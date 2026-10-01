@@ -1,0 +1,7 @@
+# Local configuration or authentication must never enter this public sandbox.
+serverless/wrangler.local.json
+serverless/.dev.vars*
+serverless/.env*
+serverless/.wrangler/
+node_modules/
+plm-test-result.json

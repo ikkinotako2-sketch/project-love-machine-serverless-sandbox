@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test serverless/test-worker.mjs
+      - run: node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs
       - name: Test-only callback round trip
         if: github.event_name == 'workflow_dispatch'
         env:

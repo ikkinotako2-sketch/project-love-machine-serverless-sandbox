@@ -1,5 +1,9 @@
 # PLM isolated TEST_ONLY sandbox preparation
 
+Current connection runbook: [D1_CONNECTION_RUNBOOK.md](serverless/D1_CONNECTION_RUNBOOK.md).
+As of 2026-10-01 the user-reported Free specification/Dashboard check is PASS.
+D1 existence and live deployment remain UNVERIFIED; no live job is sent.
+
 Source: production Draft PR #16, head e5ad13c; only the test-only reference
 files are copied here. Production repository, PR #15/16 and n8n are not
 changed. This public sandbox has no SNS clients, credentials, URLs, publish
@@ -34,7 +38,8 @@ No Workers/Queues/Workflows live provisioning is authorized by committing it.
    existing account-wide usage/headroom, and absence of a required paid/card
    step. If payment is requested, stop. A Free zone label alone does not prove
    Workers Free. The previous agent browser encountered a security challenge;
-   its Free plan has not been verified.
+   the agent did not verify its Free plan directly. The subsequent user
+   Dashboard verification is accepted as PASS; do not repeat this gate.
 2. Only after verification and permission, create sandbox Worker/D1 and apply
    test_jobs schema. Keep EMERGENCY_STOP=true. No queues/timers are needed for
    the single-job test.
@@ -72,7 +77,8 @@ UNVERIFIED until the human gates are completed.
 
 ## Offline checks
 
-`node --test serverless/test-worker.mjs` runs ten network-free checks for
+`node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs` runs
+seventeen network-free checks, including seven schema/setup checks and ten for
 claim/replay/conflict, fixed sandbox dispatch, ambiguity, signed callbacks,
 stale auth/CAS, timeout, restart, independent connections, one-job budget and
 the actual dummy runner's mocked round trip. This does not prove Cloudflare

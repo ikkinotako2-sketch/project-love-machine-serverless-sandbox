@@ -14,6 +14,7 @@
   "d1_databases": [{
     "binding": "DB",
     "database_name": "plm-serverless-sandbox-state",
-    "database_id": "REPLACE_ONLY_AFTER_FREE_PLAN_VERIFICATION"
+    "database_id": "REPLACE_ONLY_AFTER_DATABASE_EXISTENCE_VERIFICATION",
+    "migrations_dir": "migrations"
   }]
 }
