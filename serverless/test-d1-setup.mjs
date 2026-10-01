@@ -52,6 +52,7 @@ test('inspection rejects missing schema, wrong constraints, extra secret column,
   db.exec(migration);const s=snapshot(db);
   assert.throws(()=>validateInspection({...s,tableSql:undefined}));
   assert.throws(()=>validateInspection({...s,tableSql:s.tableSql.replace("CHECK(platform='test')",'')}));
+  assert.throws(()=>validateInspection({...s,tableSql:s.tableSql.replace("platform='test'","platform='TEST'")}));
   assert.throws(()=>validateInspection({...s,columns:[...s.columns,{name:'access_token',type:'TEXT',notnull:0,pk:0}]}));
   for(const jobCount of [1,-1,null,'0',NaN]) assert.throws(()=>validateInspection({...s,jobCount}));
   db.exec('ALTER TABLE test_jobs ADD COLUMN access_token TEXT');assert.throws(()=>validateInspection(snapshot(db)));

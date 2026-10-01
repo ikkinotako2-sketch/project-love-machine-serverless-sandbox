@@ -10,7 +10,7 @@ const expectedColumns = [
   ['created_at','INTEGER',1,0], ['updated_at','INTEGER',1,0]
 ];
 const normalize = sql => sql.replace(/--[^\n]*/g,'').replace(/\bIF\s+NOT\s+EXISTS\b/gi,'')
-  .replace(/\s+/g,'').replace(/;$/,'').toLowerCase();
+  .replace(/\s+/g,'').replace(/;$/,'');
 
 // UUID is a resource identifier, not a credential. This does NOT verify its
 // existence, account ownership or plan. Human verification remains mandatory.
