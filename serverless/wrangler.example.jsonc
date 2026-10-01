@@ -1,0 +1,19 @@
+// Preparation template ONLY. No resource ID or secret is provided.
+// Do not deploy until the actual Free/$0 screen and user access are verified.
+{
+  "name": "plm-serverless-sandbox-control",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "vars": {
+    "TEST_ONLY": "true",
+    "DRY_RUN": "true",
+    "NO_PUBLISH": "true",
+    "EMERGENCY_STOP": "true"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "plm-serverless-sandbox-state",
+    "database_id": "REPLACE_ONLY_AFTER_FREE_PLAN_VERIFICATION"
+  }]
+}
