@@ -12,7 +12,7 @@ jobs:
   read-only:
     # Freeze real credential use to the single authorized diagnostic commit.
     # Later pushes may test fixtures but cannot run another live diagnostic.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.head_commit.message == 'PLM authorized read-only migration preflight 20261003-0513'
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.sha == '3adaef22c65f1abadce9a2c6051e773a9380daa9'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

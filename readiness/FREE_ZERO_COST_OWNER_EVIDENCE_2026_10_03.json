@@ -1,0 +1,21 @@
+{
+  "gate": "free_zero_cost",
+  "status": "PASS",
+  "evidence_kind": "OWNER_DASHBOARD_CONFIRMATION",
+  "confirmed_at": "2026-10-03T05:13:24+09:00",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "workers_plan": "Workers Free",
+  "active": true,
+  "payment_method_registered": false,
+  "database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "database_name": "plm-serverless-sandbox-state",
+  "dashboard_last_24h": {
+    "queries": 1,
+    "rows_read": 1,
+    "rows_written": 0,
+    "storage_display": "12.29 KB",
+    "user_visible_tables": 0
+  },
+  "scope": "Current owner-confirmed Workers/D1 Free status only; not future unlimited usage",
+  "new_paid_operations_permitted": false
+}

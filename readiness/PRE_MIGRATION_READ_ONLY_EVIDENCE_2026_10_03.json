@@ -1,0 +1,86 @@
+{
+  "mode": "READ_ONLY_DIAGNOSTIC",
+  "authentication": "ACTIVE",
+  "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+  "inventory": "COMPLETE",
+  "schema": "MISSING",
+  "worker": "UNVERIFIED",
+  "free_plan": "UNVERIFIED",
+  "migration_required": true,
+  "account_isolation": "unverified",
+  "external_api_calls": 6,
+  "render_executions": 0,
+  "cloudflare_mutations": 0,
+  "live_jobs": 0,
+  "probes": [
+    {
+      "stage": "user_token_verify",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "d1_inventory_page_1",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "target_d1_metadata",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "schema_table",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "full_schema_snapshot",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "time_travel_bookmark",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    }
+  ],
+  "token_kind": "USER_TOKEN",
+  "inventory_pages": 1,
+  "d1_count": 1,
+  "d1_ids": [
+    "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+  ],
+  "other_d1_count": 0,
+  "database": "ID_AND_NAME_MATCHED",
+  "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+  "database_size_bytes": 12288,
+  "row_count": null,
+  "sql": {
+    "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+    "destructive_statements": 0,
+    "statements": 1
+  },
+  "current_schema": [
+    {
+      "type": "table",
+      "name": "_cf_KV",
+      "tbl_name": "_cf_KV",
+      "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+    }
+  ],
+  "schema_object_count": 1,
+  "time_travel": "BOOKMARK_READ_CONFIRMED",
+  "pre_migration_bookmark": "00000003-00000000-000050f8-cf6a77a03e32d058898a115ccfac83d1",
+  "checked_at": "2026-10-02T20:15:20.674Z",
+  "migration_permitted": false,
+  "migration_execution_approved": false,
+  "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED",
+  "run_id": 37059375077,
+  "commit": "3adaef22c65f1abadce9a2c6051e773a9380daa9"
+}

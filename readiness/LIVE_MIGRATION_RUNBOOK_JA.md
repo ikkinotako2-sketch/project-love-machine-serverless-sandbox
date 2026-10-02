@@ -49,3 +49,6 @@
 実account inventory/plan/current allowance、active AI quota、OAuth/TLS/HMAC key、remote D1 atomicity/backup、runner停止証明、upload副作用照合、動画品質、実70分/24h待機。
 
 次の最小本人操作は、sandbox専用Cloudflare accountの最初のread-only credentialを本人が保護された欄に登録すること。今はDashboard操作を要求せず、この地点で停止する。
+
+
+2026-10-03更新: [最新read-only証拠と本人確認済みFree gate](PRE_MIGRATION_READ_ONLY_2026_10_03_JA.md)。Free/$0は本人Dashboard確認でPASS。最新inventory/schema/bookmarkは実read-only取得済み。migrationは引き続き未承認・実行禁止、isolationはunverified。
