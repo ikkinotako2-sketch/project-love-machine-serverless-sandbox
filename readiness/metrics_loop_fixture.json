@@ -1,0 +1,17 @@
+{
+  "one_hour_metrics": {"views": 12, "likes": 1, "comments": null, "averageViewDuration": null, "averageViewPercentage": null, "subscribersGained": null, "subscribersLost": null, "analytics_available": false},
+  "day_metrics": {"views": 45, "likes": 3, "comments": 0, "averageViewDuration": null, "averageViewPercentage": 40, "subscribersGained": null, "subscribersLost": null, "analytics_available": true},
+  "improvement": {
+    "analysis": "固定metrics fixtureに基づく改善仮説。効果は未確認。",
+    "improvement_actions": {
+      "hook": "冒頭の問いを比較する仮説。",
+      "duration": "一つの要点に絞る仮説。",
+      "caption_density": "字幕を短い意味単位にする仮説。",
+      "scene_changes": "話題の切れ目で画面を変える仮説。",
+      "narration": "短文と自然な間を試す仮説。",
+      "cta": "最後に答えやすい問いを置く仮説。",
+      "topic_selection": "同じ課題を別の切り口で扱う仮説。"
+    }
+  },
+  "next_theme": "時計の読み方を別の切り口で説明する固定候補"
+}
