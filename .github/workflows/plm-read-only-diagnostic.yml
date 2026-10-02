@@ -10,7 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   read-only:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+    # Freeze real credential use to the single authorized diagnostic commit.
+    # Later pushes may test fixtures but cannot run another live diagnostic.
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.sha == 'dd55af3f1fdd7cc60024bfc3f29338daab6c6ed8'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

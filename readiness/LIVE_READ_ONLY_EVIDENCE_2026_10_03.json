@@ -1,0 +1,70 @@
+{
+  "checked_at": "2026-10-03 JST",
+  "run_id": 37056753511,
+  "commit": "dd55af3f1fdd7cc60024bfc3f29338daab6c6ed8",
+  "mode": "READ_ONLY_DIAGNOSTIC",
+  "authentication": "ACTIVE",
+  "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+  "inventory": "COMPLETE",
+  "schema": "MISSING",
+  "worker": "READ_PERMISSION_REQUIRED",
+  "free_plan": "UNVERIFIED",
+  "migration_required": true,
+  "account_isolation": "unverified",
+  "external_api_calls": 6,
+  "render_executions": 0,
+  "cloudflare_mutations": 0,
+  "live_jobs": 0,
+  "probes": [
+    {
+      "stage": "account_token_verify",
+      "http_status": 401,
+      "error_codes": [
+        1000
+      ],
+      "status": "REJECTED"
+    },
+    {
+      "stage": "user_token_type_diagnostic",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "d1_inventory_page_1",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "target_d1_metadata",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "schema_table",
+      "http_status": 200,
+      "error_codes": [],
+      "status": "PASS"
+    },
+    {
+      "stage": "exact_worker_settings",
+      "http_status": 403,
+      "error_codes": [],
+      "status": "REJECTED"
+    }
+  ],
+  "token_kind": "USER_TOKEN_ACCOUNT_VERIFY_INCOMPATIBLE",
+  "inventory_pages": 1,
+  "d1_count": 1,
+  "d1_ids": [
+    "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+  ],
+  "other_d1_count": 0,
+  "database": "ID_AND_NAME_MATCHED",
+  "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+  "database_size_bytes": 12288,
+  "row_count": null,
+  "stop_reason": "MIGRATION_APPROVAL_AND_ISOLATION_REQUIRED"
+}
