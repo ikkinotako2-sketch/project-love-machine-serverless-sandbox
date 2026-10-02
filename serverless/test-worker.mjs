@@ -115,3 +115,16 @@ test('runner refuses missing flags, arbitrary endpoints and rejected start',asyn
  await assert.rejects(runTest(input,'https://mock.workers.dev/test-callback','c'.repeat(32),'123',async()=>{calls++;return new Response(null,{status:409});}));
  assert.equal(calls,1);
 });
+
+test('emergency stop prevents any outbound call and second distinct job exceeds lifetime cap', async()=>{
+ const {DatabaseSync}=await import('node:sqlite');
+ const {readFileSync}=await import('node:fs');
+ const {default:worker,claimTest}=await import('./worker.mjs');
+ const raw=new DatabaseSync(':memory:');raw.exec(readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
+ // Minimal independent D1 batch shim for lifetime cap, with a transaction.
+ const db={batch:async statements=>{raw.exec('BEGIN');try{const out=statements.map(s=>s.exec());raw.exec('COMMIT');return out;}catch(e){raw.exec('ROLLBACK');throw e;}},prepare:sql=>({bind:(...args)=>({exec:()=>sql.startsWith('SELECT')?{results:raw.prepare(sql).all(...args)}:{meta:raw.prepare(sql).run(...args)}})})};
+ const base={platform:'test',account_id:'test_reference_001',job_id:'test-one',content_fingerprint:'a'.repeat(64),TEST_ONLY:true,DRY_RUN:true,NO_PUBLISH:true};
+ await claimTest(db,base);await assert.rejects(claimTest(db,{...base,job_id:'test-two'}),{message:'budget_exhausted'});
+ const stopped=await worker.fetch(new Request('https://example.workers.dev/test-jobs',{method:'POST',body:JSON.stringify(base)}),{TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',DB:{prepare:()=>{throw Error('DB must not be used');}}});
+ assert.equal(stopped.status,409);raw.close();
+});

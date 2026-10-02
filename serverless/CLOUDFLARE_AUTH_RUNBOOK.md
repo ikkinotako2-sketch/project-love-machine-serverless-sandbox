@@ -49,3 +49,5 @@ No credentials are available in Work at preparation time; remote GitHub secret e
 - https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/
 
 No upgrades, cards, production changes or SNS/API posts are authorized. Stop before live round trip. Keep TEST_ONLY=true, DRY_RUN=true, NO_PUBLISH=true, EMERGENCY_STOP=true.
+
+Final audit and shortest deferred owner checklist: see FINAL_SAFETY_AUDIT.md. Setup now rejects any PLM_D1_DATABASE_ID other than the confirmed sandbox UUID before HTTP; remote UUID/name are still checked independently.

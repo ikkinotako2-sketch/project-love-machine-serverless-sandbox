@@ -59,3 +59,32 @@ test('missing worker never creates worker; missing schema stops deploy',async()=
  for(const opts of [{workerMissing:true},{exists:false}]) {const m=mock(opts);await assert.rejects(setup(env,'prepare-deploy',m.fetcher));assert(m.calls.every(c=>['GET','POST'].includes(c.options.method)));assert(!m.calls.some(c=>c.url.includes('/scripts/')&&c.options.method!=='GET'));m.db.close();}
 });
 test('invalid operation cannot access API',async()=>{const m=mock();await assert.rejects(setup(env,'dispatch',m.fetcher));assert.equal(m.calls.length,0);m.db.close();});
+test('every unsafe flag and alternative valid DB UUID fail before HTTP',async()=>{
+ for(const delta of ['TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'].map(k=>({[k]:'false'})).concat([{PLM_D1_DATABASE_ID:'00000000-0000-4000-8000-000000000000'}])) {
+  const m=mock();await assert.rejects(setup({...env,...delta},'migrate',m.fetcher));assert.equal(m.calls.length,0);m.db.close();
+ }
+});
+test('all remote requests stay in exact account/DB/Worker allowlist',async()=>{
+ const m=mock({exists:false});await setup(env,'migrate',m.fetcher);await setup(env,'prepare-deploy',m.fetcher);
+ const base=`https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}`;
+ const allowed=new Set([base+'/tokens/verify',base+`/d1/database/${id}`,base+`/d1/database/${id}/query`,base+'/workers/scripts/plm-serverless-sandbox-control/settings']);
+ for(const c of m.calls) {
+  assert(allowed.has(c.url));
+  if(c.options.method==='POST') {
+   const q=JSON.parse(c.options.body).sql;
+   assert(q===readFileSync(new URL('./migrations/0001_test_jobs.sql',import.meta.url),'utf8') || /^(SELECT|PRAGMA) /.test(q));
+  }
+ }
+ m.db.close();
+});
+test('provider error containing a token is never exposed by setup error',async()=>{
+ const m=mock();const fetcher=async()=>{throw Error(env.PLM_CF_D1_API_TOKEN+' raw response Authorization');};
+ await assert.rejects(setup(env,'inspect',fetcher),{message:'read_unconfirmed'});m.db.close();
+});
+test('setup and offline CI never call the callback runner or send a live job',()=>{
+ const setupWorkflow=readFileSync(new URL('../.github/workflows/plm-cloudflare-setup.yml',import.meta.url),'utf8');
+ assert(!setupWorkflow.includes('test-runner.mjs'));assert(!setupWorkflow.includes('repository_dispatch'));assert(!setupWorkflow.includes('cron:'));
+ assert(setupWorkflow.includes("EMERGENCY_STOP: 'true'"));assert(setupWorkflow.includes('command: deploy --config wrangler.local.json'));
+ const source=readFileSync(new URL('./cloudflare-setup.mjs',import.meta.url),'utf8');
+ assert(!source.includes('console.log(token'));assert(!source.includes('console.error(error'));assert(!source.includes('dispatches'));
+});

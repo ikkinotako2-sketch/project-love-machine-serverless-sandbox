@@ -4,6 +4,8 @@ import {pathToFileURL} from 'node:url';
 import {bindingConfig, validateInspection} from './d1-setup.mjs';
 export const REPO='ikkinotako2-sketch/project-love-machine-serverless-sandbox';
 export const WORKER='plm-serverless-sandbox-control';
+// Previously confirmed sandbox D1; configuration cannot redirect setup to another DB.
+export const DATABASE_ID='18050cf6-934e-4f3a-a1cd-5041bac1c35e';
 const FLAGS=['TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'];
 const migration=readFileSync(new URL('./migrations/0001_test_jobs.sql',import.meta.url),'utf8');
 export async function setup(env, operation, fetcher=fetch) {
@@ -12,6 +14,7 @@ export async function setup(env, operation, fetcher=fetch) {
   if(!['inspect','migrate','prepare-deploy'].includes(operation)) throw Error('invalid_operation');
   const account=env.CLOUDFLARE_ACCOUNT_ID, db=env.PLM_D1_DATABASE_ID;
   if(!/^[a-f0-9]{32}$/.test(account||'')) throw Error('invalid_account_id');
+  if(db!==DATABASE_ID) throw Error('database_id_not_allowlisted');
   const config=bindingConfig(db);
   const token=env.PLM_CF_D1_API_TOKEN;
   if(!token || /[\r\n]/.test(token)) throw Error('missing_auth');
