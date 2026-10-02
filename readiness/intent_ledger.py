@@ -65,6 +65,13 @@ def _canonical(payload):
     return value
 
 
+def _script_canonical(script):
+    from offline_readiness import script_to_render
+    script_to_render('offline checkpoint fixture', script, 'youtube_game_001',
+                     'yt-900001-1790942400000', dict.fromkeys(FLAGS,True))
+    return json.dumps(script,ensure_ascii=False,sort_keys=True,separators=(',', ':'),allow_nan=False)
+
+
 @dataclass(frozen=True)
 class Record:
     intent: PublishIntent
@@ -77,6 +84,8 @@ class Record:
     dispatch_reservations: int = 0
     callback_id: str | None = None
     result_id: str | None = None
+    script_checkpoint_json: str | None = None
+    script_fingerprint: str | None = None
 
 
 class Conflict(ValueError):
@@ -151,11 +160,34 @@ class Ledger:
                 raise Conflict('invalid_transition')
             return self._save(record,state=target)
 
+    def save_script_checkpoint(self, key, owner, version, script):
+        """CAS-save immutable validated script BEFORE conversion to ready.
+
+        The same checkpoint is a no-op; different script is always rejected.
+        This is in-memory/snapshot persistence, not actual durable storage.
+        """
+        canonical = _script_canonical(script)
+        storage = json.dumps(script,ensure_ascii=False,separators=(',', ':'),allow_nan=False)
+        fingerprint = hashlib.sha256(canonical.encode()).hexdigest()
+        with self._lock:
+            record = self._cas(key,owner,version)
+            if record.script_checkpoint_json is not None:
+                if _script_canonical(json.loads(record.script_checkpoint_json)) != canonical or record.script_fingerprint != fingerprint:
+                    raise Conflict('immutable_script_checkpoint')
+                return record
+            if record.state != 'generating':
+                raise Conflict('invalid_checkpoint_state')
+            return self._save(record,script_checkpoint_json=storage,script_fingerprint=fingerprint)
+
     def bind_content(self, key, owner, version, payload):
         canonical = _canonical(payload)
         fingerprint = hashlib.sha256(canonical.encode()).hexdigest()
         with self._lock:
             record = self._cas(key,owner,version)
+            if record.script_checkpoint_json is not None:
+                source = {k:payload[k] for k in ('title','hook','narration','scenes','bgm')}
+                if _script_canonical(source) != _script_canonical(json.loads(record.script_checkpoint_json)):
+                    raise Conflict('checkpoint_payload_mismatch')
             if record.content_fingerprint is not None:
                 if record.content_fingerprint != fingerprint or record.content_json != canonical:
                     raise Conflict('immutable_content')
@@ -196,17 +228,22 @@ class Ledger:
 
     def snapshot(self):
         with self._lock:
-            return json.dumps({'format':1,'records':[asdict(r) for r in self._records.values()]},
+            return json.dumps({'format':2,'records':[asdict(r) for r in self._records.values()]},
                               ensure_ascii=False,sort_keys=True,allow_nan=False)
 
     @classmethod
     def restore(cls, snapshot, flags):
         raw = json.loads(snapshot)
-        if not isinstance(raw,dict) or set(raw) != {'format','records'} or type(raw['format']) is not int or raw['format'] != 1 or not isinstance(raw['records'],list):
+        if not isinstance(raw,dict) or set(raw) != {'format','records'} or type(raw['format']) is not int or raw['format'] not in (1,2) or not isinstance(raw['records'],list):
             raise ValueError('invalid_snapshot')
         store = cls(flags)
         fields = set(Record.__dataclass_fields__)
         for data in raw['records']:
+            if raw['format'] == 1 and isinstance(data,dict):
+                old_fields = fields - {'script_checkpoint_json','script_fingerprint'}
+                if set(data) != old_fields:
+                    raise ValueError('invalid_legacy_snapshot_record')
+                data = {**data,'script_checkpoint_json':None,'script_fingerprint':None}
             if not isinstance(data,dict) or set(data) != fields or not isinstance(data['intent'],dict):
                 raise ValueError('invalid_snapshot_record')
             intent = normalize_intent({'source':'manual',**data['intent']})
@@ -230,6 +267,20 @@ class Ledger:
                     raise ValueError('invalid_fingerprint')
                 if _canonical(json.loads(record.content_json)) != record.content_json or hashlib.sha256(record.content_json.encode()).hexdigest() != record.content_fingerprint:
                     raise ValueError('content_integrity')
+            if (record.script_checkpoint_json is None) != (record.script_fingerprint is None):
+                raise ValueError('invalid_script_checkpoint')
+            if record.script_checkpoint_json is not None:
+                if not isinstance(record.script_checkpoint_json,str) or not isinstance(record.script_fingerprint,str) or not _FINGERPRINT.fullmatch(record.script_fingerprint):
+                    raise ValueError('invalid_script_checkpoint')
+                source = json.loads(record.script_checkpoint_json)
+                if json.dumps(source,ensure_ascii=False,separators=(',', ':'),allow_nan=False) != record.script_checkpoint_json or hashlib.sha256(_script_canonical(source).encode()).hexdigest() != record.script_fingerprint:
+                    raise ValueError('script_checkpoint_integrity')
+                if record.state in ('pending','claimed'):
+                    raise ValueError('premature_script_checkpoint')
+                if record.content_json is not None:
+                    content = json.loads(record.content_json)
+                    if _script_canonical({k:content[k] for k in ('title','hook','narration','scenes','bgm')}) != _script_canonical(json.loads(record.script_checkpoint_json)):
+                        raise ValueError('checkpoint_payload_mismatch')
             if record.state in ('pending','claimed','generating') and record.content_fingerprint is not None:
                 raise ValueError('premature_content')
             if record.state in ('ready','initializing','unknown','succeeded') and not record.content_fingerprint:
