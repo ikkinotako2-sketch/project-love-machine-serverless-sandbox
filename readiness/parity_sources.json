@@ -1,0 +1,179 @@
+{
+  "production_sha": "c869b41f941b9cdff45cd2ceb16532de777b6ac1",
+  "pr15_sha": "a3bad01929b0db39499b4320182068f7a7e0047d",
+  "pr16_sha": "e5ad13c1a92bf390272ce2c547f6b5ecaf8caa9c",
+  "export_sha256": "09e9067efc10e09818299e6a8e1b791bcc952ac263484ae18b714eda5b7a84ff",
+  "pipeline_sha256": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928",
+  "categories": [
+    "hook",
+    "duration",
+    "caption_density",
+    "scene_changes",
+    "narration",
+    "cta",
+    "topic_selection"
+  ],
+  "producer_validator": "def validate_ai(output: Any) -> dict[str, Any] | None:\n    if not isinstance(output, dict) or not isinstance(output.get(\"analysis\"), str):\n        return None\n    actions = output.get(\"improvement_actions\")\n    if not isinstance(actions, dict) or set(actions) != set(CATEGORIES):\n        return None\n    if any(not isinstance(actions[key], str) or not 1 <= len(actions[key]) <= 180 for key in CATEGORIES):\n        return None\n    if len(output[\"analysis\"]) > 250:\n        return None\n    return {\"method\": \"gemini\", \"analysis\": output[\"analysis\"], \"improvement_actions\": actions}",
+  "consumer_code": "let inputSource = 'manual';\nlet source;\n\ntry {\n  source = $('Get row(s)1').first().json;\n  inputSource = 'queue';\n} catch {\n  source = $('テーマ入力フォーム').first().json;\n}\n\nconst result = {\n  ...source,\n  source: inputSource,\n  row_id: inputSource === 'queue' ? source.id : null,\n  improvement_guidance: ''\n};\nconst keys = ['hook', 'duration', 'caption_density', 'scene_changes', 'narration', 'cta', 'topic_selection'];\ntry {\n  const response = $input.first().json;\n  if (response.statusCode && response.statusCode !== 200) throw new Error('HTTP status');\n  const payload = response.body?.data ?? response.body ?? response.data;\n  const feedback = typeof payload === 'string' ? JSON.parse(payload) : payload;\n  const actions = feedback?.improvement_actions;\n  if (feedback?.status !== 'ready' || !actions || typeof actions !== 'object' || Array.isArray(actions)) throw new Error('Invalid feedback');\n  if (!keys.every(key => Object.prototype.hasOwnProperty.call(actions, key) && typeof actions[key] === 'string' && actions[key].trim().length > 0 && actions[key].length <= 240 && !/[\\r\\n\\x00-\\x1f]/.test(actions[key]))) throw new Error('Invalid actions');\n  result.improvement_guidance = keys.map(key => key + ': ' + actions[key].trim()).join('\\n');\n} catch (_) {\n  // An unavailable or malformed improvement must not block normal script generation.\n}\nreturn [{ json: result }];",
+  "normalization_assignments": [
+    {
+      "name": "title",
+      "value": "={{ $json.output.title }}",
+      "type": "string"
+    },
+    {
+      "name": "hook",
+      "value": "={{ $json.output.hook }}",
+      "type": "string"
+    },
+    {
+      "name": "narration",
+      "value": "={{ $json.output.narration }}",
+      "type": "string"
+    },
+    {
+      "name": "scenes",
+      "value": "={{ $json.output.scenes }}",
+      "type": "array"
+    },
+    {
+      "name": "captions",
+      "value": "={{ $json.output.scenes.map((s, i) => ({\n  index: i + 1,\n  start_seconds: s.start,\n  end_seconds: s.end,\n  text: s.caption\n})) }}",
+      "type": "array"
+    },
+    {
+      "name": "bgm",
+      "value": "={{ $json.output.bgm }}",
+      "type": "object"
+    }
+  ],
+  "render_assignments": [
+    {
+      "name": "title",
+      "value": "={{ $json.title }}",
+      "type": "string"
+    },
+    {
+      "name": "hook",
+      "value": "={{ $json.hook }}",
+      "type": "string"
+    },
+    {
+      "name": "narration",
+      "value": "={{ $json.narration }}",
+      "type": "string"
+    },
+    {
+      "name": "scenes",
+      "value": "={{ $json.scenes }}",
+      "type": "array"
+    },
+    {
+      "name": "captions",
+      "value": "={{ $json.captions }}",
+      "type": "array"
+    },
+    {
+      "name": "bgm",
+      "value": "={{ $json.bgm }}",
+      "type": "object"
+    },
+    {
+      "name": "speaker",
+      "value": 1,
+      "type": "number"
+    },
+    {
+      "name": "output",
+      "value": "={   \"format\": \"mp4\",   \"width\": 1080,   \"height\": 1920,   \"fps\": 30 }",
+      "type": "object"
+    }
+  ],
+  "dispatch_expression": "={{\n{\n  ref: 'main',\n  inputs: {\n    job_id: String($json.job_id),\n    account_id: 'youtube_game_001',\n    oauth_secret_name: 'PLM_YOUTUBE_GAME_001',\n\n    title: String($json.title ?? ''),\n    hook: String($json.hook ?? ''),\n    narration: String($json.narration ?? ''),\n    speaker: String($json.speaker ?? 1),\n\n    scenes_json: JSON.stringify($json.scenes ?? []),\n    captions_json: JSON.stringify($json.captions ?? []),\n    bgm_json: JSON.stringify($json.bgm ?? {}),\n    output_json: JSON.stringify(\n      $json.output ?? {\n        format: 'mp4',\n        width: 1080,\n        height: 1920,\n        fps: 30\n      }\n    ),\n\n    description: String($json.description ?? ''),\n    tags: 'game,shorts',\n\n    privacy_status: 'private',\n    scheduled_for: '',\n\n    made_for_kids: false,\n    contains_synthetic_media: false,\n    notify_subscribers: false\n  }\n}\n}}",
+  "pipeline_inputs": {
+    "job_id": {
+      "required": true,
+      "type": "string"
+    },
+    "account_id": {
+      "required": true,
+      "type": "string"
+    },
+    "oauth_secret_name": {
+      "required": true,
+      "type": "string"
+    },
+    "title": {
+      "required": true,
+      "type": "string"
+    },
+    "hook": {
+      "required": false,
+      "type": "string"
+    },
+    "narration": {
+      "required": true,
+      "type": "string"
+    },
+    "speaker": {
+      "required": true,
+      "default": "1",
+      "type": "string"
+    },
+    "scenes_json": {
+      "required": false,
+      "default": "[]",
+      "type": "string"
+    },
+    "captions_json": {
+      "required": false,
+      "default": "[]",
+      "type": "string"
+    },
+    "bgm_json": {
+      "required": false,
+      "default": "{}",
+      "type": "string"
+    },
+    "output_json": {
+      "required": false,
+      "default": "{\"format\":\"mp4\",\"width\":1080,\"height\":1920,\"fps\":30}",
+      "type": "string"
+    },
+    "description": {
+      "required": false,
+      "type": "string"
+    },
+    "tags": {
+      "required": false,
+      "type": "string"
+    },
+    "privacy_status": {
+      "required": true,
+      "default": "private",
+      "type": "choice",
+      "options": [
+        "private",
+        "unlisted",
+        "public"
+      ]
+    },
+    "scheduled_for": {
+      "required": false,
+      "type": "string"
+    },
+    "made_for_kids": {
+      "required": true,
+      "type": "boolean"
+    },
+    "contains_synthetic_media": {
+      "required": true,
+      "type": "boolean"
+    },
+    "notify_subscribers": {
+      "required": true,
+      "default": false,
+      "type": "boolean"
+    }
+  }
+}

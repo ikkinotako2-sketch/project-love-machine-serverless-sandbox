@@ -1,0 +1,115 @@
+{
+  "theme": "テスト用の時計の読み方",
+  "script_response": {
+    "output": {
+      "title": "オフライン台本テスト",
+      "hook": "これは投稿しないテストです。",
+      "narration": "時計の短い針は時を、長い針は分を示します。これは固定fixtureです。",
+      "scenes": [
+        {
+          "start": 0,
+          "end": 5,
+          "caption": "固定fixture",
+          "visual_keyword": "時計",
+          "motion": "zoom_in",
+          "sfx": "none",
+          "emphasis_words": [
+            "時計"
+          ]
+        }
+      ],
+      "bgm": {
+        "mood": "upbeat",
+        "volume": 0.12
+      }
+    }
+  },
+  "job_id": "yt-900001-1790942400000",
+  "normalized_expected": {
+    "title": "オフライン台本テスト",
+    "hook": "これは投稿しないテストです。",
+    "narration": "時計の短い針は時を、長い針は分を示します。これは固定fixtureです。",
+    "scenes": [
+      {
+        "start": 0,
+        "end": 5,
+        "caption": "固定fixture",
+        "visual_keyword": "時計",
+        "motion": "zoom_in",
+        "sfx": "none",
+        "emphasis_words": [
+          "時計"
+        ]
+      }
+    ],
+    "captions": [
+      {
+        "index": 1,
+        "start_seconds": 0,
+        "end_seconds": 5,
+        "text": "固定fixture"
+      }
+    ],
+    "bgm": {
+      "mood": "upbeat",
+      "volume": 0.12
+    }
+  },
+  "render_expected": {
+    "title": "オフライン台本テスト",
+    "hook": "これは投稿しないテストです。",
+    "narration": "時計の短い針は時を、長い針は分を示します。これは固定fixtureです。",
+    "scenes": [
+      {
+        "start": 0,
+        "end": 5,
+        "caption": "固定fixture",
+        "visual_keyword": "時計",
+        "motion": "zoom_in",
+        "sfx": "none",
+        "emphasis_words": [
+          "時計"
+        ]
+      }
+    ],
+    "captions": [
+      {
+        "index": 1,
+        "start_seconds": 0,
+        "end_seconds": 5,
+        "text": "固定fixture"
+      }
+    ],
+    "bgm": {
+      "mood": "upbeat",
+      "volume": 0.12
+    },
+    "speaker": 1,
+    "output": {
+      "format": "mp4",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30
+    }
+  },
+  "pipeline_inputs_expected": {
+    "job_id": "yt-900001-1790942400000",
+    "account_id": "youtube_game_001",
+    "oauth_secret_name": "PLM_YOUTUBE_GAME_001",
+    "title": "オフライン台本テスト",
+    "hook": "これは投稿しないテストです。",
+    "narration": "時計の短い針は時を、長い針は分を示します。これは固定fixtureです。",
+    "speaker": "1",
+    "scenes_json": "[{\"start\":0,\"end\":5,\"caption\":\"固定fixture\",\"visual_keyword\":\"時計\",\"motion\":\"zoom_in\",\"sfx\":\"none\",\"emphasis_words\":[\"時計\"]}]",
+    "captions_json": "[{\"index\":1,\"start_seconds\":0,\"end_seconds\":5,\"text\":\"固定fixture\"}]",
+    "bgm_json": "{\"mood\":\"upbeat\",\"volume\":0.12}",
+    "output_json": "{\"format\":\"mp4\",\"width\":1080,\"height\":1920,\"fps\":30}",
+    "description": "",
+    "tags": "game,shorts",
+    "privacy_status": "private",
+    "scheduled_for": "",
+    "made_for_kids": false,
+    "contains_synthetic_media": false,
+    "notify_subscribers": false
+  }
+}

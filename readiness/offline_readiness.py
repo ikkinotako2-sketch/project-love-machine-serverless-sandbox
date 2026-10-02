@@ -49,7 +49,7 @@ def script_to_render(theme, script, account_id, job_id, flags):
         raise ValueError('unsafe_flags')
     _identifier(account_id)
     _identifier(job_id)
-    if not account_id.startswith('youtube-'):
+    if not account_id.startswith(('youtube-', 'youtube_')):
         raise ValueError('platform_mismatch')
     _text(theme, 240)
     _keys(script, ('title', 'hook', 'narration', 'scenes', 'bgm'))
@@ -76,7 +76,8 @@ def script_to_render(theme, script, account_id, job_id, flags):
             raise ValueError('invalid_emphasis')
         for word in scene['emphasis_words']:
             _text(word, 40)
-        captions.append({'start': start, 'end': end, 'text': scene['caption']})
+        captions.append({'index': len(captions) + 1, 'start_seconds': start,
+                         'end_seconds': end, 'text': scene['caption']})
     _keys(script['bgm'], ('mood', 'volume'))
     _text(script['bgm']['mood'], 40)
     _number(script['bgm']['volume'], 0, 1)
