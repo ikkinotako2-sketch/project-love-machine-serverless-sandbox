@@ -1,0 +1,38 @@
+name: PLM Read Only Diagnostic
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['serverless/read-only-diagnostic.mjs', '.github/workflows/plm-read-only-diagnostic.yml']
+permissions:
+  contents: read
+concurrency:
+  group: plm-sandbox-read-only-diagnostic
+  cancel-in-progress: false
+jobs:
+  read-only:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Compile offline guard
+        run: gcc -shared -fPIC -O2 -Wall -Werror readiness/guard/native_guard.c -o "$RUNNER_TEMP/plm-offline-guard.so"
+      - name: Guarded diagnostic fixture tests without credentials or network
+        run: env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so" node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test serverless/test-read-only-diagnostic.mjs
+      - name: One bounded read-only diagnostic with sanitized evidence
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_ACCOUNT_ISOLATION: ${{ vars.PLM_CF_ACCOUNT_ISOLATION }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+        run: node serverless/read-only-diagnostic.mjs
