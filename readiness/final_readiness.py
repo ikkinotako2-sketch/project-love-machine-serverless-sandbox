@@ -45,6 +45,21 @@ def command_view(read,now,loop=None,expectation=None,workflow_conclusion=None):
     checkpoint='terminal_result' if r.result_id else 'initialization_reservation' if r.dispatch_reservations else 'renderer_payload' if r.content_fingerprint else 'script_checkpoint' if r.script_fingerprint else 'claim' if r.owner else 'intent'
     next_event={'pending':'claim_review','claimed':'generation_fixture','generating':'checkpoint_recovery' if r.script_checkpoint_json else 'generation_reconciliation','ready':'dispatch_review','initializing':'side_effect_reconciliation','unknown':'manual_reconciliation','succeeded':'metrics_evidence','failed':'failure_review'}[r.state]
     deadline=None;expected=None
+    # Derive the next event from observation/checkpoint evidence, not merely
+    # the successful upload workflow. Explicit missed evidence remains missed.
+    if slots and r.state=='succeeded':
+        unresolved=[name for name in ('1h','24h') if slots[name]['observation_status']=='pending']
+        if reconciliation:next_event='manual_reconciliation'
+        elif unresolved:
+            name=unresolved[0];next_event='metrics_'+name+'_evidence'
+            expected=slots[name]['due_at'];deadline=slots[name]['deadline_at']
+        elif loop.get('next_intent') is not None:next_event='next_intent_review'
+        elif loop.get('improvement') is not None:next_event='next_intent_fixture'
+        elif slots['24h']['observation_status']=='collected':next_event='improvement_fixture'
+        else:next_event='metrics_missed_review'
+        if loop.get('next_intent') is not None:checkpoint='next_intent_checkpoint'
+        elif loop.get('improvement') is not None:checkpoint='improvement_checkpoint'
+        elif any(s['observation_status']=='collected' for s in slots.values()):checkpoint='metrics_checkpoint'
     if expectation is not None:
         if not isinstance(expectation,dict) or set(expectation)!={'event','expected_at','deadline'} or expectation['event']!=next_event:raise ValueError('invalid_expectation')
         if any(type(expectation[k]) is not int or expectation[k]<0 for k in ('expected_at','deadline')) or expectation['deadline']<expectation['expected_at']:raise ValueError('invalid_deadline')
@@ -54,6 +69,7 @@ def command_view(read,now,loop=None,expectation=None,workflow_conclusion=None):
     if failed:healthy='failed'
     elif reconciliation:healthy='reconciliation_required'
     elif exceeded:healthy='deadline_exceeded'
+    elif any(s['observation_status']=='missed' for s in slots.values()):healthy='missed'
     return {'platform':r.intent.platform,'account_id':r.intent.account_id,'job_id':r.job_id,
         'current_stage':loop['phase'] if loop is not None and r.state=='succeeded' else r.state,
         'last_durable_checkpoint':checkpoint,'checkpoint_durability':'REFERENCE_ONLY_UNVERIFIED',
@@ -61,7 +77,7 @@ def command_view(read,now,loop=None,expectation=None,workflow_conclusion=None):
         'deadline':deadline,'deadline_exceeded':exceeded,'metrics':slots,'failed':failed,
         'manual_reconciliation_required':reconciliation,'health':healthy,
         'workflow_conclusion':workflow_conclusion if workflow_conclusion in ('success','failure','cancelled',None) else 'UNVERIFIED',
-        'next_safe_action':'manual_reconciliation' if reconciliation else 'inspect_only' if failed or exceeded else 'offline_fixture_only',
+        'next_safe_action':'manual_reconciliation' if reconciliation else 'inspect_only' if failed or exceeded or healthy=='missed' else 'offline_fixture_only',
         'unsafe_automatic_action':['initialize','resend','timeout_takeover','generate_after_checkpoint','claim_next_intent','publish'],
         'live_permitted':False}
 
