@@ -1,3 +1,5 @@
+from oracle_bridge import require_guard
+require_guard()
 import unittest
 from monitor import observe_slot, observe_metrics
 DUE = '2026-10-02T12:00:00Z'

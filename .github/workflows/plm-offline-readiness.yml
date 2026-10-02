@@ -18,11 +18,23 @@ jobs:
       EMERGENCY_STOP: 'true'
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      - run: python -m unittest discover -s readiness -v
-      - run: node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs
+          node-version: '24'
+      - name: Compile trusted offline kernel guard
+        run: gcc -shared -fPIC -O2 -Wall -Werror readiness/guard/native_guard.c -o "$RUNNER_TEMP/plm-offline-guard.so"
+      - name: Guarded Python offline tests
+        env:
+          PLM_GUARD_LIBRARY: ${{ runner.temp }}/plm-offline-guard.so
+        run: python readiness/guarded_tests.py
+      - name: Guarded Node offline tests
+        run: >-
+          env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so"
+          node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
+          readiness/guard/test-node-guard.mjs
+          serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs

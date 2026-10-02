@@ -1,3 +1,5 @@
+from oracle_bridge import require_guard
+require_guard()
 import copy
 import json
 import pathlib

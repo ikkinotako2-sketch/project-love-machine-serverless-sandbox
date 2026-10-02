@@ -1,9 +1,11 @@
+from oracle_bridge import require_guard
+require_guard()
 import copy
 import json
 from pathlib import Path
-import subprocess
 import unittest
 from typing import Any
+from oracle_bridge import oracle
 from parity import (CATEGORIES, validate_improvement, improvement_guidance, normalize_script,
                     render_payload, pipeline_inputs, validate_pipeline_inputs, offline_e2e)
 from offline_readiness import FLAGS
@@ -25,12 +27,6 @@ def feedback(value='改善案'):
 def response(value='改善案'):
     return {'statusCode': 200, 'body': {'status': 'ready', **feedback(value)}}
 
-
-def oracle(requests):
-    result = subprocess.run(['node', str(HERE / 'n8n_parity_oracle.mjs')],
-                            input=json.dumps(requests, ensure_ascii=False), text=True,
-                            capture_output=True, check=True, timeout=10)
-    return json.loads(result.stdout)
 
 
 class ImprovementTests(unittest.TestCase):
