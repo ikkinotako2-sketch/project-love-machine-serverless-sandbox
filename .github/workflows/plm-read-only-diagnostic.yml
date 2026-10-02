@@ -12,7 +12,7 @@ jobs:
   read-only:
     # Freeze real credential use to the single authorized diagnostic commit.
     # Later pushes may test fixtures but cannot run another live diagnostic.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.sha == 'dd55af3f1fdd7cc60024bfc3f29338daab6c6ed8'
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.head_commit.message == 'PLM authorized read-only migration preflight 20261003-0513'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -33,6 +33,8 @@ jobs:
         run: env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so" node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test serverless/test-read-only-diagnostic.mjs
       - name: One bounded read-only diagnostic with sanitized evidence
         env:
+          PLM_CF_D1_READ_TOKEN_KIND: 'user'
+          PLM_MIGRATION_PREFLIGHT: 'true'
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
           PLM_CF_ACCOUNT_ISOLATION: ${{ vars.PLM_CF_ACCOUNT_ISOLATION }}

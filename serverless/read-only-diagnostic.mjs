@@ -1,5 +1,7 @@
 // Read-only diagnostic. No writes, retry, deployment, job or raw response logs.
 import {pathToFileURL} from 'node:url';
+import {readFileSync} from 'node:fs';
+import {validateMigration} from './cloudflare-setup.mjs';
 import {validateInspection} from './d1-setup.mjs';
 export const ACCOUNT='6c8ccd6aface937ab5dabef61cb64534';
 export const DB='18050cf6-934e-4f3a-a1cd-5041bac1c35e';
@@ -7,7 +9,7 @@ export const BRANCH='plm-offline-readiness-v1-20261002';
 const NAME='plm-serverless-sandbox-state';
 const ROOT='https://api.cloudflare.com/client/v4';
 const FLAGS=['TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'];
-const SQL=["SELECT sql FROM sqlite_master WHERE type='table' AND name='test_jobs'",'PRAGMA table_info(test_jobs)','SELECT COUNT(*) AS job_count FROM test_jobs'];
+const SQL=["SELECT sql FROM sqlite_master WHERE type='table' AND name='test_jobs'",'PRAGMA table_info(test_jobs)','SELECT COUNT(*) AS job_count FROM test_jobs',"SELECT type, name, tbl_name, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name"];
 export async function diagnose(env,fetcher=fetch) {
   const report={mode:'READ_ONLY_DIAGNOSTIC',authentication:'UNVERIFIED',account:'UNVERIFIED',inventory:'UNVERIFIED',schema:'UNVERIFIED',worker:'UNVERIFIED',free_plan:'UNVERIFIED',migration_required:'UNVERIFIED',account_isolation:'unverified',external_api_calls:0,render_executions:0,cloudflare_mutations:0,live_jobs:0,probes:[]};
   function stop(reason){report.stop_reason=reason;return report;}
@@ -36,16 +38,18 @@ export async function diagnose(env,fetcher=fetch) {
   }
   const base=`/accounts/${ACCOUNT}`;
   try {
-    const accountAuth=await api('account_token_verify',base+'/tokens/verify');
+    const kind=env.PLM_CF_D1_READ_TOKEN_KIND;
+    if(kind!==undefined&&!['user','account'].includes(kind))return stop('TOKEN_KIND_REQUIRED');
+    const accountAuth=await api(kind==='user'?'user_token_verify':'account_token_verify',kind==='user'?'/user/tokens/verify':base+'/tokens/verify');
     let auth=accountAuth;
     if(!accountAuth.ok) {
       // One DIFFERENT ownership verification, only after a definitive 4xx.
       // This is not a retry or mutation and never follows an unknown response.
-      if(![400,401,403].includes(accountAuth.http))return stop('ACCOUNT_AUTH_REJECTED');
+      if(kind!==undefined||![400,401,403].includes(accountAuth.http))return stop('ACCOUNT_AUTH_REJECTED');
       auth=await api('user_token_type_diagnostic','/user/tokens/verify');
       if(!auth.ok)return stop('CREDENTIAL_REJECTED');
       report.token_kind='USER_TOKEN_ACCOUNT_VERIFY_INCOMPATIBLE';
-    }else report.token_kind='ACCOUNT_TOKEN';
+    }else report.token_kind=kind==='user'?'USER_TOKEN':'ACCOUNT_TOKEN';
     if(auth.data.result?.status!=='active')return stop('TOKEN_NOT_ACTIVE');
     report.authentication='ACTIVE';
     let inventory=[],total=null;const seen=new Set();
@@ -76,6 +80,18 @@ export async function diagnose(env,fetcher=fetch) {
       try{validateInspection({tableSql:tables[0].sql,columns,jobCount:count});report.schema='PASS_EMPTY';report.migration_required=false;}
       catch {report.schema='MISMATCH_OR_EXISTING_ROWS';return stop('SCHEMA_REQUIRES_RECONCILIATION');}
     }else return stop('SCHEMA_UNCONFIRMED');
+    if(env.PLM_MIGRATION_PREFLIGHT==='true') {
+      report.sql=validateMigration(readFileSync(new URL('./migrations/0001_test_jobs.sql',import.meta.url),'utf8'));
+      const schema=await query('full_schema_snapshot',SQL[3]);
+      if(schema.length>100 || schema.some(x=>!['table','index','view','trigger'].includes(x.type)||typeof x.name!=='string'||x.name.length>256||typeof x.tbl_name!=='string'||!(x.sql===null||typeof x.sql==='string'&&x.sql.length<=16384)))return stop('SCHEMA_SNAPSHOT_UNCONFIRMED');
+      report.current_schema=schema;report.schema_object_count=schema.length;
+      const travel=await api('time_travel_bookmark',base+`/d1/database/${DB}/time_travel/bookmark`);
+      const bookmark=travel.data.result?.bookmark;
+      report.time_travel=travel.ok&&typeof bookmark==='string'&&/^[a-f0-9-]{16,128}$/.test(bookmark)?'BOOKMARK_READ_CONFIRMED':travel.http===403?'READ_PERMISSION_REQUIRED':'UNVERIFIED';
+      if(report.time_travel==='BOOKMARK_READ_CONFIRMED')report.pre_migration_bookmark=bookmark;
+      report.checked_at=new Date().toISOString();report.migration_permitted=false;report.migration_execution_approved=false;
+      return stop('WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED');
+    }
     const worker=await api('exact_worker_settings',base+'/workers/scripts/plm-serverless-sandbox-control/settings');
     report.worker=worker.ok?'EXISTS':worker.http===404?'NOT_FOUND_RESPONSE':worker.http===403?'READ_PERMISSION_REQUIRED':'UNVERIFIED';
     // Do not copy settings, binding values or Secret metadata into evidence.

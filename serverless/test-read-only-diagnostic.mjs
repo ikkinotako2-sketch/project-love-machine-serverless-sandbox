@@ -22,9 +22,10 @@ function fixture(options={}) {
       extra={result_info:{page:1,per_page:100,count:result.length,total_count:result.length}};
       if(options.badPages)extra.result_info.total_count=10;
     }else if(url.endsWith(`/d1/database/${DB}`))result={uuid:DB,name:'plm-serverless-sandbox-state',file_size:12288};
+    else if(url.endsWith('/time_travel/bookmark'))result={bookmark:'00000001-00000002-00000003-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'};
     else if(url.endsWith('/query')){
       const sql=JSON.parse(request.body).sql;
-      result=[{success:true,meta:{rows_written:options.writes?1:0,changed_db:!!options.writes},results:sql.startsWith('SELECT sql')?(options.schemaMissing?[]:[{sql:options.badSchema?'bad':schema}]):sql.startsWith('PRAGMA')?columns:[{job_count:options.rows||0}]}];
+      result=[{success:true,meta:{rows_written:options.writes?1:0,changed_db:!!options.writes},results:sql.startsWith('SELECT type')?[]:sql.startsWith('SELECT sql')?(options.schemaMissing?[]:[{sql:options.badSchema?'bad':schema}]):sql.startsWith('PRAGMA')?columns:[{job_count:options.rows||0}]}];
     }else if(url.endsWith('/settings')){status=options.workerDenied?403:200;success=status===200;result={bindings:[{name:'SECRET',text:token}]};}
     else throw Error('unexpected fixture endpoint');
     return new Response(JSON.stringify({success,result,...extra,errors:success?[]:[{code:10000,message:token}]}),{status});
@@ -54,4 +55,22 @@ test('malformed oversized and rate limited bodies never retry',async()=>{
   for(const response of [()=>new Response('bad',{status:200}),()=>new Response('x'.repeat(131073),{status:200}),()=>new Response(JSON.stringify({success:false,errors:[]}),{status:429})]){
     let n=0;const r=await diagnose(env,async()=>{n++;return response();});assert.equal(n,1);assert.notEqual(r.authentication,'ACTIVE');
   }
+});
+
+test('preflight explicitly user verifies once and reads schema/bookmark without mutation',async()=>{
+ const m=fixture({schemaMissing:true});const r=await diagnose({...env,PLM_CF_D1_READ_TOKEN_KIND:'user',PLM_MIGRATION_PREFLIGHT:'true'},m.fetcher);
+ assert.equal(r.token_kind,'USER_TOKEN');assert.equal(m.calls.filter(c=>c.url.endsWith('/tokens/verify')).length,1);assert(m.calls[0].url.includes('/user/'));
+ assert.equal(r.time_travel,'BOOKMARK_READ_CONFIRMED');assert.equal(r.schema_object_count,0);assert.equal(r.sql.destructive_statements,0);assert.equal(r.migration_permitted,false);
+ assert(!m.calls.some(c=>c.url.includes('/restore')));assert(!m.calls.some(c=>c.request.body?.includes('CREATE TABLE')));assert(!m.calls.some(c=>c.url.endsWith('/settings')));
+});
+test('explicit owner rejection cannot fall back or retry',async()=>{
+ const m=fixture({invalid:true});const r=await diagnose({...env,PLM_CF_D1_READ_TOKEN_KIND:'user',PLM_MIGRATION_PREFLIGHT:'true'},m.fetcher);assert.notEqual(r.authentication,'ACTIVE');assert.equal(m.calls.length,1);
+});
+test('preflight bookmark403 leaves restore availability unverified',async()=>{
+ const m=fixture({schemaMissing:true});const f=async(u,o)=>u.endsWith('/time_travel/bookmark')?new Response(JSON.stringify({success:false,errors:[]}),{status:403}):m.fetcher(u,o);
+ const r=await diagnose({...env,PLM_CF_D1_READ_TOKEN_KIND:'user',PLM_MIGRATION_PREFLIGHT:'true'},f);assert.equal(r.time_travel,'READ_PERMISSION_REQUIRED');assert.equal(r.pre_migration_bookmark,undefined);assert.equal(r.migration_permitted,false);
+});
+test('ambiguous bookmark never retries or reports confirmed backup',async()=>{
+ const m=fixture({schemaMissing:true});let n=0;const f=async(u,o)=>{if(u.endsWith('/time_travel/bookmark')){n++;throw Error('private');}return m.fetcher(u,o);};
+ const r=await diagnose({...env,PLM_CF_D1_READ_TOKEN_KIND:'user',PLM_MIGRATION_PREFLIGHT:'true'},f);assert.equal(n,1);assert.equal(r.pre_migration_bookmark,undefined);assert.equal(r.stop_reason,'READ_DIAGNOSTIC_UNCONFIRMED_NO_RETRY');
 });
