@@ -1,0 +1,14 @@
+{
+  "name": "plm-serverless-sandbox-control",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "main": "bootstrap-placeholder.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  "triggers": {"crons": []},
+  "queues": {"consumers": [], "producers": []},
+  "vars": {"TEST_ONLY":"true","DRY_RUN":"true","NO_PUBLISH":"true","EMERGENCY_STOP":"true"},
+  "d1_databases": [{"binding":"DB","database_name":"plm-serverless-sandbox-state","database_id":"18050cf6-934e-4f3a-a1cd-5041bac1c35e"}],
+  "no_bundle": true
+}

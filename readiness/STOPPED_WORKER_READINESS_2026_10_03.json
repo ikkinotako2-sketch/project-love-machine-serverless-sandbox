@@ -1,0 +1,19 @@
+{
+  "scope": "one_account_sandbox_stopped_worker",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "worker_name": "plm-serverless-sandbox-control",
+  "owner_evidence": {"worker_exists":true,"placeholder_deployed":true,"response_status":503,"response_state":"disabled","workers_dev_enabled":true,"d1_bindings":0,"live_jobs":0,"render_executions":0,"safe_flags_true":true},
+  "work_browser": {"access":"BLOCKED_SECURITY_VERIFICATION","recovery_reload_attempts":1,"worker_settings_reached":false,"captcha_attempts":0},
+  "work_snapshot": {"deployment_id":null,"version_id":null,"code_sha256":null,"bindings":"UNVERIFIED","vars":"UNVERIFIED","secrets":"UNVERIFIED","cron":"UNVERIFIED","queues":"UNVERIFIED","routes":"UNVERIFIED","custom_domains":"UNVERIFIED","preview_urls":"UNVERIFIED","version_urls":"UNVERIFIED","request_count":"UNVERIFIED"},
+  "workers_dev_disabled":"BLOCKED_NOT_EXECUTED",
+  "offline_candidate":"OFFLINE PASS",
+  "token_scope_design":"DESIGN PASS",
+  "rollback_readiness":"BLOCKED_REMOTE_SNAPSHOT_REQUIRED",
+  "deploy_readiness":"BLOCKED",
+  "deploy_permitted":false,
+  "live_ready":false,
+  "posting_permitted":false,
+  "migration_permitted":false,
+  "work_changes":{"cloudflare":0,"d1_writes":0,"deploys":0,"live_jobs":0,"render_executions":0,"cloudflare_api_calls":0},
+  "next_owner_action":"Cloud BrowserのCloudflareセキュリティ検証を本人が完了する"
+}
