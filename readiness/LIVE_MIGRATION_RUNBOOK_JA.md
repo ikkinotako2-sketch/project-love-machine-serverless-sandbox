@@ -52,3 +52,5 @@
 
 
 2026-10-03更新: [最新read-only証拠と本人確認済みFree gate](PRE_MIGRATION_READ_ONLY_2026_10_03_JA.md)。Free/$0は本人Dashboard確認でPASS。最新inventory/schema/bookmarkは実read-only取得済み。migrationは引き続き未承認・実行禁止、isolationはunverified。
+
+2026-10-03 05:31 JST: [Write account-owned activeと最終migration承認gate](MIGRATION_FINAL_GATE_2026_10_03_JA.md)。narrow D1 isolationのみ確認済み、Account Variable unverified、実migration0、allow false。

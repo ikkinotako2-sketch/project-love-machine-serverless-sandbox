@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   inspect:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.head_commit.message == 'PLM authorized account-owned Write verify and Read final gate 20261003-0527'
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.sha == '1e21c363f51e85cb21eb474b1cb26ecbb01619b9'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

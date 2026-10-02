@@ -1,0 +1,22 @@
+{
+  "evidence_kind": "OWNER_CREATION_SCREEN_AND_REGISTRATION_ATTESTATION",
+  "screenshot_library_ref": "libfile_e7c2d464ec288191bc43ebe1530425c2",
+  "token_name": "plm-sandbox-d1-migrate-once",
+  "owner_type": "account",
+  "permission_policy_visible": [
+    "D1 Write"
+  ],
+  "other_permission_policies_visible": 0,
+  "resource_scope_visible": "current Account entire D1 permission scope",
+  "account_id_bound_by_account_owned_verify": "6c8ccd6aface937ab5dabef61cb64534",
+  "registered_secret_name": "PLM_CF_D1_API_TOKEN",
+  "scope_api_verified": false,
+  "screen_is_creation_form_not_policy_readback": true,
+  "final_created_scope_basis": "Owner registration completed under specified D1-only conditions; creation screen shows D1 Write only",
+  "expiry_api_verified": "2026-10-09T23:59:59.000Z",
+  "expiry_jst": "2026-10-10T08:59:59+09:00",
+  "shortest_possible_custom_ttl_verified": false,
+  "use_window": "Only separately approved single migration; immediate owner revoke at success/failure/cancel/timeout/unknown",
+  "secret_values_saved": false,
+  "token_ids_saved": false
+}

@@ -1,0 +1,104 @@
+{
+  "mode": "FINAL_MIGRATION_READ_ONLY",
+  "write_secret_present": true,
+  "write_token_owner": "account",
+  "write_token_active": true,
+  "write_scope_api_verified": false,
+  "remote_write_calls": 0,
+  "migration_executions": 0,
+  "external_api_calls": 7,
+  "migration_execution_approved": false,
+  "migration_permitted": false,
+  "account_isolation": "unverified",
+  "write_verify_http_status": 200,
+  "write_token_expires_at": "2026-10-09T23:59:59.000Z",
+  "read_evidence": {
+    "mode": "READ_ONLY_DIAGNOSTIC",
+    "authentication": "ACTIVE",
+    "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+    "inventory": "COMPLETE",
+    "schema": "MISSING",
+    "worker": "UNVERIFIED",
+    "free_plan": "UNVERIFIED",
+    "migration_required": true,
+    "account_isolation": "unverified",
+    "external_api_calls": 6,
+    "render_executions": 0,
+    "cloudflare_mutations": 0,
+    "live_jobs": 0,
+    "probes": [
+      {
+        "stage": "user_token_verify",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "d1_inventory_page_1",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "target_d1_metadata",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "schema_table",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "full_schema_snapshot",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "time_travel_bookmark",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      }
+    ],
+    "token_kind": "USER_TOKEN",
+    "inventory_pages": 1,
+    "d1_count": 1,
+    "d1_ids": [
+      "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+    ],
+    "other_d1_count": 0,
+    "database": "ID_AND_NAME_MATCHED",
+    "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+    "database_size_bytes": 12288,
+    "row_count": null,
+    "sql": {
+      "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+      "destructive_statements": 0,
+      "statements": 1
+    },
+    "current_schema": [
+      {
+        "type": "table",
+        "name": "_cf_KV",
+        "tbl_name": "_cf_KV",
+        "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+      }
+    ],
+    "schema_object_count": 1,
+    "time_travel": "BOOKMARK_READ_CONFIRMED",
+    "pre_migration_bookmark": "00000004-00000000-000050f8-15c9c0da7c32b9c311bdb8cacd2855e1",
+    "checked_at": "2026-10-02T20:31:24.856Z",
+    "migration_permitted": false,
+    "migration_execution_approved": false,
+    "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+  },
+  "d1_isolation": "SINGLE_TARGET_D1_VERIFIED",
+  "read_preconditions_pass": true,
+  "stop_reason": "OWNER_SCOPE_EVIDENCE_AND_FINAL_EXECUTION_APPROVAL_REQUIRED",
+  "run_id": 37061099032,
+  "commit": "1e21c363f51e85cb21eb474b1cb26ecbb01619b9"
+}

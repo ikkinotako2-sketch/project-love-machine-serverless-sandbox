@@ -38,4 +38,4 @@ jobs:
           node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
           readiness/guard/test-node-guard.mjs
           serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs
-          serverless/test-read-only-diagnostic.mjs serverless/test-migration-final-inspect.mjs
+          serverless/test-read-only-diagnostic.mjs serverless/test-migration-final-inspect.mjs serverless/test-migration-once.mjs
