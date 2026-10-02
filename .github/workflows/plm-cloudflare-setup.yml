@@ -1,0 +1,52 @@
+name: PLM Cloudflare Sandbox Setup Only
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        required: true
+        default: inspect
+        options: [inspect, migrate, prepare-deploy]
+permissions:
+  contents: read
+concurrency:
+  group: plm-cloudflare-sandbox-setup
+  cancel-in-progress: false
+jobs:
+  setup:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Offline tests
+        run: node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs
+      - name: Authenticate, match existing D1, inspect or safe migration
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_API_TOKEN: ${{ secrets.PLM_CF_D1_API_TOKEN }}
+          PLM_CF_WORKER_API_TOKEN: ${{ inputs.operation == 'prepare-deploy' && secrets.PLM_CF_WORKER_API_TOKEN || '' }}
+          SETUP_OPERATION: ${{ inputs.operation }}
+        run: node serverless/cloudflare-setup.mjs "$SETUP_OPERATION"
+      - name: Deploy stopped existing sandbox Worker only
+        if: inputs.operation == 'prepare-deploy'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.119.0'
+          workingDirectory: serverless
+          command: deploy --config wrangler.local.json
+      - name: Stop before live trial
+        run: echo 'No job sent. Deployment receipt alone does not verify remote bindings/flags. Read-back verification and explicit approval remain required.'

@@ -2,9 +2,9 @@ name: PLM Serverless Test Only
 on:
   push:
     branches: [main]
-    paths: ['serverless/**', '.github/workflows/plm-serverless-test.yml']
+    paths: ['serverless/**', '.github/workflows/plm-serverless-test.yml', '.github/workflows/plm-cloudflare-setup.yml']
   pull_request:
-    paths: ['serverless/**', '.github/workflows/plm-serverless-test.yml']
+    paths: ['serverless/**', '.github/workflows/plm-serverless-test.yml', '.github/workflows/plm-cloudflare-setup.yml']
   workflow_dispatch:
     inputs:
       job_id:
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs
+      - run: node --test serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs
       - name: Test-only callback round trip
         if: github.event_name == 'workflow_dispatch'
         env:
