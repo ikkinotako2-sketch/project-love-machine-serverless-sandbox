@@ -39,6 +39,11 @@ jobs:
           PLM_CF_D1_READ_TOKEN: ${{ inputs.operation != 'migrate' && secrets.PLM_CF_D1_READ_TOKEN || '' }}
           PLM_CF_D1_API_TOKEN: ${{ inputs.operation == 'migrate' && secrets.PLM_CF_D1_API_TOKEN || '' }}
           PLM_CF_WORKER_API_TOKEN: ${{ inputs.operation == 'prepare-deploy' && secrets.PLM_CF_WORKER_API_TOKEN || '' }}
+          PLM_CF_D1_READ_TOKEN_KIND: ${{ vars.PLM_CF_D1_READ_TOKEN_KIND || '' }}
+          PLM_CF_D1_WRITE_TOKEN_KIND: ${{ vars.PLM_CF_D1_WRITE_TOKEN_KIND || '' }}
+          PLM_CF_WORKER_TOKEN_KIND: ${{ vars.PLM_CF_WORKER_TOKEN_KIND || '' }}
+          # Preparation approval does not authorize execution. Requires a separate reviewed change.
+          PLM_CF_MIGRATION_EXECUTION_APPROVED: 'false'
           SETUP_OPERATION: ${{ inputs.operation }}
         run: node serverless/cloudflare-setup.mjs "$SETUP_OPERATION"
       - name: Deploy stopped existing sandbox Worker only

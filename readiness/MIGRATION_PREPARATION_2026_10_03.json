@@ -1,0 +1,21 @@
+{
+  "scope": "PREPARATION_ONLY",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "database_name": "plm-serverless-sandbox-state",
+  "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+  "destructive_statements": 0,
+  "sql_statements": 1,
+  "inventory_evidence_run": 37056753511,
+  "inventory_evidence_count": 1,
+  "inventory_evidence_pages": 1,
+  "inventory_fresh_at_future_execution": false,
+  "isolation": "unverified",
+  "free_plan": "UNVERIFIED",
+  "write_scope": "UNVERIFIED_NOT_REGISTERED",
+  "execution_approved": false,
+  "migration_permitted": false,
+  "rollback": "STOP_REVOKE_READ_RECONCILE_NO_AUTOMATIC_DROP_OR_RESTORE",
+  "render_executions": 0,
+  "external_api_calls_this_preparation": 0
+}

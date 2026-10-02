@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {setup,REPO} from './cloudflare-setup.mjs';
+import {setup,REPO,ACCOUNT_ID,verificationUrl,validateMigration,MIGRATION_SHA} from './cloudflare-setup.mjs';
 const id='18050cf6-934e-4f3a-a1cd-5041bac1c35e';
-const env={GITHUB_REPOSITORY:REPO,GITHUB_REF:'refs/heads/main',GITHUB_EVENT_NAME:'workflow_dispatch',TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),PLM_D1_DATABASE_ID:id,PLM_CF_ACCOUNT_ISOLATION:'sandbox_only_verified',PLM_CF_D1_READ_TOKEN:'fixture-d1-read',PLM_CF_D1_API_TOKEN:'fixture-d1',PLM_CF_WORKER_API_TOKEN:'fixture-worker'};
+const env={GITHUB_REPOSITORY:REPO,GITHUB_REF:'refs/heads/main',GITHUB_EVENT_NAME:'workflow_dispatch',TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',CLOUDFLARE_ACCOUNT_ID:ACCOUNT_ID,PLM_CF_D1_READ_TOKEN_KIND:'account',PLM_CF_D1_WRITE_TOKEN_KIND:'account',PLM_CF_WORKER_TOKEN_KIND:'account',PLM_CF_MIGRATION_EXECUTION_APPROVED:'true',PLM_D1_DATABASE_ID:id,PLM_CF_ACCOUNT_ISOLATION:'sandbox_only_verified',PLM_CF_D1_READ_TOKEN:'fixture-d1-read',PLM_CF_D1_API_TOKEN:'fixture-d1',PLM_CF_WORKER_API_TOKEN:'fixture-worker'};
 const sql=readFileSync(new URL('./schema.sql',import.meta.url),'utf8');
 function mock({exists=true,wrongName=false,inactive=false,workerMissing=false,writeLost=false}={}) {
  const db=new DatabaseSync(':memory:');if(exists) db.exec(sql);const calls=[];
@@ -121,4 +121,47 @@ test('bootstrap placeholder is always stopped regardless of supplied flags',asyn
  }
  const source=readFileSync(new URL('./bootstrap-placeholder.mjs',import.meta.url),'utf8');
  assert(!source.includes('await fetch('));assert(!source.includes('env.DB'));assert(!source.includes('https://'));
+});
+
+// Public fixture credentials are never real authentication.
+test('explicit user-owned Read verifies only /user then exact Account D1',async()=>{
+ const m=mock();const r=await setup({...env,PLM_CF_D1_READ_TOKEN_KIND:'user'},'inspect',m.fetcher);
+ assert.equal(r.schema,'pass');assert.equal(m.calls[0].url,'https://api.cloudflare.com/client/v4/user/tokens/verify');
+ assert.equal(m.calls.filter(c=>c.url.endsWith('/tokens/verify')).length,1);assert(!m.calls.some(c=>c.url.includes('/accounts/'+ACCOUNT_ID+'/tokens/')));m.db.close();
+});
+test('explicit account-owned Read never uses user endpoint',async()=>{
+ const m=mock();await setup(env,'inspect',m.fetcher);assert.equal(m.calls[0].url,verificationUrl('account',ACCOUNT_ID));assert(!m.calls.some(c=>c.url.includes('/user/')));m.db.close();
+});
+test('missing or unsupported token owner fails before HTTP',async()=>{
+ for(const kind of [undefined,'auto','USER','', '../']) {const m=mock();await assert.rejects(setup({...env,PLM_CF_D1_READ_TOKEN_KIND:kind},'inspect',m.fetcher),{message:'token_kind_required'});assert.equal(m.calls.length,0);m.db.close();}
+});
+test('user-owned Write and account-owned Worker are independent routes',async()=>{
+ const m=mock({exists:false});await setup({...env,PLM_CF_D1_WRITE_TOKEN_KIND:'user'},'migrate',m.fetcher);
+ assert.equal(m.calls[0].url,verificationUrl('user',ACCOUNT_ID));m.calls.length=0;
+ await setup({...env,PLM_CF_D1_READ_TOKEN_KIND:'user'},'prepare-deploy',m.fetcher);
+ const verifies=m.calls.filter(c=>c.url.endsWith('/tokens/verify'));assert.equal(verifies.length,2);
+ assert.equal(verifies[0].url,verificationUrl('user',ACCOUNT_ID));assert.equal(verifies[1].url,verificationUrl('account',ACCOUNT_ID));m.db.close();
+});
+test('401 403 429 500 never trigger alternate endpoint or retry',async()=>{
+ for(const status of [401,403,429,500]) {let calls=0;const f=async()=>{calls++;return {ok:false,status,json:async()=>{throw Error('fixture-secret');}}};
+ await assert.rejects(setup({...env,PLM_CF_D1_READ_TOKEN_KIND:'user'},'inspect',f),{message:'api_rejected'});assert.equal(calls,1);}
+});
+test('timeout and malformed provider JSON do not retry or leak credentials',async()=>{
+ for(const malformed of [false,true]) {let calls=0;const f=async()=>{calls++;if(!malformed)throw Error(env.PLM_CF_D1_READ_TOKEN);return {ok:true,json:async()=>{throw Error(env.PLM_CF_D1_READ_TOKEN);}}};
+ await assert.rejects(setup({...env,PLM_CF_D1_READ_TOKEN_KIND:'user'},'inspect',f),{message:malformed?'response_unconfirmed':'read_unconfirmed'});assert.equal(calls,1);}
+});
+test('another valid Account ID cannot redirect any token type',async()=>{
+ for(const kind of ['user','account']) {const m=mock();await assert.rejects(setup({...env,CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),PLM_CF_D1_READ_TOKEN_KIND:kind},'inspect',m.fetcher),{message:'account_id_not_allowlisted'});assert.equal(m.calls.length,0);m.db.close();}
+});
+test('preparation approval never implies migration execution',async()=>{
+ for(const approval of [undefined,'false','prepared']) {const m=mock({exists:false});await assert.rejects(setup({...env,PLM_CF_MIGRATION_EXECUTION_APPROVED:approval},'migrate',m.fetcher),{message:'migration_execution_not_approved'});assert.equal(m.calls.length,0);m.db.close();}
+ const wf=readFileSync(new URL('../.github/workflows/plm-cloudflare-setup.yml',import.meta.url),'utf8');assert(wf.includes("PLM_CF_MIGRATION_EXECUTION_APPROVED: 'false'"));
+});
+test('canonical migration is hash pinned and any modified/destructive SQL rejected',()=>{
+ const canonical=readFileSync(new URL('./migrations/0001_test_jobs.sql',import.meta.url),'utf8');assert.deepEqual(validateMigration(canonical),{sql_sha256:MIGRATION_SHA,destructive_statements:0,statements:1});
+ for(const sql of [canonical+'\nDROP TABLE test_jobs;',canonical+'\nDELETE FROM test_jobs;',canonical.replace('test_jobs','other_jobs'),'']) assert.throws(()=>validateMigration(sql),{message:'migration_sha_mismatch'});
+});
+test('user-owned result does not contain secret or provider token metadata',async()=>{
+ const m=mock();const f=async(u,o)=>{const r=await m.fetcher(u,o);if(u.endsWith('/tokens/verify'))return {ok:true,json:async()=>({success:true,result:{status:'active',id:'private-id',raw:env.PLM_CF_D1_READ_TOKEN}})};return r;};
+ const result=await setup({...env,PLM_CF_D1_READ_TOKEN_KIND:'user'},'inspect',f);assert(!JSON.stringify(result).includes('private-id'));assert(!JSON.stringify(result).includes('fixture-'));m.db.close();
 });

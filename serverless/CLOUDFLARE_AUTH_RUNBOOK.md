@@ -7,9 +7,9 @@ Do not issue any Token now: production D1 inventory and exact Worker existence a
 
 ## Credentials
 
-- PLM_CF_D1_READ_TOKEN: account-owned D1 Read, intended verified sandbox account only. Used by inspect and prepare-deploy; Write credential is not supplied in those steps.
-- PLM_CF_D1_API_TOKEN: temporary account-owned D1 Write, same account; explicit migrate step only. No issuance/use if any protected production D1 exists or inventory is unknown. Revoke immediately after success or interruption and remove GitHub Secret. A TTL is additional protection, not account isolation or guaranteed single-use.
-- PLM_CF_WORKER_API_TOKEN: account-owned Editor for exact existing plm-serverless-sandbox-control only. No Admin or account-wide Worker Editor fallback.
+- PLM_CF_D1_READ_TOKEN: user-owned or account-owned D1 Read, intended verified sandbox account only. Used by inspect and prepare-deploy; Write credential is not supplied in those steps.
+- PLM_CF_D1_API_TOKEN: temporary user-owned or account-owned D1 Write, same account; explicit migrate step only. No issuance/use if any protected production D1 exists or inventory is unknown. Revoke immediately after success or interruption and remove GitHub Secret. A TTL is additional protection, not account isolation or guaranteed single-use.
+- PLM_CF_WORKER_API_TOKEN: user-owned or account-owned Editor for exact existing plm-serverless-sandbox-control only. No Admin or account-wide Worker Editor fallback.
 
 Account-wide D1 permissions cannot be claimed to be single-database permissions. Code-fixed UUID/name is a separate guard. Worker Editor can modify code/settings/bindings; resource access through bindings must also be considered. Full production data isolation needs an account boundary.
 
@@ -32,3 +32,10 @@ Direct API migration applies 0001_test_jobs.sql's canonical SQL, not Wrangler d1
 Tokens never in chat, files, workflow inputs, screenshots or artifacts. No debug env dumps or token-printing commands. API errors are sanitized; real credential-bearing runtime log verification remains pending.
 
 GitHub connector currently has no new workflow_dispatch tool; initial/manual staged Run workflow may require the owner unless another authorized safe interface is available. Do not claim Secret registration starts the entire setup automatically.
+
+
+## 2026-10-03 preparation-only update
+
+Read Token was actually verified as user-owned/active in run37056753511; account-owned verify returned401. Explicit nonsecret `PLM_CF_D1_READ_TOKEN_KIND=user` selects `/user/tokens/verify`. `account` selects `/accounts/{fixed_account}/tokens/verify`. Write and Worker use independently declared `PLM_CF_D1_WRITE_TOKEN_KIND` / `PLM_CF_WORKER_TOKEN_KIND`. Missing/unsupported kind is rejected before HTTP; no automatic token-kind guessing, endpoint fallback or retry. Verify proves active status, not least privilege or account isolation; exact fixed Account D1 metadata remains required. No real re-inspect was executed after this change. Sandbox branch only: main still has the prior code until separately authorized promotion.
+
+Migration execution is locked by `PLM_CF_MIGRATION_EXECUTION_APPROVED=false` in the workflow. Preparation approval does not change that lock. Existing main remains protected by unverified isolation and absent Write credential; do not dispatch it. See [migration preparation](../readiness/MIGRATION_PREPARATION_2026_10_03_JA.md) for pending owner steps and immediate revocation.
