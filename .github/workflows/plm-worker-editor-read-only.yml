@@ -1,0 +1,37 @@
+name: PLM Worker Editor Read Only Preflight
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['serverless/worker-editor-preflight.mjs', '.github/workflows/plm-worker-editor-read-only.yml']
+permissions:
+  contents: read
+concurrency:
+  group: plm-cloudflare-sandbox-setup
+  cancel-in-progress: false
+jobs:
+  inspect:
+    # This non-secret commit pin is set by Work only for a future authorized read.
+    # Secret registration does not dispatch, deploy or enable mutation.
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.sha == vars.PLM_WORKER_PREFLIGHT_APPROVED_COMMIT && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_CF_WORKER_TOKEN_KIND: 'account'
+      PLM_WORKER_PREFLIGHT_APPROVED_COMMIT: ${{ vars.PLM_WORKER_PREFLIGHT_APPROVED_COMMIT || 'UNAPPROVED' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read-only account token and exact Worker snapshot
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_CF_WORKER_API_TOKEN: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+        run: node serverless/worker-editor-preflight.mjs
