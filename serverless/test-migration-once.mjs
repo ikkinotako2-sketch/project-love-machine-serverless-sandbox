@@ -23,7 +23,7 @@ function fixture(o={}) {
   else if(url.endsWith('/query')){
    const sql=JSON.parse(req.body).sql;
    if(sql.includes('CREATE TABLE IF NOT EXISTS')){
-    assert.equal(req.headers.Authorization,'Bearer PUBLIC_WRITE');db.exec(sql);if(o.writeLost)throw Error('secret');result=[{success:true,results:[]}];
+    assert.equal(req.headers.Authorization,'Bearer PUBLIC_WRITE');db.exec(sql);if(o.postChangeSchema)db.exec('ALTER TABLE _cf_KV ADD COLUMN extra TEXT');if(o.writeLost)throw Error('secret');result=[{success:true,results:[]}];
    }else{assert.equal(req.headers.Authorization,'Bearer PUBLIC_READ');result=[{success:true,meta:{changed_db:false,rows_written:0},results:db.prepare(sql).all()}];}
   }else if(url.endsWith('/time_travel/bookmark'))result={bookmark:'00000001-00000002-00000003-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'};
   else throw Error('unexpected');
@@ -55,6 +55,13 @@ test('unknown history blocks without retry, even if next call could succeed',asy
  const m=fixture({readLost:true});await assert.rejects(migrateOnce(m.env,m.f),{message:'workflow_history_or_branch_unconfirmed_no_retry'});await assert.rejects(migrateOnce(m.env,m.f),{message:'attempt_already_started_reconcile'});assert.equal(m.calls.length,1);assert.equal(m.creates(),0);m.db.close();
 });
 test('unexpected schema prevents CREATE',async()=>{const m=fixture({extraTable:true});await assert.rejects(migrateOnce(m.env,m.f),{message:'live_preconditions_not_met'});assert.equal(m.creates(),0);m.db.close();});
-test('prepared workflow has disabled job, false execution flag and shared concurrency',()=>{
- const wf=readFileSync(new URL('../.github/workflows/plm-migration-once.yml',import.meta.url),'utf8');assert(wf.includes('if: ${{ false }}'));assert(wf.includes("PLM_MIGRATION_EXECUTION_APPROVED: 'false'"));assert(wf.includes('group: plm-cloudflare-sandbox-setup'));assert(!wf.includes('workflow_dispatch'));assert(!wf.includes('cron:'));assert(!wf.includes('wrangler'));
+test('approved workflow binds exact commit branch first attempt and shared concurrency',()=>{
+ const wf=readFileSync(new URL('../.github/workflows/plm-migration-once.yml',import.meta.url),'utf8');assert(wf.includes('github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT'));assert(wf.includes('github.run_attempt == 1'));assert(wf.includes("github.event_name == 'push'"));assert(wf.includes("PLM_MIGRATION_EXECUTION_APPROVED: 'true'"));assert(wf.includes('group: plm-cloudflare-sandbox-setup'));assert(!wf.includes('workflow_dispatch'));assert(!wf.includes('cron:'));assert(!wf.includes('wrangler'));
+});
+
+test('post-check rejects other table definition change after a confirmed CREATE',async()=>{
+ const m=fixture({postChangeSchema:true});const events=[];await assert.rejects(migrateOnce(m.env,m.f,e=>events.push(e)),{message:'post_migration_schema_unconfirmed_revoke_and_reconcile'});assert.equal(m.creates(),1);assert.equal(events.at(-1).phase,'POSTCHECK_UNCONFIRMED');assert.equal(events.at(-1).remote_write_confirmed,1);m.db.close();
+});
+test('safe execution evidence distinguishes sent confirmed and post-checked without tokens',async()=>{
+ const m=fixture();const events=[];await migrateOnce(m.env,m.f,e=>events.push(e));assert.deepEqual(events.map(e=>e.phase),['PRECHECK_PASS','WRITE_ATTEMPT','WRITE_CONFIRMED','POSTCHECK_PASS']);assert.equal(events.at(-1).test_jobs_table_count,1);assert.equal(events.at(-1).row_count,0);assert.equal(events.at(-1).other_table_definitions_unchanged,true);assert(!JSON.stringify(events).includes('PUBLIC_WRITE'));m.db.close();
 });

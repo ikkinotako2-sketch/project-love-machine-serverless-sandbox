@@ -1,4 +1,4 @@
-name: PLM Migration Once - Disabled Pending Owner Approval
+name: PLM Migration Once - Owner Approved Single Commit
 on:
   push:
     branches: [plm-offline-readiness-v1-20261002]
@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   migrate:
-    # Must remain false until the owner's separate final execution approval.
-    if: ${{ false }}
+    # Owner explicitly approved this fixed SQL once on 2026-10-03 05:45 JST.
+    # Only the separately recorded exact commit, branch, and first run attempt.
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event_name == 'push' && github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -20,11 +21,11 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_MIGRATION_EXECUTION_APPROVED: 'false'
+      PLM_MIGRATION_EXECUTION_APPROVED: 'true'
       PLM_MIGRATION_APPROVED_COMMIT: ${{ vars.PLM_MIGRATION_APPROVED_COMMIT || 'UNAPPROVED' }}
       PLM_FREE_OWNER_EVIDENCE: 'confirmed'
-      PLM_WRITE_SCOPE_OWNER_EVIDENCE: 'UNCONFIRMED'
-      PLM_REVOCATION_OWNER_READY: 'false'
+      PLM_WRITE_SCOPE_OWNER_EVIDENCE: 'specific_account_d1_write_only'
+      PLM_REVOCATION_OWNER_READY: 'true'
     steps:
       - uses: actions/checkout@v4
         with:
