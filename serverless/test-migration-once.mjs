@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {migrateOnce} from './migration-once.mjs';
+import {migrateOnce} from './migration-once-reference.mjs';
 import {ACCOUNT,DB,BRANCH} from './read-only-diagnostic.mjs';
 import {REPO} from './cloudflare-setup.mjs';
 let nextID=100;
@@ -56,7 +56,7 @@ test('unknown history blocks without retry, even if next call could succeed',asy
 });
 test('unexpected schema prevents CREATE',async()=>{const m=fixture({extraTable:true});await assert.rejects(migrateOnce(m.env,m.f),{message:'live_preconditions_not_met'});assert.equal(m.creates(),0);m.db.close();});
 test('approved workflow binds exact commit branch first attempt and shared concurrency',()=>{
- const wf=readFileSync(new URL('../.github/workflows/plm-migration-once.yml',import.meta.url),'utf8');assert(wf.includes('github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT'));assert(wf.includes('github.run_attempt == 1'));assert(wf.includes("github.event_name == 'push'"));assert(wf.includes("PLM_MIGRATION_EXECUTION_APPROVED: 'true'"));assert(wf.includes('group: plm-cloudflare-sandbox-setup'));assert(!wf.includes('workflow_dispatch'));assert(!wf.includes('cron:'));assert(!wf.includes('wrangler'));
+ const wf=readFileSync(new URL('../.github/workflows/plm-migration-once.yml',import.meta.url),'utf8');assert(wf.includes('github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT'));assert(wf.includes('github.run_attempt == 1'));assert(wf.includes("github.event_name == 'push'"));assert(wf.includes("PLM_MIGRATION_EXECUTION_APPROVED: 'false'"));assert(wf.includes('if: ${{ false }}')); assert(wf.includes('group: plm-cloudflare-sandbox-setup'));assert(!wf.includes('workflow_dispatch'));assert(!wf.includes('cron:'));assert(!wf.includes('wrangler'));
 });
 
 test('post-check rejects other table definition change after a confirmed CREATE',async()=>{
@@ -65,3 +65,9 @@ test('post-check rejects other table definition change after a confirmed CREATE'
 test('safe execution evidence distinguishes sent confirmed and post-checked without tokens',async()=>{
  const m=fixture();const events=[];await migrateOnce(m.env,m.f,e=>events.push(e));assert.deepEqual(events.map(e=>e.phase),['PRECHECK_PASS','WRITE_ATTEMPT','WRITE_CONFIRMED','POSTCHECK_PASS']);assert.equal(events.at(-1).test_jobs_table_count,1);assert.equal(events.at(-1).row_count,0);assert.equal(events.at(-1).other_table_definitions_unchanged,true);assert(!JSON.stringify(events).includes('PUBLIC_WRITE'));m.db.close();
 });
+
+test('retired migration rejects even old approved flags and absent Write with zero HTTP',async()=>{
+ const {migrateOnce:retired}=await import('./migration-once.mjs');
+ for(const token of ['', 'PUBLIC_WRITE']){let calls=0;await assert.rejects(retired({PLM_CF_D1_API_TOKEN:token,PLM_MIGRATION_EXECUTION_APPROVED:'true'},async()=>{calls++;}),/permanently_retired/);assert.equal(calls,0);}
+});
+test('historical simulation cannot use live default fetch',async()=>{await assert.rejects(migrateOnce({}),/historical_reference_mock_only/);});

@@ -1,0 +1,240 @@
+{
+  "receipt_id": "d1-create-test-jobs-37063527954",
+  "run_id": 37063527954,
+  "commit": "d767ef792a4ca2fe8506c6de2a93ef35354bbefb",
+  "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+  "remote_write_attempts": 1,
+  "resends": 0,
+  "events": [
+    {
+      "phase": "PRECHECK_PASS",
+      "remote_write_attempts": 0,
+      "migration_resend_attempts": 0,
+      "precheck": {
+        "mode": "FINAL_MIGRATION_READ_ONLY",
+        "write_secret_present": true,
+        "write_token_owner": "account",
+        "write_token_active": true,
+        "write_scope_api_verified": false,
+        "remote_write_calls": 0,
+        "migration_executions": 0,
+        "external_api_calls": 7,
+        "migration_execution_approved": false,
+        "migration_permitted": false,
+        "account_isolation": "unverified",
+        "write_verify_http_status": 200,
+        "write_token_expires_at": "2026-10-09T23:59:59.000Z",
+        "read_evidence": {
+          "mode": "READ_ONLY_DIAGNOSTIC",
+          "authentication": "ACTIVE",
+          "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+          "inventory": "COMPLETE",
+          "schema": "MISSING",
+          "worker": "UNVERIFIED",
+          "free_plan": "UNVERIFIED",
+          "migration_required": true,
+          "account_isolation": "unverified",
+          "external_api_calls": 6,
+          "render_executions": 0,
+          "cloudflare_mutations": 0,
+          "live_jobs": 0,
+          "probes": [
+            {
+              "stage": "user_token_verify",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            },
+            {
+              "stage": "d1_inventory_page_1",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            },
+            {
+              "stage": "target_d1_metadata",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            },
+            {
+              "stage": "schema_table",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            },
+            {
+              "stage": "full_schema_snapshot",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            },
+            {
+              "stage": "time_travel_bookmark",
+              "http_status": 200,
+              "error_codes": [],
+              "status": "PASS"
+            }
+          ],
+          "token_kind": "USER_TOKEN",
+          "inventory_pages": 1,
+          "d1_count": 1,
+          "d1_ids": [
+            "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+          ],
+          "other_d1_count": 0,
+          "database": "ID_AND_NAME_MATCHED",
+          "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+          "database_size_bytes": 12288,
+          "row_count": null,
+          "sql": {
+            "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+            "destructive_statements": 0,
+            "statements": 1
+          },
+          "current_schema": [
+            {
+              "type": "table",
+              "name": "_cf_KV",
+              "tbl_name": "_cf_KV",
+              "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+            }
+          ],
+          "schema_object_count": 1,
+          "time_travel": "BOOKMARK_READ_CONFIRMED",
+          "pre_migration_bookmark": "00000005-00000000-000050f8-76e87ec640fec9e26ca5fec038ade813",
+          "checked_at": "2026-10-02T20:54:24.332Z",
+          "migration_permitted": false,
+          "migration_execution_approved": false,
+          "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+        },
+        "d1_isolation": "SINGLE_TARGET_D1_VERIFIED",
+        "read_preconditions_pass": true,
+        "stop_reason": "OWNER_SCOPE_EVIDENCE_AND_FINAL_EXECUTION_APPROVAL_REQUIRED"
+      }
+    },
+    {
+      "phase": "WRITE_ATTEMPT",
+      "remote_write_attempts": 1,
+      "migration_resend_attempts": 0
+    },
+    {
+      "phase": "WRITE_CONFIRMED",
+      "remote_write_attempts": 1,
+      "remote_write_confirmed": 1,
+      "migration_resend_attempts": 0
+    },
+    {
+      "phase": "POSTCHECK_PASS",
+      "remote_write_attempts": 1,
+      "remote_write_confirmed": 1,
+      "migration_resend_attempts": 0,
+      "unknown": false,
+      "test_jobs_table_count": 1,
+      "row_count": 0,
+      "other_table_definitions_unchanged": true,
+      "postcheck": {
+        "mode": "READ_ONLY_DIAGNOSTIC",
+        "authentication": "ACTIVE",
+        "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+        "inventory": "COMPLETE",
+        "schema": "PASS_EMPTY",
+        "worker": "UNVERIFIED",
+        "free_plan": "UNVERIFIED",
+        "migration_required": false,
+        "account_isolation": "unverified",
+        "external_api_calls": 8,
+        "render_executions": 0,
+        "cloudflare_mutations": 0,
+        "live_jobs": 0,
+        "probes": [
+          {
+            "stage": "user_token_verify",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "d1_inventory_page_1",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "target_d1_metadata",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_table",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_columns",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_count",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "full_schema_snapshot",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "time_travel_bookmark",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          }
+        ],
+        "token_kind": "USER_TOKEN",
+        "inventory_pages": 1,
+        "d1_count": 1,
+        "d1_ids": [
+          "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+        ],
+        "other_d1_count": 0,
+        "database": "ID_AND_NAME_MATCHED",
+        "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+        "database_size_bytes": 20480,
+        "row_count": 0,
+        "sql": {
+          "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+          "destructive_statements": 0,
+          "statements": 1
+        },
+        "current_schema": [
+          {
+            "type": "table",
+            "name": "_cf_KV",
+            "tbl_name": "_cf_KV",
+            "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+          },
+          {
+            "type": "table",
+            "name": "test_jobs",
+            "tbl_name": "test_jobs",
+            "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+          }
+        ],
+        "schema_object_count": 2,
+        "time_travel": "BOOKMARK_READ_CONFIRMED",
+        "pre_migration_bookmark": "00000005-00000002-000050f8-44161778ce1452373d1284c8a93eb6c4",
+        "checked_at": "2026-10-02T20:54:26.128Z",
+        "migration_permitted": false,
+        "migration_execution_approved": false,
+        "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+      }
+    }
+  ]
+}

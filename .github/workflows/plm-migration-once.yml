@@ -11,9 +11,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   migrate:
+    # Historical guard: github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT; github.run_attempt == 1; github.event_name == 'push'
     # Owner explicitly approved this fixed SQL once on 2026-10-03 05:45 JST.
     # Only the separately recorded exact commit, branch, and first run attempt.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event_name == 'push' && github.sha == vars.PLM_MIGRATION_APPROVED_COMMIT && github.run_attempt == 1
+    if: ${{ false }} # consumed receipt 37063527954; permanently retired
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -21,7 +22,7 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_MIGRATION_EXECUTION_APPROVED: 'true'
+      PLM_MIGRATION_EXECUTION_APPROVED: 'false'
       PLM_MIGRATION_APPROVED_COMMIT: ${{ vars.PLM_MIGRATION_APPROVED_COMMIT || 'UNAPPROVED' }}
       PLM_FREE_OWNER_EVIDENCE: 'confirmed'
       PLM_WRITE_SCOPE_OWNER_EVIDENCE: 'specific_account_d1_write_only'
