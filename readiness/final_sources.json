@@ -1,0 +1,242 @@
+{
+  "checked_at": "2026-10-02",
+  "production_main_sha": "fd4cd8b1f714d1c5ccffbabe88b89b64e36b468b",
+  "n8n_export_sha256": "09e9067efc10e09818299e6a8e1b791bcc952ac263484ae18b714eda5b7a84ff",
+  "live_n8n": "UNVERIFIED",
+  "nodes": [
+    {
+      "name": "テーマ入力フォーム",
+      "type": "n8n-nodes-base.formTrigger"
+    },
+    {
+      "name": "台本生成AI",
+      "type": "@n8n/n8n-nodes-langchain.agent"
+    },
+    {
+      "name": "Gemini モデル",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini"
+    },
+    {
+      "name": "台本JSON整形",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured"
+    },
+    {
+      "name": "後続処理用に整形",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "VOICEVOX 音声クエリ作成",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "VOICEVOX 音声合成",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "字幕データ生成",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "動画素材情報を整理",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "FFmpegレンダリング仕様作成",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "FFmpeg動画生成",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "完成動画を返す",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Get a channel",
+      "type": "n8n-nodes-base.youTube"
+    },
+    {
+      "name": "Upload a video",
+      "type": "n8n-nodes-base.youTube"
+    },
+    {
+      "name": "最新ローカルURL取得",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "ナレーション原稿抽出",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Cloud Render Payload",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Trigger GitHub Render",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "Prepare Pipeline Job",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Wait for Pipeline Result",
+      "type": "n8n-nodes-base.wait"
+    },
+    {
+      "name": "Get Pipeline Result",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch"
+    },
+    {
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait"
+    },
+    {
+      "name": "Save YouTube Result",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Save YouTube Error",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Get Pipeline Result1",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches"
+    },
+    {
+      "name": "Switch1",
+      "type": "n8n-nodes-base.switch"
+    },
+    {
+      "name": "Code in JavaScript1",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Parse Pipeline Result",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Parse Pipeline Result Retry",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Save YouTube Timeout",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest"
+    },
+    {
+      "name": "Code in JavaScript2",
+      "type": "n8n-nodes-base.code"
+    },
+    {
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger"
+    },
+    {
+      "name": "Get row(s)",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "Update row(s)",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "If",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "name": "Get row(s)1",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "If1",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "name": "Update row(s)1",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "If2",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "name": "If3",
+      "type": "n8n-nodes-base.if"
+    },
+    {
+      "name": "Update row(s)2",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "Update row(s)3",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "Claim Marker",
+      "type": "n8n-nodes-base.set"
+    },
+    {
+      "name": "Verify Claim",
+      "type": "n8n-nodes-base.dataTable"
+    },
+    {
+      "name": "Claim Success Guard",
+      "type": "n8n-nodes-base.if"
+    }
+  ],
+  "protected_prs": {
+    "15": {
+      "head": "a3bad01929b0db39499b4320182068f7a7e0047d",
+      "draft": true,
+      "merged": false
+    },
+    "16": {
+      "head": "e5ad13c1a92bf390272ce2c547f6b5ecaf8caa9c",
+      "draft": true,
+      "merged": false
+    }
+  },
+  "workflows": [
+    {
+      "path": ".github/workflows/render-short.yml",
+      "sha256": "d2a02202245c222a4b9a0622ba3c2f17c174e0ea478cf84b2180bb72b4e6a573"
+    },
+    {
+      "path": ".github/workflows/youtube-pipeline.yml",
+      "sha256": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928"
+    },
+    {
+      "path": ".github/workflows/youtube-metrics-1h.yml",
+      "sha256": "e9f055826b2a33cac884183e5a4694750672f32a1e045576f04d9b23fb38a847"
+    },
+    {
+      "path": ".github/workflows/youtube-improvement.yml",
+      "sha256": "1d5f532d985ce8adc1a54b4e239830e4972540d8578472f1ea1927470ba7a62d"
+    },
+    {
+      "path": ".github/workflows/command-center.yml",
+      "sha256": "1212b5a8571595479de43aef83396c3a508aa7157a33756d48a5db591b994486"
+    },
+    {
+      "path": ".github/workflows/youtube-adapter.yml",
+      "sha256": "388c3471323524152c227f4056aac9656fb95902362ad883a9258881296946c2"
+    }
+  ]
+}

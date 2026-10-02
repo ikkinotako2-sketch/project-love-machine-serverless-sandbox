@@ -75,7 +75,16 @@ def main():
     import safety_probe
     safety_probe.verify(native)
     suite = unittest.defaultTestLoader.discover(str(HERE), pattern='test_*.py')
+    def test_ids(group):
+        out=[]
+        for item in group:
+            out.extend(test_ids(item) if isinstance(item,unittest.TestSuite) else [item.id()])
+        return out
+    executed_ids=test_ids(suite)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
+    from final_readiness import evaluate_ci_gate
+    final_gate=evaluate_ci_gate(result,executed_ids,dict.fromkeys(('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'),True))
+    print('FINAL_READINESS_GATE ' + json.dumps(final_gate,sort_keys=True))
     try:
         process.stdin.close()
     except BrokenPipeError:
@@ -87,7 +96,7 @@ def main():
           'socket_syscalls_denied': True, 'exec_syscalls_denied': True,
           'render_executions': 0, 'external_api_calls': 0,
           'blocked_probe_attempts': COUNTS}, sort_keys=True))
-    raise SystemExit(not result.wasSuccessful())
+    raise SystemExit(not result.wasSuccessful() or not final_gate['offline_complete'])
 
 
 if __name__ == '__main__':
