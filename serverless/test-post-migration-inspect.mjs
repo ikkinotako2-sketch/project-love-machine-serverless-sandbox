@@ -21,3 +21,10 @@ test('post migration read audit links receipt confirms schema and cannot infer a
 test('changed old schema stops before Worker probe',async()=>{const m=fixture({changed:true});const r=await inspectAfterMigration(env,m.f);assert.equal(r.d1_pass,false);assert.equal(m.count(),8);m.db.close();});
 test('Write Secret present missing receipt context rerun and unsafe flags refuse before HTTP',async()=>{for(const delta of [{PLM_MIGRATION_WRITE_SECRET_PRESENT:'true'},{PLM_MIGRATION_WRITE_SECRET_PRESENT:undefined},{GITHUB_RUN_ATTEMPT:'2'},{GITHUB_REF:'refs/heads/main'},{EMERGENCY_STOP:'false'}]){const m=fixture();await assert.rejects(inspectAfterMigration({...env,...delta},m.f));assert.equal(m.count(),0);m.db.close();}});
 test('Worker unknown never retries and remains unverified',async()=>{const m=fixture({unknown:true});const r=await inspectAfterMigration(env,m.f);assert.equal(r.worker.status,'UNKNOWN_NO_RETRY');assert.equal(m.count(),9);m.db.close();});
+test('stopped deploy candidate binds exact identifiers and has no triggers secrets endpoints',()=>{
+ const p=JSON.parse(readFileSync(new URL('./stopped-deploy-plan.json',import.meta.url),'utf8'));assert.equal(p.deploy_permitted,false);assert.equal(p.create_permitted,false);assert.equal(p.account_id,ACCOUNT);assert.equal(p.worker_name,'plm-serverless-sandbox-control');assert.equal(p.d1_binding.database_id,DB);assert(Object.values(p.flags).every(x=>x==='true'));for(const k of ['custom_domains','routes','cron','queues','secrets','outbound_endpoints'])assert.deepEqual(p[k],[]);assert.equal(p.workers_dev,false);
+});
+test('bootstrap stopped handler never touches DB env or network even under hostile input',async()=>{
+ const placeholder=(await import('./bootstrap-placeholder.mjs')).default;const env=new Proxy({},{get(){throw Error('env_or_DB_access');}});
+ for(const method of ['GET','POST','DELETE']){const r=placeholder.fetch(new Request('https://fixture.invalid/test-jobs',{method}),env);assert.equal(r.status,503);assert.equal((await r.json()).EMERGENCY_STOP,true);}
+});

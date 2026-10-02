@@ -54,3 +54,10 @@
 2026-10-03更新: [最新read-only証拠と本人確認済みFree gate](PRE_MIGRATION_READ_ONLY_2026_10_03_JA.md)。Free/$0は本人Dashboard確認でPASS。最新inventory/schema/bookmarkは実read-only取得済み。migrationは引き続き未承認・実行禁止、isolationはunverified。
 
 2026-10-03 05:31 JST: [Write account-owned activeと最終migration承認gate](MIGRATION_FINAL_GATE_2026_10_03_JA.md)。narrow D1 isolationのみ確認済み、Account Variable unverified、実migration0、allow false。
+
+
+## 2026-10-03 migration後の現行gate
+
+0001はrun 37063527954で成功1回/再送0回、本人がWrite Token失効とGitHub Secret削除を完了。旧migration承認は消費済み。現行migration入口はretiredで再実行禁止。read-only run 37064849312のD1確認はPASS、Worker一覧は200で対象なしだがAccount-wide可視性未検証のため存在はUNVERIFIED。次の本人操作は固定Account DashboardのWorkers & Pagesで対象名の存在確認1つ。作成/deploy/新Write/Editor Tokenは未承認・未要求。
+
+現行証拠とremote未実証項目はPOST_MIGRATION_AUDIT_2026_10_03_JA.mdとPOST_MIGRATION_READINESS_GATE_2026_10_03.jsonを優先。remote競合試験はREMOTE_BACKEND_WRITE_TEST_PLAN_JA.mdの設計のみ。full durable contractはtest_jobsのCREATEだけでは実装済みにならない。4flags true、live_ready/posting_permitted=falseを維持。

@@ -1,0 +1,141 @@
+{
+  "mode": "POST_MIGRATION_READ_ONLY",
+  "external_api_calls": 9,
+  "d1_writes": 0,
+  "deploy": 0,
+  "live_jobs": 0,
+  "render_executions": 0,
+  "migration_permitted": false,
+  "posting_permitted": false,
+  "live_ready": false,
+  "migration_write_secret_present": false,
+  "d1": {
+    "mode": "READ_ONLY_DIAGNOSTIC",
+    "authentication": "ACTIVE",
+    "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+    "inventory": "COMPLETE",
+    "schema": "PASS_EMPTY",
+    "worker": "UNVERIFIED",
+    "free_plan": "UNVERIFIED",
+    "migration_required": false,
+    "account_isolation": "unverified",
+    "external_api_calls": 8,
+    "render_executions": 0,
+    "cloudflare_mutations": 0,
+    "live_jobs": 0,
+    "probes": [
+      {
+        "stage": "user_token_verify",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "d1_inventory_page_1",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "target_d1_metadata",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "schema_table",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "schema_columns",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "schema_count",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "full_schema_snapshot",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      },
+      {
+        "stage": "time_travel_bookmark",
+        "http_status": 200,
+        "error_codes": [],
+        "status": "PASS"
+      }
+    ],
+    "token_kind": "USER_TOKEN",
+    "inventory_pages": 1,
+    "d1_count": 1,
+    "d1_ids": [
+      "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+    ],
+    "other_d1_count": 0,
+    "database": "ID_AND_NAME_MATCHED",
+    "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+    "database_size_bytes": 20480,
+    "row_count": 0,
+    "sql": {
+      "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+      "destructive_statements": 0,
+      "statements": 1
+    },
+    "current_schema": [
+      {
+        "type": "table",
+        "name": "_cf_KV",
+        "tbl_name": "_cf_KV",
+        "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+      },
+      {
+        "type": "table",
+        "name": "test_jobs",
+        "tbl_name": "test_jobs",
+        "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+      }
+    ],
+    "schema_object_count": 2,
+    "time_travel": "BOOKMARK_READ_CONFIRMED",
+    "pre_migration_bookmark": "00000006-00000002-000050f8-f5a2de6e938ce4dd2b75da1a3fbe5624",
+    "checked_at": "2026-10-02T21:06:56.618Z",
+    "migration_permitted": false,
+    "migration_execution_approved": false,
+    "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+  },
+  "receipt": {
+    "id": "d1-create-test-jobs-37063527954",
+    "run_id": 37063527954,
+    "commit": "d767ef792a4ca2fe8506c6de2a93ef35354bbefb",
+    "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2"
+  },
+  "preexisting_schema_unchanged": true,
+  "test_jobs_table_count": 1,
+  "d1_pass": true,
+  "worker": {
+    "name": "plm-serverless-sandbox-control",
+    "status": "ABSENT_IN_CONFIRMED_LIST",
+    "attempts": 1,
+    "http_status": 200,
+    "account_wide_visibility_verified": false,
+    "existence": "UNVERIFIED"
+  },
+  "stop_reason": "WORKER_NEXT_OWNER_GATE_REQUIRED",
+  "audit_run_id": 37064849312,
+  "audit_commit": "ea00157f55c46a44c8e1950aba9dface218bc003",
+  "owner_evidence": {
+    "write_token_revoked": true,
+    "account_token_list_count": 0,
+    "github_write_secret_deleted": true,
+    "api_revocation_verified": false,
+    "free_zero_cost_confirmed": true
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "gates": {
+    "offline_parity": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "generation_contract": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "durable_store_contract": {
+      "status": "DESIGN PASS",
+      "scope": "guarded_reference_only"
+    },
+    "duplicate_prevention": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "recovery": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "fencing": {
+      "status": "DESIGN PASS",
+      "scope": "guarded_reference_only"
+    },
+    "callback_auth_boundary": {
+      "status": "DESIGN PASS",
+      "scope": "guarded_reference_only"
+    },
+    "pipeline_contract": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "metrics_loop": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "improvement_loop": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "next_intent_uniqueness": {
+      "status": "OFFLINE PASS",
+      "scope": "guarded_reference_only"
+    },
+    "remote_d1_schema": {
+      "status": "PASS",
+      "scope": "read_only_schema_and_empty_rows"
+    },
+    "remote_atomicity": {
+      "status": "UNVERIFIED",
+      "scope": "remote_write_test_not_authorized"
+    },
+    "storage": {
+      "status": "DESIGN PASS",
+      "scope": "artifact_plan_only_actual_GitHub_usage_unverified"
+    },
+    "ai_quota": {
+      "status": "UNVERIFIED",
+      "scope": "actual_project_model_quota"
+    },
+    "cloudflare": {
+      "status": "BLOCKED",
+      "scope": "D1_read_PASS_Free_owner_PASS_worker_unverified"
+    },
+    "worker": {
+      "status": "UNVERIFIED",
+      "scope": "existence_only_deploy_separately_blocked"
+    },
+    "worker_deploy": {
+      "status": "BLOCKED",
+      "scope": "owner_existence_and_editor_and_deploy_approval_required"
+    },
+    "secrets": {
+      "status": "BLOCKED",
+      "scope": "migration_Write_absent_test_only_secrets_not_registered"
+    },
+    "render": {
+      "status": "UNVERIFIED",
+      "scope": "real_render_never_executed"
+    },
+    "publish": {
+      "status": "BLOCKED",
+      "scope": "owner_authorization_OAuth_safety_gates_required"
+    }
+  },
+  "backend": {
+    "uniqueness": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "cas": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "version_monotonicity": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "immutable_fingerprint": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "concurrent_claim": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "stale_owner_rejection": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "fencing": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "checkpoint_durability": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "restart_recovery": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "duplicate_callback": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "replay": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "ambiguous_side_effect": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    },
+    "unknown_no_automatic_resend": {
+      "reference": "DESIGN PASS",
+      "remote": "UNVERIFIED"
+    }
+  },
+  "remote_schema_pass": true,
+  "offline_complete": true,
+  "live_ready": false,
+  "posting_permitted": false,
+  "auto_dispatch": false,
+  "claim_permitted": false,
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "scope": "one_account_sandbox",
+  "multi_account": "BLOCKED_SEPARATE"
+}

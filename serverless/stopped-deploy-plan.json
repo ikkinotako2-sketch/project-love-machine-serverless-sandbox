@@ -1,0 +1,19 @@
+{
+  "design_only": true,
+  "deploy_permitted": false,
+  "create_permitted": false,
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "worker_name": "plm-serverless-sandbox-control",
+  "entrypoint": "serverless/bootstrap-placeholder.mjs",
+  "d1_binding": {"binding":"DB","database_name":"plm-serverless-sandbox-state","database_id":"18050cf6-934e-4f3a-a1cd-5041bac1c35e"},
+  "flags": {"TEST_ONLY":"true","DRY_RUN":"true","NO_PUBLISH":"true","EMERGENCY_STOP":"true"},
+  "custom_domains": [],
+  "routes": [],
+  "cron": [],
+  "queues": [],
+  "secrets": [],
+  "outbound_endpoints": [],
+  "workers_dev": false,
+  "preview_urls": false,
+  "owner_approval_required": true
+}
