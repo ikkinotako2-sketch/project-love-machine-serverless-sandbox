@@ -4,7 +4,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import {setup,REPO} from './cloudflare-setup.mjs';
 const id='18050cf6-934e-4f3a-a1cd-5041bac1c35e';
-const env={GITHUB_REPOSITORY:REPO,GITHUB_REF:'refs/heads/main',GITHUB_EVENT_NAME:'workflow_dispatch',TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),PLM_D1_DATABASE_ID:id,PLM_CF_D1_API_TOKEN:'fixture-d1',PLM_CF_WORKER_API_TOKEN:'fixture-worker'};
+const env={GITHUB_REPOSITORY:REPO,GITHUB_REF:'refs/heads/main',GITHUB_EVENT_NAME:'workflow_dispatch',TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',CLOUDFLARE_ACCOUNT_ID:'a'.repeat(32),PLM_D1_DATABASE_ID:id,PLM_CF_ACCOUNT_ISOLATION:'sandbox_only_verified',PLM_CF_D1_READ_TOKEN:'fixture-d1-read',PLM_CF_D1_API_TOKEN:'fixture-d1',PLM_CF_WORKER_API_TOKEN:'fixture-worker'};
 const sql=readFileSync(new URL('./schema.sql',import.meta.url),'utf8');
 function mock({exists=true,wrongName=false,inactive=false,workerMissing=false,writeLost=false}={}) {
  const db=new DatabaseSync(':memory:');if(exists) db.exec(sql);const calls=[];
@@ -22,7 +22,7 @@ function mock({exists=true,wrongName=false,inactive=false,workerMissing=false,wr
  };return {db,calls,fetcher};
 }
 test('missing auth/context/flags rejected before any network',async()=>{
- for(const delta of [{PLM_CF_D1_API_TOKEN:''},{GITHUB_REPOSITORY:'production'},{GITHUB_REF:'refs/heads/other'},{GITHUB_EVENT_NAME:'push'},{EMERGENCY_STOP:'false'},{CLOUDFLARE_ACCOUNT_ID:'../'},{PLM_D1_DATABASE_ID:'../db'}]) {
+ for(const delta of [{PLM_CF_D1_READ_TOKEN:''},{GITHUB_REPOSITORY:'production'},{GITHUB_REF:'refs/heads/other'},{GITHUB_EVENT_NAME:'push'},{EMERGENCY_STOP:'false'},{CLOUDFLARE_ACCOUNT_ID:'../'},{PLM_D1_DATABASE_ID:'../db'}]) {
   const m=mock();await assert.rejects(setup({...env,...delta},'inspect',m.fetcher));assert.equal(m.calls.length,0);m.db.close();
  }
 });
@@ -78,7 +78,7 @@ test('all remote requests stay in exact account/DB/Worker allowlist',async()=>{
  m.db.close();
 });
 test('provider error containing a token is never exposed by setup error',async()=>{
- const m=mock();const fetcher=async()=>{throw Error(env.PLM_CF_D1_API_TOKEN+' raw response Authorization');};
+ const m=mock();const fetcher=async()=>{throw Error(env.PLM_CF_D1_READ_TOKEN+' raw response Authorization');};
  await assert.rejects(setup(env,'inspect',fetcher),{message:'read_unconfirmed'});m.db.close();
 });
 test('setup and offline CI never call the callback runner or send a live job',()=>{
@@ -87,4 +87,38 @@ test('setup and offline CI never call the callback runner or send a live job',()
  assert(setupWorkflow.includes("EMERGENCY_STOP: 'true'"));assert(setupWorkflow.includes('command: deploy --config wrangler.local.json'));
  const source=readFileSync(new URL('./cloudflare-setup.mjs',import.meta.url),'utf8');
  assert(!source.includes('console.log(token'));assert(!source.includes('console.error(error'));assert(!source.includes('dispatches'));
+});
+
+test('unknown or production-bearing account stops mutation before HTTP',async()=>{
+ for(const isolation of [undefined,'unverified','production_present','sandbox_only']) {
+  for(const operation of ['migrate','prepare-deploy']) {
+   const m=mock();await assert.rejects(setup({...env,PLM_CF_ACCOUNT_ISOLATION:isolation},operation,m.fetcher),{message:'account_isolation_not_verified'});assert.equal(m.calls.length,0);m.db.close();
+  }
+ }
+});
+test('inspect uses Read credential and requires no Write credential',async()=>{
+ const m=mock();const r=await setup({...env,PLM_CF_D1_API_TOKEN:'',PLM_CF_ACCOUNT_ISOLATION:'unverified'},'inspect',m.fetcher);
+ assert.equal(r.schema,'pass');assert(m.calls.every(c=>c.options.headers.Authorization==='Bearer fixture-d1-read'));m.db.close();
+});
+test('migration uses Write credential; deploy preparation uses Read plus Worker Editor only',async()=>{
+ const m=mock({exists:false});await setup({...env,PLM_CF_D1_READ_TOKEN:''},'migrate',m.fetcher);
+ assert(m.calls.every(c=>c.options.headers.Authorization==='Bearer fixture-d1'));
+ m.calls.length=0;await setup({...env,PLM_CF_D1_API_TOKEN:''},'prepare-deploy',m.fetcher);
+ assert(m.calls.every(c=>['Bearer fixture-d1-read','Bearer fixture-worker'].includes(c.options.headers.Authorization)));m.db.close();
+});
+test('workflow gives Write secret only to explicit migrate operation; no Admin secret',()=>{
+ const wf=readFileSync(new URL('../.github/workflows/plm-cloudflare-setup.yml',import.meta.url),'utf8');
+ assert(wf.includes("inputs.operation == 'migrate' && secrets.PLM_CF_D1_API_TOKEN"));
+ assert(wf.includes("inputs.operation != 'migrate' && secrets.PLM_CF_D1_READ_TOKEN"));
+ assert(wf.includes("vars.PLM_CF_ACCOUNT_ISOLATION || 'unverified'"));
+ assert(!/secrets\.[A-Z_]*ADMIN/.test(wf));
+});
+test('bootstrap placeholder is always stopped regardless of supplied flags',async()=>{
+ const {default:placeholder}=await import('./bootstrap-placeholder.mjs');
+ for(const path of ['/','/test-jobs','/test-callback']) {
+  const r=placeholder.fetch(new Request('https://example.workers.dev'+path),{EMERGENCY_STOP:'false'});
+  assert.equal(r.status,503);assert.deepEqual(await r.json(),{status:'disabled',TEST_ONLY:true,DRY_RUN:true,NO_PUBLISH:true,EMERGENCY_STOP:true});
+ }
+ const source=readFileSync(new URL('./bootstrap-placeholder.mjs',import.meta.url),'utf8');
+ assert(!source.includes('await fetch('));assert(!source.includes('env.DB'));assert(!source.includes('https://'));
 });

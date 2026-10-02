@@ -16,7 +16,11 @@ export async function setup(env, operation, fetcher=fetch) {
   if(!/^[a-f0-9]{32}$/.test(account||'')) throw Error('invalid_account_id');
   if(db!==DATABASE_ID) throw Error('database_id_not_allowlisted');
   const config=bindingConfig(db);
-  const token=env.PLM_CF_D1_API_TOKEN;
+  // Human account inventory is a prerequisite, not proof supplied by this code.
+  // Time-limited credentials cannot replace provider/account isolation.
+  if(operation!=='inspect' && env.PLM_CF_ACCOUNT_ISOLATION!=='sandbox_only_verified')
+    throw Error('account_isolation_not_verified');
+  const token=operation==='migrate'?env.PLM_CF_D1_API_TOKEN:env.PLM_CF_D1_READ_TOKEN;
   if(!token || /[\r\n]/.test(token)) throw Error('missing_auth');
   const base=`https://api.cloudflare.com/client/v4/accounts/${account}`;
   async function api(path, method='GET', body, credential=token) {

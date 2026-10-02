@@ -1,3 +1,5 @@
+> 2026-10-02 SECURITY UPDATE: ISOLATION_AND_BOOTSTRAP_JA.md supersedes the old token recipe below. No D1 Write issuance/use with production D1 or unknown inventory. Normal inspect/deploy uses PLM_CF_D1_READ_TOKEN; PLM_CF_D1_API_TOKEN is temporary migration-only. Mutation requires verified sandbox-only account; no Admin credential in CI.
+
 # Final credentials-free sandbox safety audit
 
 2026-10-02. Scope: project-love-machine-serverless-sandbox only.
@@ -36,3 +38,11 @@ Wrangler and GitHub Actions normal secret masking are used during a future deplo
 6. STOP before adding live-test dispatch/callback credentials, disabling emergency stop, or sending the one live job. Those steps require a separate explicit user approval.
 
 Current executable blocker: Cloudflare authentication setup unavailable. Migration, worker existence, deployment, remote binding/flags and callback are unverified gates after authentication, not successful executions. No token issuance, secret registration, remote migration/deploy, or live job occurred in this audit.
+
+## Follow-up A/B security resolution (2026-10-02)
+
+- Split Read and temporary migration Write credentials; setup workflow conditionally supplies Write only for migrate.
+- Added PLM_CF_ACCOUNT_ISOLATION mutation gate: unverified/production_present fail before HTTP. Owner evidence is required; gate is not provider isolation.
+- Added always-stopped credential-free bootstrap-placeholder.mjs for owner Dashboard creation. No Admin CI implementation/Secret.
+- Current tests: 37/37 local PASS, covering isolation refusal, credential separation and stopped placeholder in addition to original 32 tests.
+- Revised registration guide removes the old 7-day Write recipe. No Token issuance is allowed yet. If existing D1 shares an account with production D1, dedicated-account separation conflicts with no D1 recreate/move: STOP for a separately authorized plan.
