@@ -1,0 +1,8 @@
+{
+  "theme": "テスト用の時計の読み方",
+  "title": "オフライン台本テスト",
+  "hook": "これは投稿しないテストです。",
+  "narration": "時計の短い針は時を、長い針は分を示します。これは固定fixtureです。",
+  "scenes": [{"start": 0, "end": 5, "caption": "固定fixture", "visual_keyword": "時計", "motion": "zoom_in", "sfx": "none", "emphasis_words": ["時計"]}],
+  "bgm": {"mood": "upbeat", "volume": 0.12}
+}
