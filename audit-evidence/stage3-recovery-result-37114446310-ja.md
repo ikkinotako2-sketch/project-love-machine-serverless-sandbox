@@ -1,0 +1,18 @@
+# 修正版 explicit batch migration 結果
+
+run 37114446310 / attempt1。HTTP400、migration成功ではない。
+entry status UNKNOWNは元receiptのまま保持。ReadToken post-check1セットはNOT_APPLIED / PASSで現在適用状態を確定。
+新3tables/6triggers全て不存在。新columns/indexes/rowsは未作成で該当なし。既存schema/trigger/indexes/atomicity成功rowは不変。test_jobs0rows、_cf_KVはschema不変（内容独立検証なし）。inventory1other0、size40960不変。
+postbookmark 00000013-00000002-000050f9-60af1b067a4fa57a9ab11628d526ae73。
+
+mutationHTTP送信1、retry/resend/fallback/automaticrollback0。CloudflareAPI22（read21+mutation1）。GitHub履歴GET6pages。Worker/AI/render/posting/livejob0。
+D1write request1、成功適用は証明されずNOT_APPLIED。bookmark変化だけを適用成功の根拠にしない。
+rawProviderError保存なし、具体HTTP400原因は未確定。今回これ以上の通信/修正/migration/stage2試験はしない。
+
+SQLSHA c2d3c40447490932df83ecf52797d493787cc2a76a4a4efbc1b0a11a633381c4。
+requestSHA 7a22f2ec5eed90e658f934fb6005289752470193a213b084cfb1f21700278d58。
+codepin 1f26c091af303489bc80490549027c0d0adfc996、eventhead 7fe05ef434ffc5e30efe6a002b34479568d72868。
+CI37114392692 Python453+Node419=872PASS/FAIL0。4flags true、live_ready=false、posting_permitted=false。
+旧SENT/UNKNOWN/preflight/atomicity/Worker証拠は不変。新SENT artifact1day+GitHub実行履歴+immutable結果receiptを保持。
+
+本人操作待ち：Cloudflare recoveryTokenを失効/削除し、GitHub PLM_CF_D1_STAGE3_RECOVERY_TOKENを削除。完了はまだ独立確認・推測しない。

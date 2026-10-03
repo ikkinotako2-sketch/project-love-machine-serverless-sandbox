@@ -1,0 +1,21 @@
+{
+  "run_id": 37114392692,
+  "attempt": 1,
+  "tested_commit": "1f26c091af303489bc80490549027c0d0adfc996",
+  "python_pass": 453,
+  "node_pass": 419,
+  "total_pass": 872,
+  "fail": 0,
+  "external_api_calls": 0,
+  "d1_write": 0,
+  "render_executions": 0,
+  "posting": 0,
+  "sanitized_evidence": [
+    "2026-10-03T09:50:40.7452630Z Ran 453 tests in 0.529s",
+    "2026-10-03T09:50:40.7541770Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T09:50:40.9000140Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T09:50:41.5742912Z ℹ tests 419",
+    "2026-10-03T09:50:41.5743703Z ℹ pass 419",
+    "2026-10-03T09:50:41.5744055Z ℹ fail 0"
+  ]
+}
