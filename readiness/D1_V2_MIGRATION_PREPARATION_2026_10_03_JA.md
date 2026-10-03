@@ -40,3 +40,12 @@ migration実行結果SUCCESS/FAILURE/TIMEOUT/UNKNOWNのすべてで、直後に�
 Python402 + Node212 = 614 PASS、FAIL0（local）。今回追加Node24。wrong context/pin/flags、missing credential、401/403/404/429、expiry、他D1、旧schema変化、probe存在、journal競合、1回mutation、unknown後read-only、post mismatch、workflow disabled、history拒否をfixtureで検証。公開fixture文字列は実認証ではない。native/socket/exec guardを維持し、CI内external_api_calls=0/render_executions=0。
 
 新read-only snapshotとGitHub CI結果は後続のimmutable audit-evidence receiptへ保存する。歴史receiptは変更しない。production/sandbox main/n8n/V1/既存YouTube/1h/24h/Improvement/PR15/16に変更なし。100+ accounts別BLOCKER。
+
+## remote最終preflight結果
+
+run 37095359659 / attempt1 / commit ff1b4430dbe6dabc4fcc6dd5c38b4ccfb4f52363 SUCCESS。Token account-owned verify200/active、expiry 2026-10-10T23:59:59.000Z（2026-10-11 08:59:59 JST）。正確なpermission scopeはowner evidenceのまま、token_scope_api_verified=false。
+D1 inventory全1ページ/対象1件/他0件、Account/DB ID/DB名一致。旧schema・columns/indexesは前snapshot一致、test_jobs0行、probe table/triggerなし、size20,480 bytes。
+最新bookmark 00000009-00000000-000050f9-5f43b47f7fae7c09d98477ebc55fb0f7。read schema完了時刻 2026-10-03T04:05:55.218Z。
+GET5 + read-only query POST7 = HTTP12、mutation/D1 write/deploy/invocation/live job/render/posting0。
+固定receipt SHA256 13ae44a8499700f5f7f06925d893b79ca56ac8c58fa0a4b54fa49db24378aa0b。今回read-only workflowはif:falseにretireし、追加通信なし。migration workflowは引き続きhard-disabled、ALLOW default false、approved commit/owner approval UNAPPROVED。
+本当に次の本人操作は、この固定SQLの1回migration実行承認だけ。承認が来ても直前のfresh token/inventory/schema/bookmark再確認に不一致やunknownがあれば書き込まず停止する。成功/失敗/timeout/unknownのどの場合も直後のToken失効・GitHub Secret削除を本人へ要求して停止する。

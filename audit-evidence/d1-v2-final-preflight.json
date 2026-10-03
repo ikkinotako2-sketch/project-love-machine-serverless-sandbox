@@ -1,0 +1,284 @@
+{
+  "evidence_kind": "GITHUB_ACTIONS_READ_ONLY_D1_V2_PREFLIGHT",
+  "run_id": 37095359659,
+  "run_attempt": 1,
+  "commit": "ff1b4430dbe6dabc4fcc6dd5c38b4ccfb4f52363",
+  "conclusion": "success",
+  "evidence": {
+    "mode": "D1_V2_SCHEMA_READ_ONLY_PREFLIGHT",
+    "pass": true,
+    "token_kind": "ACCOUNT_TOKEN",
+    "token_scope_owner_evidence": true,
+    "token_scope_api_verified": false,
+    "migration_execution_approved": false,
+    "migration_permitted": false,
+    "account_isolation": "unverified",
+    "external_api_calls": 12,
+    "get_calls": 5,
+    "read_query_post_calls": 7,
+    "cloudflare_mutations": 0,
+    "d1_writes": 0,
+    "deploy": 0,
+    "worker_invocation": 0,
+    "live_jobs": 0,
+    "render": 0,
+    "posting": 0,
+    "sql": {
+      "sql_sha256": "ca2ee1a2c618c5f71b43ade4620d9ded3eb105282be9a610c492632fec59fdc3",
+      "create_table": 1,
+      "create_trigger": 1,
+      "destructive_statements": 0,
+      "existing_test_jobs_changes": 0,
+      "migration_0001_executions": 0
+    },
+    "write_secret_present": true,
+    "verify_http_status": 200,
+    "token_active": true,
+    "token_expires_at": "2026-10-10T23:59:59.000Z",
+    "before": {
+      "mode": "BACKEND_SCHEMA_READ_ONLY",
+      "d1": {
+        "mode": "READ_ONLY_DIAGNOSTIC",
+        "authentication": "ACTIVE",
+        "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+        "inventory": "COMPLETE",
+        "schema": "PASS_EMPTY",
+        "worker": "UNVERIFIED",
+        "free_plan": "UNVERIFIED",
+        "migration_required": false,
+        "account_isolation": "unverified",
+        "external_api_calls": 8,
+        "render_executions": 0,
+        "cloudflare_mutations": 0,
+        "live_jobs": 0,
+        "probes": [
+          {
+            "stage": "user_token_verify",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "d1_inventory_page_1",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "target_d1_metadata",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_table",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_columns",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "schema_count",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "full_schema_snapshot",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          },
+          {
+            "stage": "time_travel_bookmark",
+            "http_status": 200,
+            "error_codes": [],
+            "status": "PASS"
+          }
+        ],
+        "token_kind": "USER_TOKEN",
+        "inventory_pages": 1,
+        "d1_count": 1,
+        "d1_ids": [
+          "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+        ],
+        "other_d1_count": 0,
+        "database": "ID_AND_NAME_MATCHED",
+        "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+        "database_size_bytes": 20480,
+        "row_count": 0,
+        "sql": {
+          "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+          "destructive_statements": 0,
+          "statements": 1
+        },
+        "current_schema": [
+          {
+            "type": "table",
+            "name": "_cf_KV",
+            "tbl_name": "_cf_KV",
+            "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+          },
+          {
+            "type": "table",
+            "name": "test_jobs",
+            "tbl_name": "test_jobs",
+            "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+          }
+        ],
+        "schema_object_count": 2,
+        "time_travel": "BOOKMARK_READ_CONFIRMED",
+        "pre_migration_bookmark": "00000009-00000000-000050f9-5f43b47f7fae7c09d98477ebc55fb0f7",
+        "checked_at": "2026-10-03T04:05:55.218Z",
+        "migration_permitted": false,
+        "migration_execution_approved": false,
+        "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+      },
+      "external_api_calls": 11,
+      "get_calls": 4,
+      "read_query_post_calls": 7,
+      "d1_writes": 0,
+      "cloudflare_mutations": 0,
+      "worker_calls": 0,
+      "deploy": 0,
+      "live_jobs": 0,
+      "render": 0,
+      "pass": true,
+      "columns": [
+        {
+          "cid": 0,
+          "name": "platform",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "account_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 2
+        },
+        {
+          "cid": 2,
+          "name": "job_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 3
+        },
+        {
+          "cid": 3,
+          "name": "content_fingerprint",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "claimant",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "state",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "version",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "last_operation",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "run_id",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "created_at",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "updated_at",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "indexes": [
+        {
+          "seq": 0,
+          "name": "sqlite_autoindex_test_jobs_1",
+          "unique": 1,
+          "origin": "pk",
+          "partial": 0
+        }
+      ],
+      "index_columns": [
+        {
+          "seqno": 0,
+          "cid": 0,
+          "name": "platform"
+        },
+        {
+          "seqno": 1,
+          "cid": 1,
+          "name": "account_id"
+        },
+        {
+          "seqno": 2,
+          "cid": 2,
+          "name": "job_id"
+        }
+      ]
+    },
+    "expected_post_schema": {
+      "sql_sha256": "ca2ee1a2c618c5f71b43ade4620d9ded3eb105282be9a610c492632fec59fdc3",
+      "table": "backend_probe_v1",
+      "table_count": 1,
+      "column_count": 15,
+      "trigger": "backend_probe_v1_guard",
+      "trigger_count": 1,
+      "probe_row_count": 0,
+      "old_schema_unchanged": true,
+      "inventory_unchanged": true,
+      "new_bookmark_required": true
+    },
+    "d1_isolation": "LATEST_COMPLETE_INVENTORY_TARGET_ONLY",
+    "checked_at": "2026-10-03T04:05:53.212Z"
+  }
+}

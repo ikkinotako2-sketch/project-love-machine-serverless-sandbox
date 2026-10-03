@@ -62,8 +62,10 @@ export async function preflight(env,fetcher=fetch,{execution=false,now=Date.now(
   // This exact function uses user-owned Read Token; Write token is removed.
   const clean={...env,PLM_CF_D1_MIGRATION_V2_TOKEN:undefined,PLM_BACKEND_SCHEMA_AUDIT_MESSAGE:'PLM backend schema read-only 20261003-r1'};
   const before=await inspectBackendSchema(clean,fetcher);
-  report.before=before;report.external_api_calls+=before.external_api_calls;report.get_calls+=before.get_calls;report.read_query_post_calls+=before.read_query_post_calls;
+  report.external_api_calls+=before.external_api_calls;report.get_calls+=before.get_calls;report.read_query_post_calls+=before.read_query_post_calls;
   validateBefore(before);
+  // Only the exact approved schema may enter a receipt. Unexpected provider fields are discarded.
+  report.before=before;
   report.expected_post_schema={sql_sha256:EXPECTED.sql_sha256,table:'backend_probe_v1',table_count:1,column_count:EXPECTED.columns.length,trigger:'backend_probe_v1_guard',trigger_count:1,probe_row_count:0,old_schema_unchanged:true,inventory_unchanged:true,new_bookmark_required:true};
   report.d1_isolation='LATEST_COMPLETE_INVENTORY_TARGET_ONLY';report.checked_at=new Date(now).toISOString();report.pass=true;
   return report;

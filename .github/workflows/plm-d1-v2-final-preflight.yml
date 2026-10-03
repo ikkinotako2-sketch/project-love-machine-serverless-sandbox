@@ -11,7 +11,8 @@ concurrency:
 jobs:
   inspect:
     # One authorized read push from the exact supplied parent; reruns rejected.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.before == '75113cc2e7d08cd708b1fe4399cc66c463cfb5c1' && github.event.head_commit.message == 'PLM D1 v2 final read-only preflight 20261003-r1' && github.run_attempt == 1
+    # Completed once in run 37095359659 attempt 1. No further credential use.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

@@ -6,13 +6,13 @@ on:
 permissions:
   contents: read
   actions: read
-concurrency:
-  group: plm-cloudflare-sandbox-setup
-  cancel-in-progress: false
 jobs:
   migrate:
     # No owner execution approval. Must remain hard-disabled in this preparation.
     if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
