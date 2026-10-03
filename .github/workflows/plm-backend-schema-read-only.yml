@@ -1,0 +1,36 @@
+name: PLM Backend Schema Read Only Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['serverless/backend-schema-read-only.mjs', '.github/workflows/plm-backend-schema-read-only.yml']
+permissions:
+  contents: read
+concurrency:
+  group: plm-cloudflare-sandbox-setup
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.head_commit.message == 'PLM backend schema read-only 20261003-r1' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_BACKEND_SCHEMA_AUDIT_MESSAGE: PLM backend schema read-only 20261003-r1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: One D1 read-only inventory schema and bookmark audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_ACCOUNT_ISOLATION: ${{ vars.PLM_CF_ACCOUNT_ISOLATION || 'unverified' }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+        run: node serverless/backend-schema-read-only.mjs
