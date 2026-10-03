@@ -32,7 +32,7 @@ export async function migrationHistory(fetchPage){
  let total;const seen=new Set(),known=new Set(),pages=[];
  for(let page=1;page<=100;page++){
   const d=await fetchPage(page);
-  if(!Array.isArray(d.workflow_runs)||d.workflow_runs.length>100||!Number.isSafeInteger(d.total_count)||d.total_count<0||d.total_count>10000)throw Error('STAGE3_HISTORY_INCOMPLETE');
+  if(!Array.isArray(d.workflow_runs)||d.workflow_runs.length>20||!Number.isSafeInteger(d.total_count)||d.total_count<0||d.total_count>10000)throw Error('STAGE3_HISTORY_INCOMPLETE');
   if(total===undefined)total=d.total_count;if(total!==d.total_count)throw Error('STAGE3_HISTORY_CHANGED');
   const selected=[];
   for(const r of d.workflow_runs){
@@ -56,7 +56,7 @@ export function readOnlyTransport(e,fetcher){return async(url,o)=>{
  const readBase=`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/d1/database`;
  const auth=o?.headers?.Authorization;
  if(url===verify){if(o.method!=='GET'||auth!==`Bearer ${e.PLM_CF_D1_STAGE3_MIGRATION_TOKEN}`)throw Error('STAGE3_TRANSPORT_REJECTED');}
- else if(url.startsWith(`https://api.github.com/repos/${REPO}/actions/runs?per_page=100&page=`)){if(o.method!=='GET'||auth!==`Bearer ${e.PLM_HISTORY_GITHUB_TOKEN}`||!/page=\d+$/.test(url))throw Error('STAGE3_TRANSPORT_REJECTED');}
+ else if(url.startsWith(`https://api.github.com/repos/${REPO}/actions/runs?per_page=20&page=`)){if(o.method!=='GET'||auth!==`Bearer ${e.PLM_HISTORY_GITHUB_TOKEN}`||!/page=\d+$/.test(url))throw Error('STAGE3_TRANSPORT_REJECTED');}
  else if(auth===`Bearer ${e.PLM_CF_D1_READ_TOKEN}`){
   if(o.method==='GET'){if(!(url==='https://api.cloudflare.com/client/v4/user/tokens/verify'||url===readBase+'/'+DB||url===readBase+'/'+DB+'/time_travel/bookmark'||new RegExp('^'+readBase.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\?page=\\d+&per_page=100$').test(url)))throw Error('STAGE3_TRANSPORT_REJECTED');}
   else if(o.method==='POST'&&url===readBase+'/'+DB+'/query'){const p=JSON.parse(o.body);if(Object.keys(p).sort().join(',')!=='params,sql'||!READ_SQL.includes(p.sql)&&p.sql!==READ_ROW||!Array.isArray(p.params)||JSON.stringify(p.params)!==JSON.stringify(p.sql===READ_ROW?[PLAN.identity.platform,PLAN.identity.account_id,PLAN.identity.intent_id]:[]))throw Error('STAGE3_TRANSPORT_REJECTED');}
@@ -72,7 +72,7 @@ export async function finalStage3Preflight(e,fetcher=fetch,{checkout,checks=loca
  try{
   checks();out.input_hashes=LOCKS;out.code_commit=checkout;out.event_commit=e.GITHUB_SHA;
   const read=readOnlyTransport(e,fetcher);
-  out.history=await migrationHistory(async page=>{out.github_history_get_calls++;const r=await read(`https://api.github.com/repos/${REPO}/actions/runs?per_page=100&page=${page}`,{method:'GET',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${e.PLM_HISTORY_GITHUB_TOKEN}`}});if(!r.ok)throw Error('STAGE3_HISTORY_HTTP_UNKNOWN');return jsonBounded(r,1048576);});
+  out.history=await migrationHistory(async page=>{out.github_history_get_calls++;const r=await read(`https://api.github.com/repos/${REPO}/actions/runs?per_page=20&page=${page}`,{method:'GET',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${e.PLM_HISTORY_GITHUB_TOKEN}`}});if(!r.ok)throw Error('STAGE3_HISTORY_HTTP_UNKNOWN');try{return await jsonBounded(r,1048576);}catch(err){throw Error(err.message==='RESPONSE_TOO_LARGE'?'STAGE3_HISTORY_BODY_TOO_LARGE':'STAGE3_HISTORY_RESPONSE_PARSE_UNKNOWN');}});
   const result=await stage3Preflight({...e,GITHUB_SHA:checkout},read,{now});out.cloudflare_read_only_api_calls=result.cloudflare_read_calls;out.remote=result;
   if(!result.pass)return stop(result.failure_code||'STAGE3_REMOTE_UNCONFIRMED');
   out.token_active=result.token_active;out.token_owner_type='account';out.token_expires_at=result.token_expires_at;out.sql_sha256=SQL_SHA;
