@@ -9,7 +9,11 @@ permissions:
 jobs:
   prepare:
     # Registration is not approval. Live entry/history/journal activation needs a separate approval.
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.run_attempt == 1 &&
+      github.event.before == '1f26c091af303489bc80490549027c0d0adfc996' &&
+      github.event.head_commit.message == 'PLM execute approved explicit batch recovery once 20261003-r1'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     concurrency:
@@ -20,9 +24,9 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_STAGE3_RECOVERY_ALLOW: 'false'
-      PLM_STAGE3_RECOVERY_OWNER_APPROVAL: UNAPPROVED
-      PLM_STAGE3_RECOVERY_APPROVED_COMMIT: UNAPPROVED
+      PLM_STAGE3_RECOVERY_ALLOW: 'true'
+      PLM_STAGE3_RECOVERY_OWNER_APPROVAL: EXECUTE_NEW_EXPLICIT_BATCH_ONCE
+      PLM_STAGE3_RECOVERY_APPROVED_COMMIT: 1f26c091af303489bc80490549027c0d0adfc996
       PLM_RECOVERY_EVENT_BEFORE: ${{ github.event.before }}
       PLM_RECOVERY_EVENT_MESSAGE: ${{ github.event.head_commit.message }}
       PLM_RECOVERY_PREFLIGHT_RECEIPT_SHA: 585c75a9bc1fbbd0efb58a825260222c5f53e4d94688337d12ef81634bdfda97
@@ -31,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: 1f26c091af303489bc80490549027c0d0adfc996
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
