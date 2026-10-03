@@ -1,0 +1,8 @@
+{
+  "evidence_kind": "OWNER_EVIDENCE_ONLY",
+  "cloudflare_recovery_token_revoked_deleted": true,
+  "github_PLM_CF_D1_STAGE3_RECOVERY_TOKEN_deleted": true,
+  "retained_secret": "PLM_CF_D1_READ_TOKEN",
+  "independent_token_management_api_verification": false,
+  "new_write_token_requested_during_isolation": false
+}

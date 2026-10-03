@@ -1,0 +1,6 @@
+// Fixed vocabulary diagnostics; never save raw body, headers, URLs or unrecognised text.
+import {jsonBounded} from './d1-v2-migration.mjs';
+const SAFE=new Map(['incomplete input','not authorized','authentication error','invalid request','invalid sql','syntax error','foreign key constraint failed','constraint failed','statement too long','cannot start a transaction within a transaction','near "BEGIN": syntax error','near "END": syntax error'].map(s=>[s.toLowerCase(),s]));
+export function safeMessage(m){if(typeof m!=='string'||m.length>160||/[\u0000-\u001f\u007f]/.test(m))return '[REDACTED_UNRECOGNIZED_MESSAGE]';return SAFE.get(m.toLowerCase())||'[REDACTED_UNRECOGNIZED_MESSAGE]';}
+export function safeErrors(b){return (Array.isArray(b?.errors)?b.errors:[]).slice(0,4).map(x=>({code:Number.isSafeInteger(x?.code)&&x.code>=1000&&x.code<=2147483647?x.code:null,safe_message:safeMessage(x?.message)}));}
+export async function boundedDiagnostic(r){try{const b=await jsonBounded(r,16384);return {body:b,audit:{http_status:r.status,errors:safeErrors(b),...(typeof b.result?.error==='string'?{import_error:safeMessage(b.result.error)}:{})}};}catch{return {body:null,audit:{http_status:r.status,failure_code:'PROVIDER_ERROR_BODY_UNCONFIRMED_BOUNDED_NO_RAW'}};}}

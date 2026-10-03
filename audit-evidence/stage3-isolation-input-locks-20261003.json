@@ -1,0 +1,28 @@
+{
+  "immutable_inputs": [
+    {
+      "path": "audit-evidence/d1-stage3-migration-unknown-receipt-37108371746.json",
+      "sha256": "791060faf197503a0fc5f8e5945356278a43349a54422a0cf4e0e4a9e48b8c4b"
+    },
+    {
+      "path": "audit-evidence/stage3-recovery-unknown-receipt-37114446310.json",
+      "sha256": "8ee7425d513d225e35b4af0e3fe3569c274ec5868928de7dad09d59ffea2e5db"
+    },
+    {
+      "path": "audit-evidence/stage3-manual-reconciliation-37109169905.json",
+      "sha256": "cae8e4b75f5ce0d2a85c975792d775ff816389add1dd52e25fd76a5cae839305"
+    },
+    {
+      "path": "serverless/migrations/0003_durable_stage2_probe.sql",
+      "sha256": "012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686"
+    },
+    {
+      "path": "serverless/migrations/0004_durable_stage2_explicit_batch.sql",
+      "sha256": "c2d3c40447490932df83ecf52797d493787cc2a76a4a4efbc1b0a11a633381c4"
+    },
+    {
+      "path": "serverless/stage3-recovery-request.json",
+      "sha256": "7a22f2ec5eed90e658f934fb6005289752470193a213b084cfb1f21700278d58"
+    }
+  ]
+}

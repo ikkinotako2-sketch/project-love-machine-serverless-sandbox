@@ -1,0 +1,27 @@
+name: PLM Stage3 SQL File Import Prepared Disabled
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage3-file-import-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepared:
+    # No live entry. Future token verification / fresh audit / history / durable SENT journal
+    # and exact approved commit activation require separate owner execution approval.
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE3_IMPORT_ALLOW: 'false'
+      PLM_STAGE3_IMPORT_OWNER_APPROVAL: UNAPPROVED
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate fixed plan only; no credentials, no HTTP
+        run: node --input-type=module -e "import {candidate} from './serverless/stage3-file-import-contract.mjs'; candidate();"

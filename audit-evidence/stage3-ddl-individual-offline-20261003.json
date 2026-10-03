@@ -1,0 +1,76 @@
+{
+  "sqlite_version": "3.53.1",
+  "local_d1_runtime": "Miniflare5.20260801.0-alpha/workerd1.20260801.1",
+  "local_compatibility_date": "2026-08-08",
+  "requested_2026_10_01_runtime_unavailable": true,
+  "credential_passed": false,
+  "external_connections_blocked": "LD_PRELOAD loopback-only connect/bind/sendto policy",
+  "local_loopback_rpc_used": true,
+  "cloudflare_api_calls": 0,
+  "remote_d1_write": 0,
+  "rows": [
+    {
+      "sequence": 1,
+      "name": "durable_stage2_job",
+      "sql_sha256": "2cb0f9e19ada0d8ed95ee5640a08e2b7c8011f63e281a322a04874ea7ab7b348",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 2,
+      "name": "durable_stage2_checkpoint",
+      "sql_sha256": "43970b40a09d5cea1e3caaa7723f5fc71efb388d8b488ca313e1f0d8f78a2840",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 3,
+      "name": "durable_stage2_callback",
+      "sql_sha256": "1ad0113c2dfe9540e070a87038e4166545d6874ebce8324460a8709de313f165",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 4,
+      "name": "durable_stage2_job_guard",
+      "sql_sha256": "7e6a464def3c6e0073ce6fded1235bd1d2fe0ea2ea473f0f7820217706abbad2",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 5,
+      "name": "durable_stage2_checkpoint_insert_guard",
+      "sql_sha256": "744f092e25ed67b3032c3870d5bf413a20a998e004a070ce48eda1e5d349baca",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 6,
+      "name": "durable_stage2_checkpoint_guard",
+      "sql_sha256": "696876aacc11f41f9709d9daaf88b433d67316e89edf19109f1ff53e7b065c07",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 7,
+      "name": "durable_stage2_callback_insert_guard",
+      "sql_sha256": "bd651dd3540a8b5aca142ce90a08f9985bd1aff3aeae310a3a3b9492cabcb38e",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 8,
+      "name": "durable_stage2_callback_immutable",
+      "sql_sha256": "7e33eaa0a8d0730e88b4443c0c2989e9ba9644f0fa34b5098828a1b1b542233d",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    },
+    {
+      "sequence": 9,
+      "name": "durable_stage2_callback_apply",
+      "sql_sha256": "eb8869765f81dbc8c40c50faf6868b7220fdb99b77675cf57551f32603bae9fc",
+      "sqlite_pass": true,
+      "local_d1_pass": true
+    }
+  ]
+}

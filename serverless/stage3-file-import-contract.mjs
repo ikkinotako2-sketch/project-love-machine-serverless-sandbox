@@ -1,0 +1,22 @@
+// Prepared import transport. No live CLI, no retry libraries, no query mutation.
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {ACCOUNT,DB,baseContext,sha} from './atomicity-schema-audit.mjs';
+import {boundedDiagnostic} from './safe-cloudflare-errors.mjs';
+export const SQL_SHA='c01e08915c97aaf457879aa163dcd0e02faabab36a7ef044c3e5acaca2d1c23f',PLAN_SHA='32e1d91c2907fd70bdd0a0d5e6379c7f24af9d04906ad8a265cce951aa694b14';
+const read=p=>readFileSync(new URL(p,import.meta.url));
+export function candidate(sql=read('./migrations/0005_durable_stage2_file_import.sql'),raw=read('./stage3-import-plan.json')){if(sha(sql)!==SQL_SHA||sha(raw)!==PLAN_SHA)throw Error('IMPORT_FIXED_BYTES_DRIFT');const p=JSON.parse(raw);if(p.sql_md5!==createHash('md5').update(sql).digest('hex')||p.account!==ACCOUNT||p.database_id!==DB||p.side_effect_http_max!==3||p.poll_read_post_max!==3)throw Error('IMPORT_PLAN_DRIFT');return {sql,plan:p};}
+export function uploadURL(s){const u=new URL(s);if(s.length>4096||u.protocol!=='https:'||u.port||u.username||u.password||u.hash||!/^([a-f0-9]{32})\.r2\.cloudflarestorage\.com$/.test(u.hostname)||!u.searchParams.has('X-Amz-Signature'))throw Error('IMPORT_UPLOAD_URL_REJECTED');return u.href;}
+export async function importOnce(e,fetcher,{freshAuditApproved=false,historyClear=false,journal,postRead}={}){
+ const out={status:'BLOCKED',side_effect_http:0,poll_read_posts:0,query_mutations:0,retry:0,resend:0,fallback:0,automatic_rollback:0,worker:0,ai:0,render:0,posting:0,steps:[],post_sets:0,live_ready:false,posting_permitted:false};
+ if(!baseContext(e)||e.GITHUB_EVENT_NAME!=='push'||!/^\d+$/.test(e.GITHUB_RUN_ID||'')||e.GITHUB_SHA!==e.PLM_STAGE3_IMPORT_APPROVED_COMMIT||e.PLM_STAGE3_IMPORT_ALLOW!=='true'||e.PLM_STAGE3_IMPORT_OWNER_APPROVAL!=='APPROVE_NEW_FILE_IMPORT_ONCE'||!e.PLM_CF_D1_STAGE3_IMPORT_TOKEN||e.PLM_CF_D1_STAGE3_RECOVERY_TOKEN||!freshAuditApproved||!historyClear||!journal||!postRead)return out;
+ const {sql,plan}=candidate();const endpoint=`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/d1/database/${DB}/import`;let maybeSent=false;
+ const sent=new Set();
+ async function cf(action,fields){if(action!=='poll'){if(sent.has(action)||out.side_effect_http>=3)throw Error('IMPORT_NO_RESEND');journal.reserve(action,{status:'SENT',sql_sha256:SQL_SHA,plan_sha256:PLAN_SHA});sent.add(action);out.side_effect_http++;maybeSent=true;}else{if(out.poll_read_posts>=3)throw Error('IMPORT_POLL_BUDGET');out.poll_read_posts++;}const r=await fetcher(endpoint,{method:'POST',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${e.PLM_CF_D1_STAGE3_IMPORT_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({action,...fields})});const {body,audit}=await boundedDiagnostic(r);out.steps.push({operation:action,...audit});if(!r.ok||body?.success!==true)throw Error('IMPORT_HTTP_UNCONFIRMED');return body.result;}
+ try{let state=await cf('init',{etag:plan.sql_md5});if(typeof state?.upload_url==='string'){const url=uploadURL(state.upload_url);if(typeof state.filename!=='string'||state.filename.length>256||!/^[A-Za-z0-9_.-]+$/.test(state.filename))throw Error('IMPORT_FILENAME_UNKNOWN');journal.reserve('upload',{status:'SENT',sql_sha256:SQL_SHA});sent.add('upload');out.side_effect_http++;const r=await fetcher(url,{method:'PUT',redirect:'error',signal:AbortSignal.timeout(15000),headers:{'Content-Type':'application/sql'},body:sql});out.steps.push({operation:'upload',http_status:r.status});if(r.status!==200||r.headers.get('etag')?.replace(/^"|"$/g,'')!==plan.sql_md5)throw Error('IMPORT_UPLOAD_UNKNOWN');state=await cf('ingest',{filename:state.filename,etag:plan.sql_md5});}
+ // init may itself start a cached import: never issue a second init/ingest in that branch.
+ for(let i=0;state?.status!=='complete'&&state?.status!=='error'&&i<3;i++){if(!/^[a-f0-9-]{16,128}$/.test(state?.at_bookmark||''))throw Error('IMPORT_STATE_UNKNOWN');state=await cf('poll',{current_bookmark:state.at_bookmark});}
+ out.status=state?.status==='complete'&&state.result?.num_queries===9?'ACK_NEEDS_POST':'UNKNOWN';
+ }catch{out.status='UNKNOWN';out.failure_code='IMPORT_STOP_NO_RESEND_NO_RESUME';}
+ if(maybeSent){out.post_sets=1;try{out.post=await postRead();if(out.status==='ACK_NEEDS_POST'&&out.post.pass===true&&out.post.classification==='FULL_APPLIED')out.status='SUCCESS';else out.status='UNKNOWN';}catch{out.status='UNKNOWN';}out.manual_reconciliation_required=out.status!=='SUCCESS';}return out;
+}

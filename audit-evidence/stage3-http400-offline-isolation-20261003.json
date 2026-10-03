@@ -1,0 +1,41 @@
+{
+  "evidence_kind": "OFFLINE_EXTRACTION_FROM_IMMUTABLE_SANITIZED_RECEIPTS",
+  "runs": [
+    {
+      "run": 37108371746,
+      "extracted": {
+        "status": "UNKNOWN",
+        "http_status": 400,
+        "mutation_requests": 1,
+        "retry": 0,
+        "resend": 0,
+        "fallback": 0,
+        "cloudflare_api_calls": 15,
+        "reconciliation_classification": null
+      },
+      "subsequent_read_only_reconciliation_run": 37109169905,
+      "classification": "NOT_APPLIED"
+    },
+    {
+      "run": 37114446310,
+      "extracted": {
+        "status": "UNKNOWN",
+        "http_status": 400,
+        "mutation_requests": 1,
+        "retry": 0,
+        "resend": 0,
+        "fallback": 0,
+        "cloudflare_api_calls": 22,
+        "reconciliation_classification": "NOT_APPLIED"
+      },
+      "classification": "NOT_APPLIED"
+    }
+  ],
+  "errors_code_saved": false,
+  "provider_message_saved": false,
+  "additional_error_information_recoverable": false,
+  "raw_provider_body_saved": false,
+  "raw_headers_saved": false,
+  "token_saved": false,
+  "reason": "Old receipts recorded status only; do not invent errors[].code or message."
+}
