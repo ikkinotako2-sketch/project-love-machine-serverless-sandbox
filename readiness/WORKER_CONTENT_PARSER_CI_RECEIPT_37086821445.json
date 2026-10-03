@@ -1,0 +1,42 @@
+{
+  "evidence_kind": "OFFLINE_CI_RECEIPT",
+  "commit": "a0246f2bf16271dd42867060df38eba4caecd27b",
+  "run_id": 37086821445,
+  "job_id": 111098748978,
+  "conclusion": "success",
+  "python_pass": 366,
+  "node_pass": 172,
+  "total_pass": 538,
+  "fail": 0,
+  "guard_evidence_lines": [
+    "2026-10-03T01:38:02.1941645Z Ran 366 tests in 0.316s",
+    "2026-10-03T01:38:02.2029030Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T01:38:02.3426296Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T01:38:02.8481331Z ℹ tests 172",
+    "2026-10-03T01:38:02.8482145Z ℹ pass 172",
+    "2026-10-03T01:38:02.8482576Z ℹ fail 0"
+  ],
+  "read_only_workflow": {
+    "run_id": 37086821531,
+    "conclusion": "skipped",
+    "job_conclusion": "skipped",
+    "external_calls": 0,
+    "approved_commit_pin_changed": false,
+    "new_editor_token_used": false
+  },
+  "owner_revocation_evidence": "OWNER CONFIRMED; no API read-back",
+  "old_failure_receipt_modified": false,
+  "old_result_document_modified": false,
+  "cloudflare_api_calls": 0,
+  "d1_queries": 0,
+  "remote_mutations": 0,
+  "deploy_executions": 0,
+  "live_jobs": 0,
+  "render_executions": 0,
+  "external_api_calls": 0,
+  "remote_snapshot": "UNVERIFIED",
+  "remote_code_equivalence": "UNVERIFIED",
+  "deploy_readiness": false,
+  "live_ready": false,
+  "posting_permitted": false
+}
