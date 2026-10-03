@@ -1,0 +1,6 @@
+{
+  "migrations/0007_generalized_roundtrip_backend.sql": "45f042a1342676ceeeed587490d80eb132e31a2c3d9b33cceeab3045ffdf37b5",
+  "generalized-backend-plan.json": "59cb7545f1d54976e19d74a2dd08c38987698d0271e1aa1ac6d79b72cc25b9cb",
+  "generalized-backend-before.json": "64f4b23b9265bb2f4576b9670241d7afab5f003a5375fca8e8a598aa1a39a468",
+  "generalized-backend-after.json": "d77d27b2e14ec333ca5ee4b8aad49c3b99e372e9004acbff3c6425979cb4049d"
+}

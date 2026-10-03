@@ -1,0 +1,40 @@
+name: PLM Generalized Backend Read Only Preflight Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-backend-read-only-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  preflight:
+    if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_GENERALIZED_ALLOW: 'false'
+      PLM_GENERALIZED_OWNER_APPROVAL: UNAPPROVED
+      PLM_GENERALIZED_PREFLIGHT_PIN: UNAPPROVED
+      PLM_GENERALIZED_BEFORE: ${{ github.event.before }}
+      PLM_GENERALIZED_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: UNAPPROVED
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Backend Token verify only and Read Token exact audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN: ${{ secrets.PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN }}
+        run: node serverless/generalized-backend-preflight.mjs

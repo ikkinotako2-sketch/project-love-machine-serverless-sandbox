@@ -1,0 +1,18 @@
+name: PLM Generalized Backend Migration Once Disabled
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  migration:
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_GENERALIZED_ALLOW: 'false'
+      PLM_GENERALIZED_OWNER_APPROVAL: UNAPPROVED
+    steps:
+      - run: echo 'STOP pending separate owner migration approval'
