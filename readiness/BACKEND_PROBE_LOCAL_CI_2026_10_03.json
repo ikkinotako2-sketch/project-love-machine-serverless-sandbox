@@ -1,0 +1,16 @@
+{
+  "evidence_kind": "LOCAL_GUARDED_OFFLINE_TESTS",
+  "python_pass": 400,
+  "node_pass": 188,
+  "total_pass": 588,
+  "fail": 0,
+  "added_python_tests": 34,
+  "added_node_tests": 4,
+  "external_api_calls": 0,
+  "render_executions": 0,
+  "native_seccomp_active": true,
+  "socket_syscalls_denied": true,
+  "exec_syscalls_denied": true,
+  "live_ready": false,
+  "posting_permitted": false
+}

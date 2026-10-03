@@ -1,0 +1,309 @@
+{
+  "scope": "ONE_ACCOUNT_SANDBOX_PROBE_NOT_PRODUCTION_BACKEND",
+  "prepared_only": true,
+  "execution_permitted": false,
+  "schema_migration_required": true,
+  "migration": {
+    "sha256": "ca2ee1a2c618c5f71b43ade4620d9ded3eb105282be9a610c492632fec59fdc3",
+    "create_table": 1,
+    "create_trigger": 1,
+    "alter": 0,
+    "destructive_statements": 0,
+    "standalone_data_mutations": 0,
+    "statements": 2,
+    "execution_permitted": false
+  },
+  "target": {
+    "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+    "database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "database_name": "plm-serverless-sandbox-state"
+  },
+  "current_schema_receipt": "BACKEND_SCHEMA_READ_RECEIPT_37093009614.json",
+  "gap_analysis": [
+    {
+      "feature": "unique intent identity",
+      "classification": "MISSING",
+      "reason": "intent_idなし。現在PKはplatform/account/jobのみ。",
+      "first_test_required": true
+    },
+    {
+      "feature": "job_id mint once",
+      "classification": "PARTIAL",
+      "reason": "job PKは重複を防ぐが、同一intentに異なるjobをmintできる。",
+      "first_test_required": true
+    },
+    {
+      "feature": "immutable content fingerprint",
+      "classification": "PARTIAL",
+      "reason": "TEXT NOT NULLのみ。変更禁止のDB制約なし。",
+      "first_test_required": true
+    },
+    {
+      "feature": "version CAS",
+      "classification": "PARTIAL",
+      "reason": "version列あり。条件付きUPDATEは可能だが、必須predicateや増加をDBが強制しない。",
+      "first_test_required": true
+    },
+    {
+      "feature": "owner identity",
+      "classification": "PARTIAL",
+      "reason": "claimant列あり。owner不変・有効値・terminal bindingの制約なし。",
+      "first_test_required": true
+    },
+    {
+      "feature": "owner epoch",
+      "classification": "MISSING",
+      "reason": "epoch列なし。第1段階では固定epoch=1のprobeだけ。",
+      "first_test_required": true
+    },
+    {
+      "feature": "fencing token",
+      "classification": "MISSING",
+      "reason": "fencing列なし。handoff/external fencingは第2段階。",
+      "first_test_required": false
+    },
+    {
+      "feature": "state transition guard",
+      "classification": "PARTIAL",
+      "reason": "状態enumのみ。遷移順序やfailed terminalは保証されない。",
+      "first_test_required": true
+    },
+    {
+      "feature": "dispatch reservation",
+      "classification": "MISSING",
+      "reason": "dispatching状態名のみで予約ID/一意性/外部副作用の証拠なし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "generation checkpoint",
+      "classification": "MISSING",
+      "reason": "checkpoint本文/identity/CASなし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "checkpoint fingerprint",
+      "classification": "MISSING",
+      "reason": "generation内容との固定bindingなし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "callback replay/delivery identity",
+      "classification": "MISSING",
+      "reason": "delivery id/replay ledgerなし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "terminal result uniqueness",
+      "classification": "PARTIAL",
+      "reason": "job行PKのみ。result id、delivery id、terminal不変保証なし。",
+      "first_test_required": true
+    },
+    {
+      "feature": "metrics 1h / 24h uniqueness",
+      "classification": "NOT REQUIRED FOR FIRST REMOTE TEST",
+      "reason": "現在MISSING。metric slot/period uniqueなし。第2段階以降。",
+      "first_test_required": false
+    },
+    {
+      "feature": "Improvement uniqueness",
+      "classification": "NOT REQUIRED FOR FIRST REMOTE TEST",
+      "reason": "現在MISSING。improvement checkpoint uniqueなし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "next-intent uniqueness",
+      "classification": "NOT REQUIRED FOR FIRST REMOTE TEST",
+      "reason": "現在MISSING。next intent uniqueなし。",
+      "first_test_required": false
+    },
+    {
+      "feature": "audit timestamps",
+      "classification": "PARTIAL",
+      "reason": "created_at/updated_at列のみ。非回帰/immutable作成時刻/履歴trailなし。",
+      "first_test_required": true
+    },
+    {
+      "feature": "unknown / ambiguous side effect",
+      "classification": "PARTIAL",
+      "reason": "unknown enumあり。mutation attempt/reservation/reconciliation証拠なし。",
+      "first_test_required": true
+    }
+  ],
+  "budgets": {
+    "dedicated_identities": 1,
+    "dml_http_submissions": 9,
+    "successful_logical_row_changes": 3,
+    "concurrent_runners": 2,
+    "migration_http_submissions": 1,
+    "migration_ddl_statements": 2,
+    "automatic_retry": 0,
+    "automatic_rollback": 0,
+    "delete": 0
+  },
+  "test_steps": [
+    {
+      "id": "01_init",
+      "sql": "INSERT INTO backend_probe_v1(platform,account_id,intent_id,job_id,content_fingerprint,owner,owner_epoch,fencing_token,state,version,last_request_id,created_at,updated_at) VALUES(?,?,?,?,?,NULL,0,0,'ready',1,'init',?,?) ON CONFLICT(platform,account_id,intent_id) DO NOTHING",
+      "params": [
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "plm-d1-atomicity-job-001",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1790998200,
+        1790998200
+      ],
+      "expected_changes": 1
+    },
+    {
+      "id": "02_identity_replay",
+      "sql": "INSERT INTO backend_probe_v1(platform,account_id,intent_id,job_id,content_fingerprint,owner,owner_epoch,fencing_token,state,version,last_request_id,created_at,updated_at) VALUES(?,?,?,?,?,NULL,0,0,'ready',1,'init',?,?) ON CONFLICT(platform,account_id,intent_id) DO NOTHING",
+      "params": [
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "plm-d1-atomicity-job-001",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1790998200,
+        1790998200
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "03_claim_a",
+      "sql": "UPDATE backend_probe_v1 SET owner=?,owner_epoch=1,fencing_token=1,state='claimed',version=version+1,last_request_id=?,updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=1 AND state='ready' AND owner IS NULL AND owner_epoch=0 AND fencing_token=0",
+      "params": [
+        "contender_a",
+        "claim_a",
+        1790998201,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      ],
+      "group": "concurrent_claim",
+      "expected_changes": null
+    },
+    {
+      "id": "04_claim_b",
+      "sql": "UPDATE backend_probe_v1 SET owner=?,owner_epoch=1,fencing_token=1,state='claimed',version=version+1,last_request_id=?,updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=1 AND state='ready' AND owner IS NULL AND owner_epoch=0 AND fencing_token=0",
+      "params": [
+        "contender_b",
+        "claim_b",
+        1790998201,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      ],
+      "group": "concurrent_claim",
+      "expected_changes": null
+    },
+    {
+      "id": "05_stale_version",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "06_stale_owner",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_b"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "07_wrong_fingerprint",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "08_terminal",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 1
+    },
+    {
+      "id": "09_terminal_replay",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    }
+  ],
+  "plan_timestamp": "FIXTURE_ONLY_REPLACE_ONCE_BEFORE_FINAL_PIN",
+  "unknown_policy": {
+    "automatic_resend": false,
+    "read_only_reconciliation_only": true,
+    "read_reconciliation_submission_cap": 1,
+    "all_future_mutations_stop_on_unknown": true,
+    "absence_is_not_noncommit_proof": true,
+    "persisted_sent_after_restart_is_unknown": true
+  },
+  "tokens": {
+    "migration_secret": "PLM_CF_D1_MIGRATION_V2_TOKEN",
+    "test_secret": "PLM_CF_D1_ATOMICITY_TEST_TOKEN",
+    "separate_credentials": true,
+    "owner_type": "ACCOUNT_TOKEN",
+    "permission": "Account D1 Write only",
+    "account": "6c8ccd6aface937ab5dabef61cb64534",
+    "single_database_resource_scope": "UNVERIFIED",
+    "requires_complete_latest_inventory_exactly_one_target": true,
+    "finite_ttl": true,
+    "ttl_preference": "shortest available, ideally <=24h",
+    "create_token_is_not_execution_approval": true,
+    "revoke_cloudflare_then_delete_github_secret_after_every_outcome": true,
+    "token_scope_api_verified": false
+  },
+  "remote_atomicity": "UNVERIFIED",
+  "remote_fencing": "UNVERIFIED",
+  "callback_replay_ledger": "UNVERIFIED",
+  "worker_change_permitted": false,
+  "live_ready": false,
+  "posting_permitted": false,
+  "hundred_plus_accounts": "SEPARATE BLOCKER"
+}

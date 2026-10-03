@@ -1,0 +1,21 @@
+{
+  "sandbox_main": "8ac2337a37072ae23f7781e2f47e8dfc7016b30f",
+  "sandbox_parent": "60be87996e83bf841a49ca86367b541f91837947",
+  "pull_requests": [
+    {
+      "number": 15,
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head_sha": "a3bad01929b0db39499b4320182068f7a7e0047d"
+    },
+    {
+      "number": 16,
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head_sha": "e5ad13c1a92bf390272ce2c547f6b5ecaf8caa9c"
+    }
+  ],
+  "mutations_to_protected_paths": 0
+}

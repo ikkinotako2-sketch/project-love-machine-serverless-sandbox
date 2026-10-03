@@ -1,0 +1,236 @@
+{
+  "run_id": 37093009614,
+  "run_attempt": 1,
+  "commit": "60be87996e83bf841a49ca86367b541f91837947",
+  "evidence": {
+    "mode": "BACKEND_SCHEMA_READ_ONLY",
+    "d1": {
+      "mode": "READ_ONLY_DIAGNOSTIC",
+      "authentication": "ACTIVE",
+      "account": "D1_ACCESS_CONFIRMED_AT_EXACT_ACCOUNT",
+      "inventory": "COMPLETE",
+      "schema": "PASS_EMPTY",
+      "worker": "UNVERIFIED",
+      "free_plan": "UNVERIFIED",
+      "migration_required": false,
+      "account_isolation": "unverified",
+      "external_api_calls": 8,
+      "render_executions": 0,
+      "cloudflare_mutations": 0,
+      "live_jobs": 0,
+      "probes": [
+        {
+          "stage": "user_token_verify",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "d1_inventory_page_1",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "target_d1_metadata",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "schema_table",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "schema_columns",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "schema_count",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "full_schema_snapshot",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        },
+        {
+          "stage": "time_travel_bookmark",
+          "http_status": 200,
+          "error_codes": [],
+          "status": "PASS"
+        }
+      ],
+      "token_kind": "USER_TOKEN",
+      "inventory_pages": 1,
+      "d1_count": 1,
+      "d1_ids": [
+        "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+      ],
+      "other_d1_count": 0,
+      "database": "ID_AND_NAME_MATCHED",
+      "database_purpose": "SANDBOX_NAME_MATCH_ONLY",
+      "database_size_bytes": 20480,
+      "row_count": 0,
+      "sql": {
+        "sql_sha256": "ac01f6d9d7eac877b802688d4f1d3c4dd40e8940876ed3ce0dc441c10297d0e2",
+        "destructive_statements": 0,
+        "statements": 1
+      },
+      "current_schema": [
+        {
+          "type": "table",
+          "name": "_cf_KV",
+          "tbl_name": "_cf_KV",
+          "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+        },
+        {
+          "type": "table",
+          "name": "test_jobs",
+          "tbl_name": "test_jobs",
+          "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+        }
+      ],
+      "schema_object_count": 2,
+      "time_travel": "BOOKMARK_READ_CONFIRMED",
+      "pre_migration_bookmark": "00000008-00000000-000050f9-2cb29c01ddd3315759c3856f719068ee",
+      "checked_at": "2026-10-03T03:23:05.423Z",
+      "migration_permitted": false,
+      "migration_execution_approved": false,
+      "stop_reason": "WRITE_TOKEN_AND_FINAL_EXECUTION_GATES_REQUIRED"
+    },
+    "external_api_calls": 11,
+    "get_calls": 4,
+    "read_query_post_calls": 7,
+    "d1_writes": 0,
+    "cloudflare_mutations": 0,
+    "worker_calls": 0,
+    "deploy": 0,
+    "live_jobs": 0,
+    "render": 0,
+    "pass": true,
+    "columns": [
+      {
+        "cid": 0,
+        "name": "platform",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "account_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 2
+      },
+      {
+        "cid": 2,
+        "name": "job_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 3
+      },
+      {
+        "cid": 3,
+        "name": "content_fingerprint",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "claimant",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "state",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "last_operation",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "run_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "created_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "updated_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ],
+    "indexes": [
+      {
+        "seq": 0,
+        "name": "sqlite_autoindex_test_jobs_1",
+        "unique": 1,
+        "origin": "pk",
+        "partial": 0
+      }
+    ],
+    "index_columns": [
+      {
+        "seqno": 0,
+        "cid": 0,
+        "name": "platform"
+      },
+      {
+        "seqno": 1,
+        "cid": 1,
+        "name": "account_id"
+      },
+      {
+        "seqno": 2,
+        "cid": 2,
+        "name": "job_id"
+      }
+    ]
+  }
+}

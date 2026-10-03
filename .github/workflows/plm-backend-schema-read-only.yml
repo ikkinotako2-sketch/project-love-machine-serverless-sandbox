@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   inspect:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.head_commit.message == 'PLM backend schema read-only 20261003-r1' && github.run_attempt == 1
+    # Completed in run 37093009614 attempt 1. Retired; no future credential use.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

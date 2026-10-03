@@ -1,0 +1,140 @@
+{
+  "execution_permitted": false,
+  "fixture_only": true,
+  "winner_selection": "after two acknowledged claim responses, exact read-back",
+  "steps": [
+    {
+      "id": "01_init",
+      "sql": "INSERT INTO backend_probe_v1(platform,account_id,intent_id,job_id,content_fingerprint,owner,owner_epoch,fencing_token,state,version,last_request_id,created_at,updated_at) VALUES(?,?,?,?,?,NULL,0,0,'ready',1,'init',?,?) ON CONFLICT(platform,account_id,intent_id) DO NOTHING",
+      "params": [
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "plm-d1-atomicity-job-001",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1790998200,
+        1790998200
+      ],
+      "expected_changes": 1
+    },
+    {
+      "id": "02_identity_replay",
+      "sql": "INSERT INTO backend_probe_v1(platform,account_id,intent_id,job_id,content_fingerprint,owner,owner_epoch,fencing_token,state,version,last_request_id,created_at,updated_at) VALUES(?,?,?,?,?,NULL,0,0,'ready',1,'init',?,?) ON CONFLICT(platform,account_id,intent_id) DO NOTHING",
+      "params": [
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "plm-d1-atomicity-job-001",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1790998200,
+        1790998200
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "03_claim_a",
+      "sql": "UPDATE backend_probe_v1 SET owner=?,owner_epoch=1,fencing_token=1,state='claimed',version=version+1,last_request_id=?,updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=1 AND state='ready' AND owner IS NULL AND owner_epoch=0 AND fencing_token=0",
+      "params": [
+        "contender_a",
+        "claim_a",
+        1790998201,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      ],
+      "group": "concurrent_claim",
+      "expected_changes": null
+    },
+    {
+      "id": "04_claim_b",
+      "sql": "UPDATE backend_probe_v1 SET owner=?,owner_epoch=1,fencing_token=1,state='claimed',version=version+1,last_request_id=?,updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=1 AND state='ready' AND owner IS NULL AND owner_epoch=0 AND fencing_token=0",
+      "params": [
+        "contender_b",
+        "claim_b",
+        1790998201,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      ],
+      "group": "concurrent_claim",
+      "expected_changes": null
+    },
+    {
+      "id": "05_stale_version",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        1,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "06_stale_owner",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_b"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "07_wrong_fingerprint",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    },
+    {
+      "id": "08_terminal",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 1
+    },
+    {
+      "id": "09_terminal_replay",
+      "sql": "UPDATE backend_probe_v1 SET state=?,version=version+1,last_request_id='terminal',delivery_id='delivery_001',result_id='result_001',updated_at=? WHERE platform=? AND account_id=? AND intent_id=? AND content_fingerprint=? AND version=? AND state='claimed' AND owner=? AND owner_epoch=1 AND fencing_token=1",
+      "params": [
+        "succeeded",
+        1790998202,
+        "test",
+        "test_reference_001",
+        "plm-d1-atomicity-20261003-r1",
+        "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        2,
+        "contender_a"
+      ],
+      "expected_changes": 0
+    }
+  ]
+}

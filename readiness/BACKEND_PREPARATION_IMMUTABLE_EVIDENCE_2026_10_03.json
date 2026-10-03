@@ -1,0 +1,33 @@
+{
+  "scope": "HISTORICAL_EVIDENCE_HASHES_NO_EDITS",
+  "files": [
+    {
+      "path": "readiness/BACKEND_SCHEMA_READ_RECEIPT_37093009614.json",
+      "sha256": "d2c6bb63853797782f98ee674b0d07540291f9e7ef6e993fd6ec6e549452de59"
+    },
+    {
+      "path": "readiness/MIGRATION_RECEIPT_37063527954.json",
+      "sha256": "1c66211047cf2426058cb0a57e7c63b212817c46278220174368932c4a7b0a10"
+    },
+    {
+      "path": "readiness/WORKER_CONTENT_PARSER_CI_RECEIPT_37086821445.json",
+      "sha256": "5273f02dbfbdfa150673b2c38870ba9734f1fe2235b864d736c5d918b99c8224"
+    },
+    {
+      "path": "readiness/WORKER_EDITOR_PREFLIGHT_RECEIPT_37085331907.json",
+      "sha256": "43067d8d6569bef3e8569bc3f0e93d3aad0920d2e3bb3ddcd3f9f14458d5a5f1"
+    },
+    {
+      "path": "readiness/WORKER_EDITOR_PREFLIGHT_RECEIPT_37088180262.json",
+      "sha256": "1e34ef948166ce3888c877ed2ddf2b2d0833e992d01fea7c441a0600808cb18e"
+    },
+    {
+      "path": "readiness/WORKER_STOPPED_DEPLOY_RECEIPT_37089851089.json",
+      "sha256": "2ad4473c94a48bf062e1b5fbe8868c4df3f97e0c6298f3ba93557b06c8e6cfbf"
+    },
+    {
+      "path": "readiness/WORKER_STOPPED_ROLLBACK_BASE_37088180262.json",
+      "sha256": "84ab929bcb389ff8d75c36832bc039c07fb763145b0a4786bc48a0eb87b00538"
+    }
+  ]
+}
