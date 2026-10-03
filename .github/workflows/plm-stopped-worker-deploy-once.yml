@@ -1,0 +1,50 @@
+name: PLM Stopped Worker Deploy Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['readiness/STOPPED_DEPLOY_EXECUTION_AUTHORIZATION.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: plm-cloudflare-sandbox-setup
+  cancel-in-progress: false
+jobs:
+  deploy:
+    # Variables are deliberately unset/false now. Policy approval is not execution approval.
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.run_attempt == 1 && vars.PLM_STOPPED_DEPLOY_ALLOW == 'true' && github.sha == vars.PLM_STOPPED_DEPLOY_APPROVED_COMMIT
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_CF_WORKER_TOKEN_KIND: account
+      PLM_STOPPED_DEPLOY_ALLOW: ${{ vars.PLM_STOPPED_DEPLOY_ALLOW || 'false' }}
+      PLM_STOPPED_DEPLOY_OWNER_APPROVAL: ${{ vars.PLM_STOPPED_DEPLOY_OWNER_APPROVAL || 'NOT_APPROVED' }}
+      PLM_STOPPED_DEPLOY_APPROVED_COMMIT: ${{ vars.PLM_STOPPED_DEPLOY_APPROVED_COMMIT || 'UNAPPROVED' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Exact stopped upload once with GET precheck and GET postcheck
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_CF_WORKER_API_TOKEN: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/stopped-deploy-once.mjs
+      - name: Preserve sanitized intent and result even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stopped-deploy-receipt-${{ github.run_id }}
+          path: |
+            stopped-deploy-intent.json
+            stopped-deploy-receipt.json
+          retention-days: 1
+          if-no-files-found: ignore

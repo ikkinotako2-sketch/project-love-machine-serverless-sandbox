@@ -38,6 +38,6 @@ jobs:
           node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
           readiness/guard/test-node-guard.mjs
           serverless/test-worker.mjs serverless/test-d1-setup.mjs serverless/test-cloudflare-setup.mjs
-          serverless/test-read-only-diagnostic.mjs serverless/test-migration-final-inspect.mjs serverless/test-migration-once.mjs serverless/test-post-migration-inspect.mjs serverless/test-stopped-deploy-contract.mjs serverless/test-worker-editor-preflight.mjs serverless/test-worker-content-parser.mjs
+          serverless/test-read-only-diagnostic.mjs serverless/test-migration-final-inspect.mjs serverless/test-migration-once.mjs serverless/test-post-migration-inspect.mjs serverless/test-stopped-deploy-contract.mjs serverless/test-worker-editor-preflight.mjs serverless/test-worker-content-parser.mjs serverless/test-stopped-deploy-once.mjs
       - name: Evidence-scoped post migration gate without credentials or network
         run: env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so" python readiness/post_migration_readiness.py

@@ -1,0 +1,87 @@
+{
+  "kind": "IMMUTABLE_OWNER_ACCEPTED_ROLLBACK_BASE",
+  "source_run_id": 37088180262,
+  "source_commit": "96838b6acc31cfbde7f1fd464b1ebd2f5cf38f62",
+  "source_receipt_sha256": "1e34ef948166ce3888c877ed2ddf2b2d0833e992d01fea7c441a0600808cb18e",
+  "snapshot": {
+    "evidence_kind": "WORK_READ_ONLY_SNAPSHOT",
+    "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+    "worker_name": "plm-serverless-sandbox-control",
+    "deployment_id": "1fbeef3b-34a2-4902-89f1-460c055945e2",
+    "version_id": "8e4d2c71-1c71-4346-911a-016ce63ef57d",
+    "code_sha256": "1ce52049f4ec8c776f74e605fe2263cc3ebefa90cd43124fa9e490d2f0c0ec39",
+    "code_inventory": {
+      "module_count": 3,
+      "modules": [
+        {
+          "name": "data.js",
+          "content_type": "application/javascript+module",
+          "byte_size": 81,
+          "sha256": "6e5a642818761c2917980018816aea020f7ce2fcac61a2b4bb2e5997fb23d124"
+        },
+        {
+          "name": "index.js",
+          "content_type": "application/javascript+module",
+          "byte_size": 204,
+          "sha256": "1ce52049f4ec8c776f74e605fe2263cc3ebefa90cd43124fa9e490d2f0c0ec39"
+        },
+        {
+          "name": "welcome.html",
+          "content_type": "text/plain",
+          "byte_size": 1372,
+          "sha256": "2b28515222692fd0bf9a4b33384f480cf666b08f5b3e296f06f7456e2287ad57"
+        }
+      ],
+      "main_module_name": "index.js",
+      "main_module_sha256": "1ce52049f4ec8c776f74e605fe2263cc3ebefa90cd43124fa9e490d2f0c0ec39",
+      "entrypoint_source": "CF_ENTRYPOINT",
+      "raw_body_name_is_synthetic": false
+    },
+    "snapshot_complete": true,
+    "code_metadata_etag": "a446d06f12958da94c35a130e885b441edc775fff4d6bdc5a0036b55adb00c89",
+    "bindings": [],
+    "vars": {},
+    "secrets": [],
+    "workers_dev": false,
+    "preview_urls": false,
+    "compatibility_date": "2026-10-02",
+    "handlers": [
+      "fetch"
+    ],
+    "cron": [],
+    "stable_deployment_readback": true,
+    "public_routes_owner_confirmed_none": true,
+    "routes": {
+      "status": "OWNER CONFIRMED NONE",
+      "api_readback": false
+    },
+    "custom_domains": {
+      "status": "OWNER CONFIRMED NONE",
+      "api_readback": false
+    },
+    "queue_external_consumers": "UNVERIFIED_NO_QUEUE_PERMISSION",
+    "observability": {
+      "enabled": true,
+      "logs_enabled": true,
+      "logpush": false,
+      "tail_consumers_count": 0,
+      "logs_destinations_count": null,
+      "traces_destinations_count": null
+    },
+    "checked_at": "2026-10-03T01:59:46.370Z"
+  },
+  "owner_acceptance": {
+    "date": "2026-10-03",
+    "replacement_policy_approved": true,
+    "deploy_approved": false,
+    "accepted_differences": [
+      "three_modules",
+      "raw_main_sha_mismatch",
+      "safety_vars_absent",
+      "bindings_empty"
+    ]
+  },
+  "automatic_rollback": false,
+  "rollback_requires_separate_owner_approval": true,
+  "token_revocation_required_after_any_outcome": true
+}

@@ -1,0 +1,103 @@
+{
+  "kind": "CANONICAL_STOPPED_REPLACEMENT_PLAN",
+  "policy_owner_approved": true,
+  "deploy_owner_approved": false,
+  "deploy_permitted": false,
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "worker": "plm-serverless-sandbox-control",
+  "code_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "canonical_config_sha256": "cefa60606ca3e3820116a56671d83125ea86ac6e3a5e771761dd2e3508c96cf5",
+  "rollback_receipt_sha256": "84ab929bcb389ff8d75c36832bc039c07fb763145b0a4786bc48a0eb87b00538",
+  "preflight_source_run": 37088180262,
+  "preflight_source_checked_at": "2026-10-03T01:59:46.370Z",
+  "authorization_file_present": false,
+  "max_put_attempts": 1,
+  "mutation_endpoint": "PUT /accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control",
+  "predeploy_get_budget": 9,
+  "postdeploy_get_budget": 8,
+  "max_cloudflare_api_calls": 18,
+  "retries": 0,
+  "fallbacks": 0,
+  "predeploy_snapshot_must_match_entire_sanitized_base": true,
+  "token_active_and_expiry_rechecked_before_put": true,
+  "github_workflow_history_get_pages_max": 100,
+  "one_shot_fence": "repo workflow history (all pages); any prior non-skipped run blocks, including cancelled/failed/unknown; concurrency group; exact pin; run_attempt=1; local exclusive intent before PUT",
+  "remote_mutation_cas": "UNVERIFIED; no claim of atomic GET-to-PUT CAS or exactly-once network delivery",
+  "public_settings": "pre/post GET disabled; no subdomain mutation endpoint; no Wrangler",
+  "expected": {
+    "main_module": "bootstrap-placeholder.mjs",
+    "module_count": 1,
+    "compatibility_date": "2026-10-01",
+    "d1": {
+      "type": "d1",
+      "name": "DB",
+      "id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+      "database_name": "plm-serverless-sandbox-state"
+    },
+    "safety_vars": {
+      "TEST_ONLY": "true",
+      "DRY_RUN": "true",
+      "NO_PUBLISH": "true",
+      "EMERGENCY_STOP": "true"
+    },
+    "workers_dev": false,
+    "preview_urls": false,
+    "secrets": [],
+    "cron": [],
+    "routes": [],
+    "custom_domains": [],
+    "queues": [],
+    "service_bindings": [],
+    "outbound_endpoints": [],
+    "handlers": [
+      "fetch"
+    ],
+    "response_status": 503,
+    "db_queries": 0,
+    "outbound_fetch": 0,
+    "live_jobs": 0,
+    "render": 0
+  },
+  "postcheck_evidence_limits": {
+    "routes_custom_domains": "OWNER EVIDENCE; API unverified without additional permissions",
+    "response_503": "fixed code SHA plus offline execution; remote HTTP invocation prohibited",
+    "d1_database_name": "config provenance only; binding API ID exact; no D1 inventory/query",
+    "queue_external_consumers": "UNVERIFIED; no queue permission; candidate contains no queue bindings/handler"
+  },
+  "stop_before_put": [
+    "approval/context/secret/history missing",
+    "401/403/404/429/5xx/timeout/unknown in precheck",
+    "base snapshot drift",
+    "receipt/config/code hash mismatch",
+    "public flags enabled",
+    "token inactive or expiry unconfirmed",
+    "prior executed deployment workflow",
+    "exclusive intent failed"
+  ],
+  "stop_after_put": [
+    "any non-success or timeout/unknown",
+    "any postcheck failure or missing evidence",
+    "code/binding/flags/public/secret/cron/compatibility mismatch",
+    "deployment not new stable single-version 100%"
+  ],
+  "after_put": "one GET-only reconciliation; then STOP and owner revoke Worker Token plus delete GitHub Secret; never automatic redeploy/rollback",
+  "rollback": {
+    "automatic": false,
+    "requires_new_owner_approval": true,
+    "base_deployment_id": "1fbeef3b-34a2-4902-89f1-460c055945e2",
+    "base_version_id": "8e4d2c71-1c71-4346-911a-016ce63ef57d",
+    "route": "separately approve deployment of retained previous version; verify old version still exists read-only first; then verify restore snapshot and public disabled; no delete/recreate",
+    "code_source_backup": "not stored; restore depends on retained Cloudflare version",
+    "remote_restore_availability": "UNVERIFIED until fresh GET of retained version; do not promise executable rollback"
+  },
+  "live_ready": false,
+  "posting_permitted": false,
+  "remote_backend_behavior": "UNVERIFIED",
+  "production_impact": 0,
+  "hundred_accounts": "SEPARATE BLOCKER",
+  "official_sources": [
+    "https://developers.cloudflare.com/workers/platform/infrastructure-as-code/",
+    "https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/methods/update/"
+  ]
+}
