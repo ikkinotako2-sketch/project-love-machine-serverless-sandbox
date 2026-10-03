@@ -1,0 +1,36 @@
+{
+  "run_id": 37100148756,
+  "attempt": 1,
+  "commit": "03a940c81e813034828b5dc244dc43921f967063",
+  "conclusion": "success",
+  "python_pass": 406,
+  "node_pass": 264,
+  "fail": 0,
+  "total_pass": 670,
+  "guard": {
+    "blocked_probe_attempts": {
+      "blocked_exec": 10,
+      "blocked_import": 10,
+      "blocked_media_write": 5,
+      "blocked_network": 2
+    },
+    "exec_syscalls_denied": true,
+    "external_api_calls": 0,
+    "native_seccomp_active": true,
+    "render_executions": 0,
+    "socket_syscalls_denied": true
+  },
+  "read_audit_run_id": 37099745940,
+  "read_only_cloudflare_calls": 10,
+  "cloudflare_mutations": 0,
+  "d1_writes": 0,
+  "worker_deploy": 0,
+  "worker_invocation": 0,
+  "live_job": 0,
+  "render": 0,
+  "posting": 0,
+  "atomicity_execution_workflow": "HARD_DISABLED_SKIPPED",
+  "execution_run": 37100148817,
+  "live_ready": false,
+  "posting_permitted": false
+}

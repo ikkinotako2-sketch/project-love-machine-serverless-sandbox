@@ -1,0 +1,19 @@
+{
+  "scope": "IMMUTABLE_PREPARATION_EVIDENCE_NO_REMOTE_ATOMICITY_EXECUTED",
+  "ci_run_id": 37100148756,
+  "ci_code_commit": "03a940c81e813034828b5dc244dc43921f967063",
+  "schema_audit_run_id": 37099745940,
+  "plan_sha256": "cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28",
+  "migration_sql_sha256": "ca2ee1a2c618c5f71b43ade4620d9ded3eb105282be9a610c492632fec59fdc3",
+  "migration_receipt_sha256": "2310028cfcc6a7222411a059fe9d62f2f5a847fbaabbeaaa1a73ef47c4263e22",
+  "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+  "python_pass": 406,
+  "node_pass": 264,
+  "total_pass": 670,
+  "fail": 0,
+  "added_tests": 55,
+  "execution_hard_disabled": true,
+  "owner_token_registration_is_not_execution_approval": true,
+  "live_ready": false,
+  "posting_permitted": false
+}
