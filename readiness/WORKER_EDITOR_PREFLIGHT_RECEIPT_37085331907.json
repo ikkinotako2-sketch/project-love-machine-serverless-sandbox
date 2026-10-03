@@ -1,0 +1,115 @@
+{
+  "evidence_kind": "GITHUB_ACTIONS_READ_ONLY_PREFLIGHT_RECEIPT",
+  "run_id": 37085331907,
+  "job_id": 111094325160,
+  "run_attempt": 1,
+  "commit": "039855643032d8eebe756dad0d4f0ac316316c78",
+  "conclusion": "failure",
+  "evidence": {
+    "mode": "EDITOR_READ_ONLY_PREFLIGHT",
+    "remote_mutations": 0,
+    "deploy_executions": 0,
+    "live_jobs": 0,
+    "render_executions": 0,
+    "external_api_calls": 8,
+    "deploy_permitted": false,
+    "live_ready": false,
+    "posting_permitted": false,
+    "token_owner": "account",
+    "token_scope_api_verified": false,
+    "other_worker_access_api_verified": false,
+    "probes": [
+      {
+        "stage": "account_token_verify",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "worker_settings",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "active_deployment",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "active_version_metadata",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "worker_public_subdomain",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "worker_cron",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "worker_secret_names_only",
+        "http_status": 200,
+        "status": "PASS"
+      },
+      {
+        "stage": "worker_code_hash_only",
+        "http_status": 200
+      }
+    ],
+    "token_active": true,
+    "token_expires_at": "2026-10-10T23:59:59.000Z",
+    "observed_deployment_id": "1fbeef3b-34a2-4902-89f1-460c055945e2",
+    "observed_version_id": "8e4d2c71-1c71-4346-911a-016ce63ef57d",
+    "preflight_pass": false,
+    "stop_reason": "READ_ONLY_PREFLIGHT_UNCONFIRMED_NO_RETRY_NO_DEPLOY"
+  },
+  "interpretation": {
+    "token_active": "API PASS",
+    "token_expiry": "API PASS",
+    "observed_ids": "API OBSERVED ONLY; stable end read-back not reached",
+    "worker_settings_read": "HTTP 200 but sanitized completed snapshot not emitted",
+    "remote_code_sha": "UNVERIFIED; hash stage did not complete",
+    "snapshot": "INCOMPLETE",
+    "specific_parser_failure": "NOT RECORDED; do not infer content type, module count, malformed code, or SHA mismatch",
+    "workers_dev_preview": "OWNER CONFIRMED DISABLED; API values not preserved in receipt",
+    "bindings_vars_secrets_compatibility_cron_observability": "UNVERIFIED; HTTP success alone is not semantic verification",
+    "rollback_readiness": "BLOCKED",
+    "deployment_readiness": "BLOCKED",
+    "token_scope_api_verified": false,
+    "automatic_retry_permitted": false,
+    "manual_reconciliation_required": true
+  },
+  "offline_ci": {
+    "run_id": 37085331897,
+    "conclusion": "success",
+    "python": 366,
+    "node": 125,
+    "total": 491,
+    "pass": 491,
+    "fail": 0,
+    "render_executions": 0,
+    "external_api_calls": 0
+  },
+  "candidate": {
+    "code_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+    "canonical_config_sha256": "cefa60606ca3e3820116a56671d83125ea86ac6e3a5e771761dd2e3508c96cf5",
+    "status": "OFFLINE PASS"
+  },
+  "remote_backend_behavior": "UNVERIFIED",
+  "next_owner_action": "Revoke aborted preflight Editor Token in Cloudflare; no deploy approval request",
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "remote_mutations": 0,
+  "d1_writes": 0,
+  "deploy_executions": 0,
+  "live_jobs": 0,
+  "render_executions": 0,
+  "external_api_calls": 8
+}

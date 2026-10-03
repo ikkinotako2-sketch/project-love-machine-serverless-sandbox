@@ -28,8 +28,8 @@
     "retry_this_turn": false
   },
   "work_snapshot": {
-    "deployment_id": null,
-    "version_id": null,
+    "deployment_id": "1fbeef3b-34a2-4902-89f1-460c055945e2",
+    "version_id": "8e4d2c71-1c71-4346-911a-016ce63ef57d",
     "code_sha256": null,
     "bindings": "UNVERIFIED",
     "vars": "UNVERIFIED",
@@ -41,7 +41,10 @@
     "preview_urls": "UNVERIFIED",
     "version_urls": "UNVERIFIED",
     "request_count": "UNVERIFIED",
-    "compatibility_date": "UNVERIFIED"
+    "compatibility_date": "UNVERIFIED",
+    "evidence_status": "INCOMPLETE_NOT_A_DEPLOY_BASE",
+    "deployment_stability": "UNVERIFIED",
+    "run_id": 37085331907
   },
   "workers_dev_disabled": "OWNER CONFIRMED DISABLED",
   "offline_candidate": "OFFLINE PASS",
@@ -58,9 +61,9 @@
     "deploys": 0,
     "live_jobs": 0,
     "render_executions": 0,
-    "cloudflare_api_calls": 0
+    "cloudflare_api_calls": 8
   },
-  "next_owner_action": "Individual Worker Editor Tokenを本人が作成しPLM_CF_WORKER_API_TOKENへ保護登録",
+  "next_owner_action": "中断したEditor TokenをCloudflare側で失効（本人操作）。失効済みと推測しない。",
   "owner_confirmed_status": {
     "worker_existence": "OWNER CONFIRMED PASS",
     "production_workers_dev": "OWNER CONFIRMED DISABLED",
@@ -68,5 +71,34 @@
     "custom_domains": "OWNER CONFIRMED NONE",
     "routes": "OWNER CONFIRMED NONE"
   },
-  "overall_progress_percent": 96
+  "overall_progress_percent": 96,
+  "preflight": {
+    "run_id": 37085331907,
+    "run_attempt": 1,
+    "commit": "039855643032d8eebe756dad0d4f0ac316316c78",
+    "status": "BLOCKED",
+    "last_probe": "worker_code_hash_only",
+    "last_http_status": 200,
+    "snapshot_acquired": false,
+    "automatic_retry_permitted": false,
+    "receipt": "WORKER_EDITOR_PREFLIGHT_RECEIPT_37085331907.json"
+  },
+  "token_auth": {
+    "owner": "account",
+    "active_api_confirmed": true,
+    "expires_at": "2026-10-10T23:59:59.000Z",
+    "token_scope_api_verified": false,
+    "exclusive_scope_evidence": "OWNER_CREATION_SCREEN_REPORT",
+    "revocation": "NOT_CONFIRMED"
+  },
+  "offline_ci": {
+    "run_id": 37085331897,
+    "status": "PASS",
+    "python": 366,
+    "node": 125,
+    "total": 491,
+    "fail": 0,
+    "external_api_calls": 0,
+    "render_executions": 0
+  }
 }
