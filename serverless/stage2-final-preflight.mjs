@@ -1,0 +1,18 @@
+import {readFileSync} from 'node:fs';
+import {pathToFileURL} from 'node:url';
+import {ACCOUNT,baseContext} from './atomicity-schema-audit.mjs';
+import {preflight,readOnlyTransport,planCheck,MESSAGE as PREP_MESSAGE} from './stage2-read-only-preflight.mjs';
+import {jsonBounded} from './d1-v2-migration.mjs';
+export const MESSAGE='PLM stage2 token verify read-only once 20261003-r1';
+export function disabledCheck(){const w=readFileSync(new URL('../.github/workflows/plm-stage2-test-once.yml',import.meta.url),'utf8');if(!w.includes('if: false')||!w.includes("PLM_STAGE2_ALLOW: 'false'")||!w.includes('PLM_STAGE2_OWNER_APPROVAL: UNAPPROVED')||w.includes('secrets.'))throw Error('STAGE2_TEST_WORKFLOW_NOT_DISABLED');return planCheck();}
+export function verifyOnlyTransport(e,f){const clean={...e,PLM_CF_D1_STAGE2_TEST_TOKEN:undefined},read=readOnlyTransport(clean,f),verify=`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/tokens/verify`;let used=false;
+ return async(u,o)=>{if(u===verify&&o.method==='GET'&&!o.body&&o.redirect==='error'&&o.headers?.Authorization===`Bearer ${e.PLM_CF_D1_STAGE2_TEST_TOKEN}`){if(used)throw Error('STAGE2_VERIFY_NO_RETRY');used=true;return f(u,o);}return read(u,o);};
+}
+export async function finalPreflight(e,f=fetch,{checkout,checks=disabledCheck,readiness=preflight,now=Date.now()}={}){const out={pass:false,cloudflare_read_only_calls:0,d1_mutation:0,d1_write:0,worker:0,ai:0,render:0,posting:0,external_provider_calls:0,retry:0,resend:0,fallback:0,automatic_rollback:0,live_ready:false,posting_permitted:false,token_registration_owner_evidence:true};
+ try{if(!baseContext(e)||e.GITHUB_EVENT_NAME!=='push'||!/^\d+$/.test(e.GITHUB_RUN_ID||'')||!/^[a-f0-9]{40}$/.test(checkout||'')||checkout!==e.PLM_STAGE2_FINAL_CODE_PIN||e.PLM_STAGE2_FINAL_BEFORE!==checkout||e.PLM_STAGE2_FINAL_MESSAGE!==MESSAGE||e.PLM_STAGE2_ALLOW!=='false'||e.PLM_STAGE2_OWNER_APPROVAL!=='UNAPPROVED'||!e.PLM_CF_D1_STAGE2_TEST_TOKEN||!e.PLM_CF_D1_READ_TOKEN||['PLM_CF_D1_STAGE3_IMPORT_TOKEN','PLM_CF_D1_STAGE3_RECOVERY_TOKEN','PLM_CF_D1_STAGE3_MIGRATION_TOKEN','PLM_CF_WORKER_API_TOKEN'].some(k=>e[k]))throw Error('STAGE2_FINAL_CONTEXT_REJECTED');
+ out.plan=checks();const transport=verifyOnlyTransport(e,async(u,o)=>{out.cloudflare_read_only_calls++;return f(u,o);});const r=await transport(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/tokens/verify`,{method:'GET',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${e.PLM_CF_D1_STAGE2_TEST_TOKEN}`}});
+ if(!r.ok)throw Error('STAGE2_TEST_TOKEN_VERIFY_REJECTED');const b=await jsonBounded(r,16384),expires=Date.parse(b.result?.expires_on);if(b.success!==true||b.result?.status!=='active'||!Number.isFinite(expires)||expires<=now)throw Error('STAGE2_TEST_TOKEN_INACTIVE_OR_NO_FINITE_EXPIRY');out.token_active=true;out.token_expires_at=new Date(expires).toISOString();out.token_scope_api_verified=false;
+ const clean={...e,PLM_CF_D1_STAGE2_TEST_TOKEN:undefined,PLM_STAGE2_PREFLIGHT_CODE_PIN:checkout,PLM_STAGE2_PREFLIGHT_BEFORE:checkout,PLM_STAGE2_PREFLIGHT_MESSAGE:PREP_MESSAGE};out.readiness=await readiness(clean,transport,{checkout});if(!out.readiness.pass)throw Error('STAGE2_FRESH_READINESS_UNCONFIRMED');out.test_workflow_hard_disabled=true;out.allow=false;out.execution_approved=false;out.pass=true;out.next_gate='STOP_AWAIT_OWNER_FIXED_14_STEP_APPROVAL';
+ }catch(err){out.failure_code=/^[A-Z_]+$/.test(err.message)?err.message:'STAGE2_FINAL_UNKNOWN_NO_RETRY';}return out;
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const r=await finalPreflight(process.env,fetch,{checkout:readFileSync('.git/HEAD','utf8').trim()});console.log('STAGE2_FINAL_PREFLIGHT '+JSON.stringify(r));if(!r.pass)process.exitCode=1;}

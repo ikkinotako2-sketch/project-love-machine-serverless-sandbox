@@ -1,0 +1,16 @@
+name: PLM Stage2 Test Prepared Disabled
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage2-test-once.yml']
+permissions:
+  contents: read
+jobs:
+  prepared:
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      PLM_STAGE2_ALLOW: 'false'
+      PLM_STAGE2_OWNER_APPROVAL: UNAPPROVED
+    steps:
+      - run: echo 'Prepared only; fixed 14-step execution requires separate owner approval.'
