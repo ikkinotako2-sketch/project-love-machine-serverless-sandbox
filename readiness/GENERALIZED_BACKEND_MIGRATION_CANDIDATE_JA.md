@@ -29,3 +29,22 @@ SQL: serverless/migrations/0007_generalized_roundtrip_backend.sql。plan/before/
 preflightはBackend Token active/finite expiryをaccount-owned verifyで確認（scopeはverify responseでは独立証明できない）。Read Tokenでinventory exact、metadata DB size、全既存schema/columns/indexes/rows、fresh bookmarkを取得し、stage2 SUCCESS receiptの最終3rowおよび固定beforeと照合。candidate namespaceは全不存在を要求する。migration実行前にもfresh gateを再度行い、最初のsend前に全page GitHub execution history・消費済journal/receipt拒否を必須とする。今回のpreflightではmigration workflowはhard-disabledかつsecretなし、実行entry自体を提供しない。
 
 全PASSでも実行せず「固定generalized backend migrationを1回だけ実行してよいか」と本人へ最終承認を求める。AI/Worker/render/YouTube/SNSは引き続き0。
+
+## 固定raw SHA256
+
+| file | SHA256 |
+|---|---|
+| migrations/0007_generalized_roundtrip_backend.sql | `45f042a1342676ceeeed587490d80eb132e31a2c3d9b33cceeab3045ffdf37b5` |
+| generalized-backend-plan.json | `59cb7545f1d54976e19d74a2dd08c38987698d0271e1aa1ac6d79b72cc25b9cb` |
+| generalized-backend-before.json | `64f4b23b9265bb2f4576b9670241d7afab5f003a5375fca8e8a598aa1a39a468` |
+| generalized-backend-after.json | `d77d27b2e14ec333ca5ee4b8aad49c3b99e372e9004acbff3c6425979cb4049d` |
+
+## Fresh preflight結果
+
+Run37162479288/attempt1 PASS。code pin033a71c555222e6c4df592d44d960cd5aadbfbd6、activation796d0ac4b8b569fb39052104e0351094b6011b77。Backend Token verify1回のみ、Read Token監査22回、D1 mutation/write0。active/finite expiry=2026-10-10T23:59:59Z（scopeはverify APIで独立証明不可）。candidate namespace NOT_APPLIED、stage2 schema FULL_APPLIEDと最終3row exact不変。既存schema/columns/indexes/atomicity成功row/test_jobs0/_cf_KV schema不変。inventory exact、DB size102400 bytes。fresh bookmark0000001b-00000000-000050f9-0ef1fb67dade8bc156539f6a1013dcdf。
+
+SQL/plan/before/after raw SHA一致、5table/11trigger/14autoindex、新row0予定。migration execution最大1、runner1、init/upload/ingest各1、poll3、side-effect3/import合計6、query mutation0、retry/resend/fallback/automatic rollback0。unknown時は次side effectを送らずread-only reconciliation最大1setでSTOP。preflight後は両workflow hard-disabled/allow=false/UNAPPROVED。
+
+Offline CI37162426181: Python480+Node544=1024 PASS、fail0、external API0/render0。新規fixtureにはgeneric identity、unique intent、handoff proofとepoch/fence、開始後handoff拒否、unsent response拒否、saved checkpoint後render/upload、unknown不可逆、stale owner/fence、exact duplicate0change、payload conflict拒否、callback effect/job atomicity失敗全体ABORT、既存stage2 row/schema保全を含む。SQLite offline受理はD1 remote migration受理の証明ではない。
+
+証跡audit-evidence/generalized-backend-preflight-37162479288.json。旧success/failure receiptsは変更しない。AI/Worker/render/YouTube/SNS0、live_ready=false/posting_permitted=false/4安全flags trueを維持。本人の別migration承認待ちで停止する。
