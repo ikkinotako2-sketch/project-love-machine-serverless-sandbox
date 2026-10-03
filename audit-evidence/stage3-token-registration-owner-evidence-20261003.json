@@ -1,0 +1,23 @@
+{
+  "evidence_kind": "OWNER_EVIDENCE_ONLY",
+  "cloudflare_token_name": "plm-sandbox-d1-stage3-schema-once",
+  "github_secret_name": "PLM_CF_D1_STAGE3_MIGRATION_TOKEN",
+  "owner_registered": true,
+  "owner_type": "account",
+  "scope": "Account D1 Edit/Write only",
+  "account": "6c8ccd6aface937ab5dabef61cb64534",
+  "finite_short_ttl_owner_confirmed": true,
+  "excluded_permissions": [
+    "Workers",
+    "Admin",
+    "Billing",
+    "Token management",
+    "DNS",
+    "Routes"
+  ],
+  "token_scope_api_verified": false,
+  "execution_approved": false,
+  "read_token_retained": true,
+  "stage2_test_credential_reuse_prohibited": true,
+  "secret_value_present_in_receipt": false
+}

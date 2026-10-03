@@ -1,0 +1,44 @@
+name: PLM D1 Stage3 Final Read Only Preflight
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-d1-stage3-final-preflight.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  preflight:
+    # Prepare first, activate once with an exact code checkout pin.
+    if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE3_ALLOW: 'false'
+      PLM_STAGE3_OWNER_APPROVAL: UNAPPROVED
+      PLM_STAGE3_SQL_SHA: 012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686
+      PLM_STAGE3_APPROVED_COMMIT: UNAPPROVED
+      PLM_STAGE3_EVENT_BEFORE: ${{ github.event.before }}
+      PLM_STAGE3_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: UNAPPROVED
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify migration credential only and fixed D1 read-only audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_STAGE3_MIGRATION_TOKEN: ${{ secrets.PLM_CF_D1_STAGE3_MIGRATION_TOKEN }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/d1-stage3-final-preflight.mjs
