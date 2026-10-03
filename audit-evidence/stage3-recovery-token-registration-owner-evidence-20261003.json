@@ -1,0 +1,9 @@
+{
+  "evidence_kind": "OWNER_EVIDENCE_ONLY",
+  "github_secret": "PLM_CF_D1_STAGE3_RECOVERY_TOKEN",
+  "owner_confirmed_registered": true,
+  "migration_execution_approval": false,
+  "token_scope_api_verified": false,
+  "token_value_recorded": false,
+  "existing_read_secret": "PLM_CF_D1_READ_TOKEN"
+}
