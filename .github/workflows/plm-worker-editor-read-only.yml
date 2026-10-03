@@ -2,7 +2,7 @@ name: PLM Worker Editor Read Only Preflight
 on:
   push:
     branches: [plm-offline-readiness-v1-20261002]
-    paths: ['serverless/worker-editor-preflight.mjs', '.github/workflows/plm-worker-editor-read-only.yml']
+    paths: ['serverless/worker-editor-preflight.mjs', 'serverless/worker-content-parser.mjs', '.github/workflows/plm-worker-editor-read-only.yml']
 permissions:
   contents: read
 concurrency:

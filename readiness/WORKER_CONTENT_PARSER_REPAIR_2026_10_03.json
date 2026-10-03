@@ -1,0 +1,93 @@
+{
+  "evidence_kind": "OFFLINE_PARSER_REPAIR",
+  "date": "2026-10-03",
+  "prior_failure_run_id": 37085331907,
+  "prior_failure_unchanged": true,
+  "prior_receipt_sha256": "43067d8d6569bef3e8569bc3f0e93d3aad0920d2e3bb3ddcd3f9f14458d5a5f1",
+  "prior_result_sha256": "fc0bf4ad68cbf87817a6a1a3cd0b88abd701b5eaadf2063df7f5f162fa36a855",
+  "root_cause": {
+    "most_likely": "MULTI_MODULE_REJECTED_BY_LEGACY_SINGLE_FILE_ASSUMPTION",
+    "status": "HYPOTHESIS_NOT_CONFIRMED",
+    "synthetic_reproduction": true,
+    "other_possible_causes": [
+      "CONTENT_TYPE_MISMATCH",
+      "BODY_TOO_LARGE",
+      "MULTIPART_PARSE_FAILURE",
+      "FILE_VS_STRING_COERCION",
+      "MODULE_MIME",
+      "METADATA_SHAPE",
+      "UTF8_INVALID"
+    ]
+  },
+  "owner_evidence": {
+    "old_editor_token_revoked": true,
+    "github_worker_secret_deleted": true,
+    "api_readback": false,
+    "current_editor_credential_assumed_absent": true
+  },
+  "limits": {
+    "total_body_bytes": 131072,
+    "module_bytes": 65536,
+    "metadata_bytes": 8192,
+    "module_count": 8,
+    "part_headers_bytes": 2048,
+    "cloudflare_platform_limit_claim": false
+  },
+  "gates": {
+    "parser": "OFFLINE PASS",
+    "fixture_tests": "OFFLINE PASS",
+    "candidate_validation": "OFFLINE PASS",
+    "remote_snapshot": "UNVERIFIED",
+    "remote_code_equivalence": "UNVERIFIED",
+    "remote_rollback_snapshot": "BLOCKED",
+    "deploy_readiness": "BLOCKED",
+    "remote_backend_atomicity_cas_fencing_replay": "UNVERIFIED"
+  },
+  "local_tests": {
+    "python": 366,
+    "node": 172,
+    "total": 538,
+    "pass": 538,
+    "fail": 0,
+    "new_parser_fixture_test_cases": 40,
+    "new_preflight_integration_tests": 7
+  },
+  "sdk_source_pins": {
+    "https://api.github.com/repos/cloudflare/cloudflare-typescript/git/ref/heads/main": "5ba0c3d36e3f3a7b12990b55649517b1d5c4914c",
+    "https://api.github.com/repos/cloudflare/cloudflare-python/git/ref/heads/main": "c9dd8956de93575640e06ea28e802951175099a0",
+    "https://api.github.com/repos/cloudflare/cloudflare-go/git/ref/heads/main": "05ca1e4fc7c7f02ffd8257ea199c985e1ec618e8",
+    "https://api.github.com/repos/cloudflare/workers-sdk/git/ref/heads/main": "22dbde63a5726ba5d17c15270db0b11b50122b79"
+  },
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "external_api_calls": 0,
+  "cloudflare_api_calls": 0,
+  "d1_queries": 0,
+  "remote_mutations": 0,
+  "deploy_executions": 0,
+  "live_jobs": 0,
+  "render_executions": 0,
+  "offline_complete": true,
+  "live_ready": false,
+  "posting_permitted": false,
+  "overall_progress_percent": 96,
+  "new_token_requested_before_ci": false,
+  "next_token_design": {
+    "name": "plm-sandbox-worker-stopped-deploy-once-v2",
+    "owner": "account",
+    "scope": "Specified Workers",
+    "exact_worker": "plm-serverless-sandbox-control",
+    "permission": "Individual Workers Editor",
+    "finite_ttl": true,
+    "secret_name": "PLM_CF_WORKER_API_TOKEN",
+    "other_permissions": [],
+    "registration_does_not_authorize_preflight": true,
+    "next_read_requires_separate_approval": true,
+    "old_run_rerun_permitted": false
+  },
+  "hundred_plus_accounts": "SEPARATE BLOCKER"
+}

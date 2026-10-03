@@ -1,6 +1,6 @@
-// Owner-authorized single read-only preflight after protected Editor registration, 2026-10-03.
+// Offline-repaired parser. A future read requires separate owner approval and a new exact pin.
 // Exact approved push SHA only. No deploy/mutation/DB/dispatch; no retries or fallback.
-import {createHash} from 'node:crypto';
+import {ContentError,readBoundedContent,parseWorkerContent} from './worker-content-parser.mjs';
 import {readFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
 import {ACCOUNT,BRANCH} from './read-only-diagnostic.mjs';
@@ -21,20 +21,8 @@ export async function editorPreflight(env,fetcher=fetch){
   const p={stage};out.probes.push(p);out.external_api_calls++;
   const r=await fetcher(url,{method:'GET',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${token}`}});p.http_status=r.status;
   if(!r.ok)throw Error('read_rejected');
-  const reader=r.body.getReader();let len=0,chunks=[];
-  for(;;){const {done,value}=await reader.read();if(done)break;len+=value.length;if(len>131072){await reader.cancel();throw Error('body_too_large');}chunks.push(value);}
-  const bytes=new Uint8Array(len);let offset=0;for(const c of chunks){bytes.set(c,offset);offset+=c.length;}
-  if(raw){
-   const type=r.headers.get('content-type')||'';
-   if(type.startsWith('multipart/form-data')){
-    const form=await new Response(bytes,{headers:{'content-type':type}}).formData();
-    const files=[...form.values()].filter(x=>typeof x!=='string');
-    if(files.length!==1)throw Error('module_count_unconfirmed');
-    return new TextDecoder('utf-8',{fatal:true}).decode(await files[0].arrayBuffer());
-   }
-   if(!/^(application\/javascript|text\/javascript|text\/plain)(;|$)/.test(type))throw Error('content_type_unconfirmed');
-   return new TextDecoder('utf-8',{fatal:true}).decode(bytes);
-  }
+  if(raw){out.content_diagnostics={};const bytes=await readBoundedContent(r,out.content_diagnostics);return parseWorkerContent(bytes,r.headers,out.content_diagnostics);}
+  const bytes=await readBoundedContent(r,{});
   const d=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));if(d?.success!==true)throw Error('provider_rejected');p.status='PASS';return d.result;
  }
  try{
@@ -66,21 +54,22 @@ export async function editorPreflight(env,fetcher=fetch){
   if(!Array.isArray(schedules?.schedules))throw Error('cron_unconfirmed');
   const listedSecrets=await get('worker_secret_names_only',base+'/secrets');
   if(!Array.isArray(listedSecrets)||listedSecrets.some(x=>typeof x.name!=='string'||!/^[_A-Za-z][_A-Za-z0-9]{0,127}$/.test(x.name)))throw Error('secret_metadata_unconfirmed');
-  const source=await get('worker_code_hash_only',base+'/content/v2',true);
-  const sha=createHash('sha256').update(source).digest('hex');
+  const content=await get('worker_code_hash_only',base+'/content/v2',true);
+  const sha=content.main_module_sha256;
   const again=active(await get('deployment_stability_readback',base+'/deployments'));
   if(again.id!==dep.id||again.versions[0].version_id!==versionID)throw Error('deployment_changed');
   const owner=JSON.parse(readFileSync(new URL('../readiness/STOPPED_WORKER_READINESS_2026_10_03.json',import.meta.url),'utf8')).owner_evidence;
   const publicOwner=owner.api_readback===false&&owner.custom_domains===0&&owner.routes===0&&owner.workers_dev_enabled===false&&owner.preview_enabled===false;
-  const snapshot={evidence_kind:'WORK_READ_ONLY_SNAPSHOT',account_id:ACCOUNT,worker_name:WORKER,deployment_id:dep.id,version_id:versionID,code_sha256:sha,code_metadata_etag:typeof resource.script.etag==='string'&&/^[A-Za-z0-9-]{1,128}$/.test(resource.script.etag)?resource.script.etag:null,bindings,vars,secrets:[...new Set([...secrets,...listedSecrets.map(x=>x.name)])],workers_dev:sub.enabled,preview_urls:sub.previews_enabled,compatibility_date:typeof resource.script_runtime?.compatibility_date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(resource.script_runtime.compatibility_date)?resource.script_runtime.compatibility_date:null,handlers:resource.script.handlers.filter(x=>typeof x==='string'),cron:schedules.schedules.length===0?[]:['NONEMPTY_REDACTED'],stable_deployment_readback:true,public_routes_owner_confirmed_none:publicOwner,routes:{status:'OWNER CONFIRMED NONE',api_readback:false},custom_domains:{status:'OWNER CONFIRMED NONE',api_readback:false},queue_external_consumers:'UNVERIFIED_NO_QUEUE_PERMISSION',observability:{enabled:typeof settings.observability?.enabled==='boolean'?settings.observability.enabled:null,logs_enabled:typeof settings.observability?.logs?.enabled==='boolean'?settings.observability.logs.enabled:null,logpush:typeof settings.logpush==='boolean'?settings.logpush:null,tail_consumers_count:Array.isArray(settings.tail_consumers)?settings.tail_consumers.length:null,logs_destinations_count:Array.isArray(settings.observability?.logs?.destinations)?settings.observability.logs.destinations.length:null,traces_destinations_count:Array.isArray(settings.observability?.traces?.destinations)?settings.observability.traces.destinations.length:null},checked_at:new Date().toISOString()};
-  out.snapshot=snapshot;out.snapshot_acquired=true;out.rollback=rollbackReadiness(snapshot);
+  const snapshot={evidence_kind:'WORK_READ_ONLY_SNAPSHOT',account_id:ACCOUNT,worker_name:WORKER,deployment_id:dep.id,version_id:versionID,code_sha256:sha,code_inventory:content,snapshot_complete:true,code_metadata_etag:typeof resource.script.etag==='string'&&/^[A-Za-z0-9-]{1,128}$/.test(resource.script.etag)?resource.script.etag:null,bindings,vars,secrets:[...new Set([...secrets,...listedSecrets.map(x=>x.name)])],workers_dev:sub.enabled,preview_urls:sub.previews_enabled,compatibility_date:typeof resource.script_runtime?.compatibility_date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(resource.script_runtime.compatibility_date)?resource.script_runtime.compatibility_date:null,handlers:resource.script.handlers.filter(x=>typeof x==='string'),cron:schedules.schedules.length===0?[]:['NONEMPTY_REDACTED'],stable_deployment_readback:true,public_routes_owner_confirmed_none:publicOwner,routes:{status:'OWNER CONFIRMED NONE',api_readback:false},custom_domains:{status:'OWNER CONFIRMED NONE',api_readback:false},queue_external_consumers:'UNVERIFIED_NO_QUEUE_PERMISSION',observability:{enabled:typeof settings.observability?.enabled==='boolean'?settings.observability.enabled:null,logs_enabled:typeof settings.observability?.logs?.enabled==='boolean'?settings.observability.logs.enabled:null,logpush:typeof settings.logpush==='boolean'?settings.logpush:null,tail_consumers_count:Array.isArray(settings.tail_consumers)?settings.tail_consumers.length:null,logs_destinations_count:Array.isArray(settings.observability?.logs?.destinations)?settings.observability.logs.destinations.length:null,traces_destinations_count:Array.isArray(settings.observability?.traces?.destinations)?settings.observability.traces.destinations.length:null},checked_at:new Date().toISOString()};
+  out.snapshot=snapshot;out.snapshot_acquired=true;out.snapshot_pass=true;out.rollback=rollbackReadiness(snapshot);
   out.placeholder_hash_matches=sha===CODE_SHA;
   const candidate=validateStoppedDeploy(JSON.parse(readFileSync(new URL('./wrangler.stopped.json',import.meta.url),'utf8')),JSON.parse(readFileSync(new URL('./stopped-deploy-plan.json',import.meta.url),'utf8')),readFileSync(new URL('./bootstrap-placeholder.mjs',import.meta.url),'utf8'));
   out.offline_candidate=candidate;
   out.scope_evidence='EXACT_WORKER_GET_SUCCEEDED_POLICY_EXCLUSIVITY_REQUIRES_OWNER_SCREEN';
-  out.preflight_pass=out.rollback.status==='DESIGN PASS'&&snapshot.secrets.length===0&&Object.values(vars).every(x=>x==='true')&&snapshot.compatibility_date!==null;
+  out.deploy_readiness=out.rollback.status==='DESIGN PASS'&&out.placeholder_hash_matches&&content.module_count===1&&snapshot.bindings.length===0&&snapshot.secrets.length===0&&snapshot.cron.length===0&&snapshot.handlers.join(',')==='fetch'&&snapshot.workers_dev===false&&snapshot.preview_urls===false&&publicOwner&&Object.values(vars).every(x=>x==='true')&&snapshot.compatibility_date!==null;
+  out.preflight_pass=out.deploy_readiness;
   out.stop_reason=out.preflight_pass?'OWNER_SCOPE_CI_AND_FINAL_DEPLOY_APPROVAL_REQUIRED':'REMOTE_SNAPSHOT_REQUIRES_REVIEW_NO_DEPLOY';
- }catch{out.preflight_pass=false;out.stop_reason='READ_ONLY_PREFLIGHT_UNCONFIRMED_NO_RETRY_NO_DEPLOY';}
+ }catch(e){out.preflight_pass=false;out.deploy_readiness=false;out.failure_code=e instanceof ContentError?e.code:'READ_ONLY_PREFLIGHT_UNCONFIRMED';out.failure_stage=out.probes.at(-1)?.stage??'CONTEXT';out.stop_reason='READ_ONLY_PREFLIGHT_UNCONFIRMED_NO_RETRY_NO_DEPLOY';}
  return out;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){

@@ -63,7 +63,7 @@
     "render_executions": 0,
     "cloudflare_api_calls": 8
   },
-  "next_owner_action": "中断したEditor TokenをCloudflare側で失効（本人操作）。失効済みと推測しない。",
+  "next_owner_action": "offline CI PASS後、v2限定Editor Tokenの本人作成・保護登録。再preflightは別承認が必要。",
   "owner_confirmed_status": {
     "worker_existence": "OWNER CONFIRMED PASS",
     "production_workers_dev": "OWNER CONFIRMED DISABLED",
@@ -89,7 +89,11 @@
     "expires_at": "2026-10-10T23:59:59.000Z",
     "token_scope_api_verified": false,
     "exclusive_scope_evidence": "OWNER_CREATION_SCREEN_REPORT",
-    "revocation": "NOT_CONFIRMED"
+    "revocation": "OWNER CONFIRMED REVOKED",
+    "github_secret_deleted": "OWNER CONFIRMED DELETED",
+    "active_api_confirmed_is_historical": true,
+    "current_token_assumed_absent": true,
+    "revocation_api_readback": false
   },
   "offline_ci": {
     "run_id": 37085331897,
@@ -100,5 +104,12 @@
     "fail": 0,
     "external_api_calls": 0,
     "render_executions": 0
+  },
+  "parser_repair": {
+    "evidence": "WORKER_CONTENT_PARSER_REPAIR_2026_10_03.json",
+    "status": "OFFLINE PASS",
+    "cloudflare_calls_this_repair": 0,
+    "remote_snapshot": "UNVERIFIED",
+    "deploy_permitted": false
   }
 }
