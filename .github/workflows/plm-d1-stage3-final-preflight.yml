@@ -10,11 +10,8 @@ jobs:
   preflight:
     # One authorized read-only push. No rerun, retry or fallback.
     # Retired failed run37107313982; new code pin required, never rerun.
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.run_attempt == 1 &&
-      github.event.before == 'a26ba0c6013238b52e346f66c37749e4bed384e7' &&
-      github.event.head_commit.message == 'PLM stage3 final read-only preflight 20261003-r1'
+    # Retired after read-only SUCCESS37107515426. No rerun.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false

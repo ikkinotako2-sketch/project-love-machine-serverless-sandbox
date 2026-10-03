@@ -1,0 +1,57 @@
+{
+  "evidence_kind": "FROZEN_EXPECTATIONS_BEFORE_ANY_STAGE3_MUTATION",
+  "sql_sha256": "012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686",
+  "before_schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+  "expected_schema_file": "serverless/durable-stage2-expected-schema.json",
+  "expected_schema_sha256": "c56781320a403573c9c76d827eaad2ef47226c70dd7474224a5ecbb7d92bd159",
+  "expected": {
+    "sha256": "c56781320a403573c9c76d827eaad2ef47226c70dd7474224a5ecbb7d92bd159",
+    "new_tables": 3,
+    "new_triggers": 6,
+    "columns": {
+      "durable_stage2_job": 16,
+      "durable_stage2_checkpoint": 11,
+      "durable_stage2_callback": 9
+    },
+    "indexes": 8,
+    "new_table_rows": 0,
+    "old_atomicity_row_unchanged": true,
+    "old_schema_unchanged": true,
+    "test_jobs_rows": 0
+  },
+  "expected_prior_row": {
+    "platform": "test",
+    "account_id": "test_reference_001",
+    "intent_id": "plm-d1-atomicity-20261003-r1",
+    "job_id": "plm-d1-atomicity-job-001",
+    "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+    "owner": "contender_a",
+    "owner_epoch": 1,
+    "fencing_token": 1,
+    "state": "succeeded",
+    "version": 3,
+    "last_request_id": "terminal",
+    "delivery_id": "delivery_001",
+    "result_id": "result_001",
+    "created_at": 1791007331,
+    "updated_at": 1791007333
+  },
+  "inventory": {
+    "account": "6c8ccd6aface937ab5dabef61cb64534",
+    "db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "db_name": "plm-serverless-sandbox-state",
+    "total": 1,
+    "other_d1": 0,
+    "complete": true
+  },
+  "preflight_bookmark": "0000000f-00000000-000050f9-e6f9fddf5a9929b98c820a5775a58eee",
+  "mutations_maximum": 1,
+  "retry": 0,
+  "resend": 0,
+  "fallback": 0,
+  "automatic_rollback": 0,
+  "post_check_read_token_only": true,
+  "success_requires_http_ack_and_full_post_check": true,
+  "unknown_requires_manual_reconciliation": true,
+  "stage2_test_requires_new_separate_token_and_owner_approval": true
+}
