@@ -1,4 +1,5 @@
-// Prepared read-only account-owned Editor preflight. No deploy/mutation/DB/dispatch.
+// Owner-authorized single read-only preflight after protected Editor registration, 2026-10-03.
+// Exact approved push SHA only. No deploy/mutation/DB/dispatch; no retries or fallback.
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
