@@ -1,0 +1,29 @@
+{
+  "evidence_kind": "GUARDED_OFFLINE_ROOT_CAUSE_ISOLATION_CI",
+  "run_id": 37115692109,
+  "attempt": 1,
+  "job_id": 111181964470,
+  "tested_commit": "b0af5b31a76560b5ef278b8bf38b59aaab73e21f",
+  "conclusion": "success",
+  "python_pass": 456,
+  "node_pass": 433,
+  "total_pass": 889,
+  "fail": 0,
+  "additional_tests": 17,
+  "external_api_calls": 0,
+  "d1_write": 0,
+  "render_executions": 0,
+  "posting": 0,
+  "cloudflare_api_calls_during_isolation": 0,
+  "local_d1_tests": 9,
+  "sqlite_tests": 9,
+  "local_runtime_not_current_remote": true,
+  "source_evidence": [
+    "2026-10-03T10:13:34.0322076Z Ran 456 tests in 0.530s",
+    "2026-10-03T10:13:34.0413158Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T10:13:34.1889843Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T10:13:34.8563853Z ℹ tests 433",
+    "2026-10-03T10:13:34.8564990Z ℹ pass 433",
+    "2026-10-03T10:13:34.8565442Z ℹ fail 0"
+  ]
+}
