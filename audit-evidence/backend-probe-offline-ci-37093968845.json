@@ -1,0 +1,47 @@
+{
+  "evidence_kind": "GITHUB_ACTIONS_GUARDED_OFFLINE_CI",
+  "run_id": 37093968845,
+  "job_id": 111119981011,
+  "run_attempt": 1,
+  "commit": "02d0f3b43026b0270491f1a6ab54a6b630149dd9",
+  "conclusion": "success",
+  "python_pass": 402,
+  "node_pass": 188,
+  "total_pass": 590,
+  "fail": 0,
+  "added_python": 36,
+  "added_node": 4,
+  "external_api_calls": 0,
+  "render_executions": 0,
+  "native_seccomp_active": true,
+  "socket_syscalls_denied": true,
+  "exec_syscalls_denied": true,
+  "separate_read_only_d1_audit": {
+    "run_id": 37093009614,
+    "get_calls": 4,
+    "read_query_post_calls": 7,
+    "external_api_calls": 11,
+    "cloudflare_mutations": 0,
+    "d1_writes": 0
+  },
+  "current_phase": {
+    "migration": 0,
+    "deploy": 0,
+    "worker_invocation": 0,
+    "live_job": 0,
+    "render": 0,
+    "posting": 0
+  },
+  "live_ready": false,
+  "posting_permitted": false,
+  "approved_migration_execution": false,
+  "approved_remote_test_execution": false,
+  "evidence_lines": [
+    "2026-10-03T03:40:15.4492944Z Ran 402 tests in 0.440s",
+    "2026-10-03T03:40:15.4585824Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T03:40:15.5812593Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T03:40:15.9032599Z ℹ tests 188",
+    "2026-10-03T03:40:15.9033675Z ℹ pass 188",
+    "2026-10-03T03:40:15.9034157Z ℹ fail 0"
+  ]
+}
