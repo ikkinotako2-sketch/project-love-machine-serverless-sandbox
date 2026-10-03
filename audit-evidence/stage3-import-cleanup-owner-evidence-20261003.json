@@ -1,0 +1,10 @@
+{
+  "evidence_kind": "OWNER_STATEMENT_NOT_PROVIDER_VERIFIED",
+  "received_at": "2026-10-03T22:47:18+09:00",
+  "cloudflare_import_token_revoked_or_deleted": true,
+  "github_secret": "PLM_CF_D1_STAGE3_IMPORT_TOKEN",
+  "github_secret_deleted": true,
+  "read_token_retained": true,
+  "token_value_saved": false,
+  "mutation_authorized": false
+}
