@@ -1,0 +1,31 @@
+{
+  "evidence_kind": "GITHUB_GUARDED_OFFLINE_CI",
+  "run_id": 37109891802,
+  "job_id": 111165590050,
+  "attempt": 1,
+  "conclusion": "success",
+  "tested_commit": "e29aee743a3f8c5701999ae0f72f34d69cc1f3f4",
+  "python_pass": 453,
+  "node_pass": 403,
+  "total_pass": 856,
+  "fail": 0,
+  "additional_tests": 44,
+  "external_api_calls": 0,
+  "d1_write": 0,
+  "render_executions": 0,
+  "posting": 0,
+  "sanitized_test_evidence": [
+    "2026-10-03T08:29:58.8480011Z Ran 453 tests in 0.527s",
+    "2026-10-03T08:29:58.8568939Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T08:29:59.0083649Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T08:29:59.6729661Z ℹ tests 403",
+    "2026-10-03T08:29:59.6731327Z ℹ pass 403",
+    "2026-10-03T08:29:59.6732103Z ℹ fail 0"
+  ],
+  "read_only_reconciliation_run": 37109169905,
+  "classification": "NOT_APPLIED",
+  "cloudflare_read_only_api_calls": 10,
+  "cloudflare_mutation": 0,
+  "live_ready": false,
+  "posting_permitted": false
+}
