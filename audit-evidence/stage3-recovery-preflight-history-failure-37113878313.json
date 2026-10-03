@@ -1,0 +1,27 @@
+{
+  "run_id": 37113878313,
+  "attempt": 1,
+  "event_commit": "6966528d11e233f7a375248efcb06dc53de1d5ff",
+  "checked_code": "b62dd580a584870f9122407b52d5f5403780c847",
+  "evidence": {
+    "pass": false,
+    "cloudflare_read_only_api_calls": 0,
+    "github_history_get_calls": 1,
+    "d1_mutation": 0,
+    "d1_write": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "ai_api": 0,
+    "render": 0,
+    "posting": 0,
+    "retry": 0,
+    "resend": 0,
+    "fallback": 0,
+    "live_ready": false,
+    "posting_permitted": false,
+    "failure_code": "RESPONSE_TOO_LARGE"
+  },
+  "classification": "GITHUB_HISTORY_SIZE_FAILURE_BEFORE_CLOUDFLARE",
+  "old_run_rerun": false,
+  "token_verify_performed": false
+}
