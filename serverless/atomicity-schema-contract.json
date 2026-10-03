@@ -1,0 +1,274 @@
+{
+  "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+  "migration_receipt_sha256": "2310028cfcc6a7222411a059fe9d62f2f5a847fbaabbeaaa1a73ef47c4263e22",
+  "snapshot": {
+    "schema": [
+      {
+        "type": "table",
+        "name": "_cf_KV",
+        "tbl_name": "_cf_KV",
+        "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+      },
+      {
+        "type": "table",
+        "name": "backend_probe_v1",
+        "tbl_name": "backend_probe_v1",
+        "sql": "CREATE TABLE backend_probe_v1 (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n intent_id TEXT NOT NULL CHECK(intent_id='plm-d1-atomicity-20261003-r1'),\n job_id TEXT NOT NULL UNIQUE CHECK(job_id='plm-d1-atomicity-job-001'),\n content_fingerprint TEXT NOT NULL CHECK(content_fingerprint='5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b'),\n owner TEXT CHECK(owner IN ('contender_a','contender_b')),\n owner_epoch INTEGER NOT NULL CHECK(typeof(owner_epoch)='integer'),\n fencing_token INTEGER NOT NULL CHECK(typeof(fencing_token)='integer'),\n state TEXT NOT NULL CHECK(state IN ('ready','claimed','succeeded','failed')),\n version INTEGER NOT NULL CHECK(typeof(version)='integer'),\n last_request_id TEXT NOT NULL CHECK(length(last_request_id) BETWEEN 1 AND 96),\n delivery_id TEXT UNIQUE,\n result_id TEXT UNIQUE,\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n PRIMARY KEY(platform,account_id,intent_id),\n CHECK((state='ready' AND version=1 AND owner IS NULL AND owner_epoch=0 AND fencing_token=0 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state='claimed' AND version=2 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state IN ('succeeded','failed') AND version=3 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NOT NULL AND result_id IS NOT NULL))\n)"
+      },
+      {
+        "type": "table",
+        "name": "test_jobs",
+        "tbl_name": "test_jobs",
+        "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+      },
+      {
+        "type": "trigger",
+        "name": "backend_probe_v1_guard",
+        "tbl_name": "backend_probe_v1",
+        "sql": "CREATE TRIGGER backend_probe_v1_guard BEFORE UPDATE ON backend_probe_v1\nWHEN NEW.platform IS NOT OLD.platform OR NEW.account_id IS NOT OLD.account_id\n OR NEW.intent_id IS NOT OLD.intent_id OR NEW.job_id IS NOT OLD.job_id\n OR NEW.content_fingerprint IS NOT OLD.content_fingerprint OR NEW.created_at IS NOT OLD.created_at\n OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT((OLD.state='ready' AND NEW.state='claimed' AND NEW.owner_epoch=1 AND NEW.fencing_token=1)\n OR (OLD.state='claimed' AND NEW.state IN ('succeeded','failed') AND NEW.owner IS OLD.owner\n AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token))\nBEGIN\n SELECT RAISE(ABORT,'backend_probe_guard');\nEND"
+      }
+    ],
+    "test_jobs_columns": [
+      {
+        "cid": 0,
+        "name": "platform",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "account_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 2
+      },
+      {
+        "cid": 2,
+        "name": "job_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 3
+      },
+      {
+        "cid": 3,
+        "name": "content_fingerprint",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "claimant",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "state",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "last_operation",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "run_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "created_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "updated_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ],
+    "probe_columns": [
+      {
+        "cid": 0,
+        "name": "platform",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "account_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 2
+      },
+      {
+        "cid": 2,
+        "name": "intent_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 3
+      },
+      {
+        "cid": 3,
+        "name": "job_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "content_fingerprint",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "owner",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "owner_epoch",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "fencing_token",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "state",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "last_request_id",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "delivery_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 12,
+        "name": "result_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 13,
+        "name": "created_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 14,
+        "name": "updated_at",
+        "type": "INTEGER",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      }
+    ],
+    "probe_indexes": [
+      {
+        "seq": 3,
+        "name": "sqlite_autoindex_backend_probe_v1_1",
+        "unique": 1,
+        "origin": "u",
+        "partial": 0
+      },
+      {
+        "seq": 2,
+        "name": "sqlite_autoindex_backend_probe_v1_2",
+        "unique": 1,
+        "origin": "u",
+        "partial": 0
+      },
+      {
+        "seq": 1,
+        "name": "sqlite_autoindex_backend_probe_v1_3",
+        "unique": 1,
+        "origin": "u",
+        "partial": 0
+      },
+      {
+        "seq": 0,
+        "name": "sqlite_autoindex_backend_probe_v1_4",
+        "unique": 1,
+        "origin": "pk",
+        "partial": 0
+      }
+    ]
+  }
+}
