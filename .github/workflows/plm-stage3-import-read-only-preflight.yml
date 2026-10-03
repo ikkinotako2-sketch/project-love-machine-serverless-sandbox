@@ -8,7 +8,8 @@ permissions:
   actions: read
 jobs:
   preflight:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '51c9e79d7bb725be135f5a597ecde028b35d06e8' && github.event.head_commit.message == 'PLM stage3 import verify read-only once 20261003-r2'
+    # Consumed read-only preflight 37120908659; import remains disabled.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
