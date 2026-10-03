@@ -100,12 +100,15 @@ export async function deployOnce(env,{fetcher,preflight=editorPreflight,consumeI
 // deployment run consumes this operation, including failure/cancellation/unknown.
 export async function assertUnusedWorkflow(env,fetcher){
  const prefix=`https://api.github.com/repos/${env.GITHUB_REPOSITORY}/actions/workflows/plm-stopped-worker-deploy-once.yml/runs?per_page=100&page=`;
+ let currentConfirmed=false;
  for(let page=1;page<=100;page++){
   const r=await fetcher(prefix+page,{method:'GET',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${env.GITHUB_TOKEN}`,'X-GitHub-Api-Version':'2022-11-28'}});
   if(!r.ok)throw Error('RUN_HISTORY_UNCONFIRMED');const data=await r.json();
   if(!Array.isArray(data.workflow_runs)||!Number.isSafeInteger(data.total_count))throw Error('RUN_HISTORY_INVALID');
+  const current=data.workflow_runs.find(x=>String(x.id)===env.GITHUB_RUN_ID);
+  if(current){if(current.head_sha!==env.GITHUB_SHA||current.run_attempt!==1||current.event!=='push')throw Error('CURRENT_RUN_IDENTITY_UNCONFIRMED');currentConfirmed=true;}
   if(data.workflow_runs.some(x=>String(x.id)!==env.GITHUB_RUN_ID&&x.conclusion!=='skipped'))throw Error('PREVIOUS_DEPLOY_RUN_CONSUMED');
-  if(page*100>=data.total_count)return;
+  if(page*100>=data.total_count){if(!currentConfirmed)throw Error('CURRENT_RUN_MISSING_NO_WRITE');return;}
  }
  throw Error('RUN_HISTORY_PAGINATION_UNCONFIRMED');
 }

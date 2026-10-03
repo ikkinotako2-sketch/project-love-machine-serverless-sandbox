@@ -71,7 +71,8 @@ test('postcheck refuses code, flags, DB binding, handlers, stable ids and public
 });
 test('cross-process GitHub fence paginates and rejects previous failed/cancelled/unknown runs',async()=>{
  let calls=0;
- await assertUnusedWorkflow(env,async()=>new Response(JSON.stringify({total_count:101,workflow_runs:++calls===1?[{id:999,conclusion:null}]:[{id:998,conclusion:'skipped'}]})));assert.equal(calls,2);
+ await assertUnusedWorkflow(env,async()=>new Response(JSON.stringify({total_count:101,workflow_runs:++calls===1?[{id:999,conclusion:null,head_sha:env.GITHUB_SHA,run_attempt:1,event:'push'}]:[{id:998,conclusion:'skipped'}]})));assert.equal(calls,2);
  for(const conclusion of ['failure','cancelled',null,'success'])await assert.rejects(assertUnusedWorkflow(env,async()=>new Response(JSON.stringify({total_count:1,workflow_runs:[{id:998,conclusion}]}))));
  await assert.rejects(assertUnusedWorkflow(env,async()=>new Response('',{status:403})));
+ await assert.rejects(assertUnusedWorkflow(env,async()=>new Response(JSON.stringify({total_count:0,workflow_runs:[]}))));
 });
