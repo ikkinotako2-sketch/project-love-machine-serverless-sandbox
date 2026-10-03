@@ -1,0 +1,35 @@
+name: PLM Post Atomicity Cleanup Read Only
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['serverless/post-atomicity-read-only.mjs', '.github/workflows/plm-post-atomicity-read-only.yml']
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '36c263a7e7f96e8c66a74ebe9c2bb21c4305c6a3' && github.event.head_commit.message == 'PLM post atomicity cleanup read-only audit 20261003-r1'
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_POST_ATOMICITY_PARENT: ${{ github.event.before }}
+      PLM_POST_ATOMICITY_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Existing successful row read-only audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+        run: node serverless/post-atomicity-read-only.mjs
