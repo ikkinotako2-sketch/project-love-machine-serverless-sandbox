@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   preflight:
-    if: false
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '033a71c555222e6c4df592d44d960cd5aadbfbd6' && github.event.head_commit.message == 'PLM generalized backend verify read-only once 20261004-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -20,13 +20,13 @@ jobs:
       EMERGENCY_STOP: 'true'
       PLM_GENERALIZED_ALLOW: 'false'
       PLM_GENERALIZED_OWNER_APPROVAL: UNAPPROVED
-      PLM_GENERALIZED_PREFLIGHT_PIN: UNAPPROVED
+      PLM_GENERALIZED_PREFLIGHT_PIN: 033a71c555222e6c4df592d44d960cd5aadbfbd6
       PLM_GENERALIZED_BEFORE: ${{ github.event.before }}
       PLM_GENERALIZED_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: 033a71c555222e6c4df592d44d960cd5aadbfbd6
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
