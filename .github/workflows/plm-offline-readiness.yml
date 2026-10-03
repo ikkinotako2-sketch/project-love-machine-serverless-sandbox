@@ -1,9 +1,9 @@
 name: PLM Offline Readiness
 on:
   push:
-    paths: ['readiness/**', '.github/workflows/plm-offline-readiness.yml']
+    paths: ['readiness/**', 'serverless/**', '.github/workflows/plm-offline-readiness.yml']
   pull_request:
-    paths: ['readiness/**', '.github/workflows/plm-offline-readiness.yml']
+    paths: ['readiness/**', 'serverless/**', '.github/workflows/plm-offline-readiness.yml']
 permissions:
   contents: read
 jobs:
