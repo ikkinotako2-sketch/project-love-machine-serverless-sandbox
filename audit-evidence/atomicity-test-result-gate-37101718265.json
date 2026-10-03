@@ -1,0 +1,39 @@
+{
+  "scope": "ONE_FIXED_SANDBOX_PROBE_ONLY_NOT_FULL_PRODUCTION_BACKEND",
+  "progress_percent_estimate": 98,
+  "delta_pt": 1,
+  "remaining_active_minutes_estimate": [
+    300,
+    660
+  ],
+  "execution_run_id": 37101718265,
+  "test_plan_sha256": "cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28",
+  "gates": {
+    "unique_intent_mint_once": "PASS_BOUNDED_REMOTE_PROBE",
+    "initial_claim_CAS": "PASS_BOUNDED_REMOTE_PROBE",
+    "same_version_concurrent_claim": "PASS_BOUNDED_REMOTE_PROBE",
+    "stale_version": "PASS_BOUNDED_REMOTE_PROBE",
+    "stale_owner": "PASS_BOUNDED_REMOTE_PROBE",
+    "fingerprint_binding_mismatch": "PASS_BOUNDED_REMOTE_PROBE",
+    "terminal_duplicate_replay": "PASS_BOUNDED_REMOTE_PROBE",
+    "version_monotonicity": "PASS_V1_V2_V3_ONLY",
+    "immutable_fingerprint_unchanged": "PASS_THIS_FIXED_PATH_ONLY",
+    "arbitrary_overwrite_rejection": "UNVERIFIED_REMOTE",
+    "fencing_handoff": "UNVERIFIED",
+    "generation_checkpoint": "UNVERIFIED",
+    "callback_replay_ledger": "UNVERIFIED",
+    "full_durable_backend": "UNVERIFIED",
+    "restart_crash_with_real_external_effect": "UNVERIFIED",
+    "metrics_Improvement_next_intent": "UNVERIFIED",
+    "credential_cleanup": "BLOCKED_OWNER_REQUIRED",
+    "hundred_plus_accounts": "BLOCKED_SEPARATE"
+  },
+  "live_ready": false,
+  "posting_permitted": false,
+  "probe_row_retained": true,
+  "delete": 0,
+  "row_reset": 0,
+  "automatic_rollback": 0,
+  "token_revoked_verified": false,
+  "github_secret_deleted_verified": false
+}

@@ -8,8 +8,8 @@ permissions:
   actions: read
 jobs:
   probe:
-    # ONE OWNER APPROVAL: fixed plan only; fresh gate and no prior execution required.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'b8f7dc93cdae3b300a1a095bd39a1409560955c7' && github.event.head_commit.message == 'PLM execute owner-approved fixed atomicity once 20261003-r1'
+    # HARD DISABLED. Token registration is NOT execution approval.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -20,17 +20,14 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_ATOMICITY_ALLOW: 'true'
-      PLM_ATOMICITY_OWNER_APPROVAL: EXECUTE_FIXED_ATOMICITY_ONCE
-      PLM_ATOMICITY_APPROVED_COMMIT: b8f7dc93cdae3b300a1a095bd39a1409560955c7
-      PLM_ATOMICITY_EXECUTION_CODE_COMMIT: b8f7dc93cdae3b300a1a095bd39a1409560955c7
-      PLM_ATOMICITY_EVENT_BEFORE: ${{ github.event.before }}
-      PLM_ATOMICITY_ACTIVATION_MESSAGE: ${{ github.event.head_commit.message }}
+      PLM_ATOMICITY_ALLOW: 'false'
+      PLM_ATOMICITY_OWNER_APPROVAL: UNAPPROVED
+      PLM_ATOMICITY_APPROVED_COMMIT: UNAPPROVED
       PLM_ATOMICITY_PLAN_SHA: cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: b8f7dc93cdae3b300a1a095bd39a1409560955c7
+          ref: UNAPPROVED
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:

@@ -1,0 +1,22 @@
+{
+  "run_id": 37101654530,
+  "attempt": 1,
+  "commit": "b8f7dc93cdae3b300a1a095bd39a1409560955c7",
+  "conclusion": "success",
+  "python_pass": 406,
+  "node_pass": 300,
+  "guard": {
+    "blocked_probe_attempts": {
+      "blocked_exec": 10,
+      "blocked_import": 10,
+      "blocked_media_write": 5,
+      "blocked_network": 2
+    },
+    "exec_syscalls_denied": true,
+    "external_api_calls": 0,
+    "native_seccomp_active": true,
+    "render_executions": 0,
+    "socket_syscalls_denied": true
+  },
+  "fail": 0
+}

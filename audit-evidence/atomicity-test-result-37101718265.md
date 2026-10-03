@@ -1,0 +1,11 @@
+# Fixed remote atomicity result — run 37101718265
+
+SUCCESS, attempt1. Plan SHA cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28 unchanged. Activation fff5d4b69d84674c4cf325c72fd4f0f8c35280b6; code pin b8f7dc93cdae3b300a1a095bd39a1409560955c7. Fresh token active/finite expiry, complete inventory target1/other0, canonical schema fingerprint, empty probe, Read Token primary reads, history all pages and clear journal verified before first mutation. Scope remains owner evidence, not API permission exclusivity verification.
+
+Mutation requests9, acknowledged logical row changes3, retry/resend/fallback/DELETE/reset/automatic rollback0. Every mutation HTTP200 and fixed primary readback matched. Readbacks9. Claimer A won, B changed0. Client HTTP overlap379ms; no claim of D1 internal parallel execution. 05/06/07/09 all changed0, identity replay02 changed0. Final primary row has15 canonical fields, state succeeded/version3/owner contender_a/epoch=fence1/terminal/delivery_001/result_001. created1791007331/updated1791007333. Probe retained as audit, never reset.
+
+Fresh bookmark 0000000d-00000006-000050f9-2e5087254f288f2f276b2531ddeb4d5b. Cloudflare total30 = read-only21 + mutation9. GitHub history1page. Worker deploy/invocation/access/vars changes0, AI/render/live/posting0. Unknown0, reconciliation0. Offline CI 37101654530: Python406/Node300/total706/FAIL0, native/socket/exec guard evidence offline external_api_calls0/render0.
+
+Progress estimate98% (+1pt); remaining active estimate300–660min excluding owner waiting and future1h/24h observation. Only fixed first-probe behaviors PASS; arbitrary fingerprint overwrite rejection, owner handoff/fencing, checkpoint, real callback ledger, full durable backend, metrics/Improvement/nextintent remain UNVERIFIED. live_ready=false/posting_permitted=false, four flags true, 100+accounts separateBLOCKER.
+
+One owner operation now: revoke/delete Cloudflare plm-sandbox-d1-atomicity-test-once, verify revocation, delete GitHub PLM_CF_D1_ATOMICITY_TEST_TOKEN. Work has not independently verified cleanup and does not presume it done. No subsequent remote write before owner confirms cleanup. Original hard-disabled execution workflow restored; prior non-skipped run and retained row also prevent new execution. Protected production/main/n8n/V1/YouTube/1h/24h/Improvement/PR15/16 unchanged.

@@ -1,0 +1,632 @@
+{
+  "run_id": 37101718265,
+  "attempt": 1,
+  "owner_approved_once": true,
+  "activation_commit": "fff5d4b69d84674c4cf325c72fd4f0f8c35280b6",
+  "code_commit": "b8f7dc93cdae3b300a1a095bd39a1409560955c7",
+  "evidence": {
+    "status": "SUCCESS",
+    "retry": 0,
+    "resend": 0,
+    "fallback": 0,
+    "delete": 0,
+    "row_reset": 0,
+    "automatic_rollback": 0,
+    "deploy": 0,
+    "worker_invocation": 0,
+    "live_jobs": 0,
+    "ai_api": 0,
+    "render": 0,
+    "posting": 0,
+    "live_ready": false,
+    "posting_permitted": false,
+    "owner_token_revocation_required": true,
+    "token_scope_api_verified": false,
+    "token_scope_owner_evidence": true,
+    "token_active": true,
+    "token_expires_at": "2026-10-10T23:59:59.000Z",
+    "token_owner": "account",
+    "preflight": {
+      "pass": true,
+      "external_api_calls": 10,
+      "get_calls": 4,
+      "read_query_post_calls": 6,
+      "cloudflare_mutations": 0,
+      "d1_writes": 0,
+      "deploy": 0,
+      "worker_invocation": 0,
+      "live_jobs": 0,
+      "render": 0,
+      "posting": 0,
+      "primary_reads_confirmed": true,
+      "token_active": true,
+      "read_token_owner": "user",
+      "inventory": {
+        "account": "6c8ccd6aface937ab5dabef61cb64534",
+        "db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+        "db_name": "plm-serverless-sandbox-state",
+        "total": 1,
+        "other_d1": 0,
+        "complete": true
+      },
+      "database_size_bytes": 40960,
+      "bookmark": "0000000d-00000000-000050f9-9b7e200c920083a9de722c298fd749c3",
+      "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+      "snapshot": {
+        "schema": [
+          {
+            "type": "table",
+            "name": "_cf_KV",
+            "tbl_name": "_cf_KV",
+            "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+          },
+          {
+            "type": "table",
+            "name": "backend_probe_v1",
+            "tbl_name": "backend_probe_v1",
+            "sql": "CREATE TABLE backend_probe_v1 (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n intent_id TEXT NOT NULL CHECK(intent_id='plm-d1-atomicity-20261003-r1'),\n job_id TEXT NOT NULL UNIQUE CHECK(job_id='plm-d1-atomicity-job-001'),\n content_fingerprint TEXT NOT NULL CHECK(content_fingerprint='5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b'),\n owner TEXT CHECK(owner IN ('contender_a','contender_b')),\n owner_epoch INTEGER NOT NULL CHECK(typeof(owner_epoch)='integer'),\n fencing_token INTEGER NOT NULL CHECK(typeof(fencing_token)='integer'),\n state TEXT NOT NULL CHECK(state IN ('ready','claimed','succeeded','failed')),\n version INTEGER NOT NULL CHECK(typeof(version)='integer'),\n last_request_id TEXT NOT NULL CHECK(length(last_request_id) BETWEEN 1 AND 96),\n delivery_id TEXT UNIQUE,\n result_id TEXT UNIQUE,\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n PRIMARY KEY(platform,account_id,intent_id),\n CHECK((state='ready' AND version=1 AND owner IS NULL AND owner_epoch=0 AND fencing_token=0 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state='claimed' AND version=2 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state IN ('succeeded','failed') AND version=3 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NOT NULL AND result_id IS NOT NULL))\n)"
+          },
+          {
+            "type": "table",
+            "name": "test_jobs",
+            "tbl_name": "test_jobs",
+            "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+          },
+          {
+            "type": "trigger",
+            "name": "backend_probe_v1_guard",
+            "tbl_name": "backend_probe_v1",
+            "sql": "CREATE TRIGGER backend_probe_v1_guard BEFORE UPDATE ON backend_probe_v1\nWHEN NEW.platform IS NOT OLD.platform OR NEW.account_id IS NOT OLD.account_id\n OR NEW.intent_id IS NOT OLD.intent_id OR NEW.job_id IS NOT OLD.job_id\n OR NEW.content_fingerprint IS NOT OLD.content_fingerprint OR NEW.created_at IS NOT OLD.created_at\n OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT((OLD.state='ready' AND NEW.state='claimed' AND NEW.owner_epoch=1 AND NEW.fencing_token=1)\n OR (OLD.state='claimed' AND NEW.state IN ('succeeded','failed') AND NEW.owner IS OLD.owner\n AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token))\nBEGIN\n SELECT RAISE(ABORT,'backend_probe_guard');\nEND"
+          }
+        ],
+        "test_jobs_columns": [
+          {
+            "cid": 0,
+            "name": "platform",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 1
+          },
+          {
+            "cid": 1,
+            "name": "account_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 2
+          },
+          {
+            "cid": 2,
+            "name": "job_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 3
+          },
+          {
+            "cid": 3,
+            "name": "content_fingerprint",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 4,
+            "name": "claimant",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 5,
+            "name": "state",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 6,
+            "name": "version",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 7,
+            "name": "last_operation",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 8,
+            "name": "run_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 9,
+            "name": "created_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 10,
+            "name": "updated_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          }
+        ],
+        "probe_columns": [
+          {
+            "cid": 0,
+            "name": "platform",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 1
+          },
+          {
+            "cid": 1,
+            "name": "account_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 2
+          },
+          {
+            "cid": 2,
+            "name": "intent_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 3
+          },
+          {
+            "cid": 3,
+            "name": "job_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 4,
+            "name": "content_fingerprint",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 5,
+            "name": "owner",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 6,
+            "name": "owner_epoch",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 7,
+            "name": "fencing_token",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 8,
+            "name": "state",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 9,
+            "name": "version",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 10,
+            "name": "last_request_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 11,
+            "name": "delivery_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 12,
+            "name": "result_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 13,
+            "name": "created_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 14,
+            "name": "updated_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          }
+        ],
+        "probe_indexes": [
+          {
+            "seq": 3,
+            "name": "sqlite_autoindex_backend_probe_v1_1",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 2,
+            "name": "sqlite_autoindex_backend_probe_v1_2",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 1,
+            "name": "sqlite_autoindex_backend_probe_v1_3",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 0,
+            "name": "sqlite_autoindex_backend_probe_v1_4",
+            "unique": 1,
+            "origin": "pk",
+            "partial": 0
+          }
+        ]
+      },
+      "probe_row_count": 0,
+      "test_jobs_row_count": 0,
+      "old_schema_unchanged": true,
+      "account_isolation": "unverified",
+      "d1_isolation": "COMPLETE_INVENTORY_TARGET_ONLY"
+    },
+    "history": [
+      {
+        "page": 1,
+        "total_count": 3,
+        "runs": [
+          {
+            "id": 37101718265,
+            "attempt": 1,
+            "conclusion": null
+          },
+          {
+            "id": 37101654537,
+            "attempt": 1,
+            "conclusion": "skipped"
+          },
+          {
+            "id": 37100148817,
+            "attempt": 1,
+            "conclusion": "skipped"
+          }
+        ]
+      }
+    ],
+    "test_plan_sha256": "cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28",
+    "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+    "code_commit": "b8f7dc93cdae3b300a1a095bd39a1409560955c7",
+    "event_commit": "fff5d4b69d84674c4cf325c72fd4f0f8c35280b6",
+    "mutation_submissions": 9,
+    "successful_logical_row_changes": 3,
+    "reconciliation_sets": 0,
+    "steps": [
+      {
+        "id": "01_init",
+        "changes": 1,
+        "start_ms": 1791007331677,
+        "end_ms": 1791007332057,
+        "http_status": 200
+      },
+      {
+        "id": "02_identity_replay",
+        "changes": 0,
+        "start_ms": 1791007332294,
+        "end_ms": 1791007332494,
+        "http_status": 200
+      },
+      {
+        "id": "03_claim_a",
+        "changes": 1,
+        "start_ms": 1791007332870,
+        "end_ms": 1791007333250,
+        "http_status": 200
+      },
+      {
+        "id": "04_claim_b",
+        "changes": 0,
+        "start_ms": 1791007332871,
+        "end_ms": 1791007333323,
+        "http_status": 200
+      },
+      {
+        "id": "05_stale_version",
+        "changes": 0,
+        "start_ms": 1791007333612,
+        "end_ms": 1791007333810,
+        "http_status": 200
+      },
+      {
+        "id": "06_stale_owner",
+        "changes": 0,
+        "start_ms": 1791007334018,
+        "end_ms": 1791007334224,
+        "http_status": 200
+      },
+      {
+        "id": "07_wrong_fingerprint",
+        "changes": 0,
+        "start_ms": 1791007334440,
+        "end_ms": 1791007334636,
+        "http_status": 200
+      },
+      {
+        "id": "08_terminal",
+        "changes": 1,
+        "start_ms": 1791007334841,
+        "end_ms": 1791007335043,
+        "http_status": 200
+      },
+      {
+        "id": "09_terminal_replay",
+        "changes": 0,
+        "start_ms": 1791007335237,
+        "end_ms": 1791007335454,
+        "http_status": 200
+      }
+    ],
+    "primary_readbacks": [
+      {
+        "after_submission": 0,
+        "served_by_primary": true,
+        "row": null
+      },
+      {
+        "after_submission": 1,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": null,
+          "owner_epoch": 0,
+          "fencing_token": 0,
+          "state": "ready",
+          "version": 1,
+          "last_request_id": "init",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007331
+        }
+      },
+      {
+        "after_submission": 2,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": null,
+          "owner_epoch": 0,
+          "fencing_token": 0,
+          "state": "ready",
+          "version": 1,
+          "last_request_id": "init",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007331
+        }
+      },
+      {
+        "after_submission": 4,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "claimed",
+          "version": 2,
+          "last_request_id": "claim_a",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007332
+        }
+      },
+      {
+        "after_submission": 5,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "claimed",
+          "version": 2,
+          "last_request_id": "claim_a",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007332
+        }
+      },
+      {
+        "after_submission": 6,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "claimed",
+          "version": 2,
+          "last_request_id": "claim_a",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007332
+        }
+      },
+      {
+        "after_submission": 7,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "claimed",
+          "version": 2,
+          "last_request_id": "claim_a",
+          "delivery_id": null,
+          "result_id": null,
+          "created_at": 1791007331,
+          "updated_at": 1791007332
+        }
+      },
+      {
+        "after_submission": 8,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "succeeded",
+          "version": 3,
+          "last_request_id": "terminal",
+          "delivery_id": "delivery_001",
+          "result_id": "result_001",
+          "created_at": 1791007331,
+          "updated_at": 1791007333
+        }
+      },
+      {
+        "after_submission": 9,
+        "served_by_primary": true,
+        "row": {
+          "platform": "test",
+          "account_id": "test_reference_001",
+          "intent_id": "plm-d1-atomicity-20261003-r1",
+          "job_id": "plm-d1-atomicity-job-001",
+          "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+          "owner": "contender_a",
+          "owner_epoch": 1,
+          "fencing_token": 1,
+          "state": "succeeded",
+          "version": 3,
+          "last_request_id": "terminal",
+          "delivery_id": "delivery_001",
+          "result_id": "result_001",
+          "created_at": 1791007331,
+          "updated_at": 1791007333
+        }
+      }
+    ],
+    "unknown_count": 0,
+    "client_overlap_ms": 379,
+    "client_request_overlap": true,
+    "claim_winner": "contender_a",
+    "claim_loser": "contender_b",
+    "d1_internal_parallel_execution_claimed": false,
+    "final_row": {
+      "platform": "test",
+      "account_id": "test_reference_001",
+      "intent_id": "plm-d1-atomicity-20261003-r1",
+      "job_id": "plm-d1-atomicity-job-001",
+      "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+      "owner": "contender_a",
+      "owner_epoch": 1,
+      "fencing_token": 1,
+      "state": "succeeded",
+      "version": 3,
+      "last_request_id": "terminal",
+      "delivery_id": "delivery_001",
+      "result_id": "result_001",
+      "created_at": 1791007331,
+      "updated_at": 1791007333
+    },
+    "logical_timestamp_T0": 1791007331,
+    "fresh_bookmark": "0000000d-00000006-000050f9-2e5087254f288f2f276b2531ddeb4d5b",
+    "cloudflare_api_calls": 30,
+    "cloudflare_read_only_calls": 21,
+    "github_history_get_calls": 1,
+    "successful_logical_row_changes_known_only": false,
+    "completed_at": "2026-10-03T06:02:15.890Z"
+  }
+}
