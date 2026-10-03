@@ -1,0 +1,166 @@
+{
+  "progress_percent": 98,
+  "progress_delta_points": 0,
+  "estimate_active_minutes": [
+    300,
+    660
+  ],
+  "live_ready": false,
+  "posting_permitted": false,
+  "credential_cleanup": {
+    "evidence_kind": "OWNER_EVIDENCE_NOT_TOKEN_MANAGEMENT_API",
+    "cloudflare_atomicity_token_revoked": true,
+    "github_atomicity_secret_deleted": true,
+    "read_token_retained": true,
+    "migration_write_token_present": false,
+    "worker_editor_present": false
+  },
+  "audit_run": 37104775137,
+  "read_only_calls": 11,
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "worker_deploy": 0,
+  "worker_invocation": 0,
+  "ai_api": 0,
+  "render_executions": 0,
+  "posting": 0,
+  "prior_remote_pass_scope": "FIXED_BACKEND_PROBE_V1_ONLY",
+  "gaps": [
+    {
+      "capability": "arbitrary fingerprint overwrite protection",
+      "current_remote_status": "PARTIAL",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "owner handoff",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "owner epoch increment",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "fencing handoff / stale fenced owner rejection",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "generation checkpoint identity",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "checkpoint immutable fingerprint binding",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "checkpoint resume after crash",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "generation result uniqueness",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "dispatch reservation",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "ambiguous external side-effect state",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "callback delivery identity",
+      "current_remote_status": "PARTIAL",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "callback replay ledger",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "duplicate callback no-op",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "terminal result uniqueness across callbacks",
+      "current_remote_status": "PARTIAL",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "crash between side effect and acknowledgment",
+      "current_remote_status": "MISSING",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "restart after SENT/UNKNOWN",
+      "current_remote_status": "PARTIAL",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "metrics 1h uniqueness",
+      "current_remote_status": "NOT REQUIRED BEFORE FIRST YOUTUBE ROUNDTRIP",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "metrics 24h uniqueness",
+      "current_remote_status": "NOT REQUIRED BEFORE FIRST YOUTUBE ROUNDTRIP",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "Improvement uniqueness",
+      "current_remote_status": "NOT REQUIRED BEFORE FIRST YOUTUBE ROUNDTRIP",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    },
+    {
+      "capability": "next-intent uniqueness",
+      "current_remote_status": "NOT REQUIRED BEFORE FIRST YOUTUBE ROUNDTRIP",
+      "candidate_offline_status": "DESIGN PASS",
+      "remote_stage2_status": "UNVERIFIED"
+    }
+  ],
+  "migration_required": true,
+  "sql_sha256": "012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686",
+  "test_plan_sha256": "230c1acee56c3be8a68cac3c29341675a67cc43d926f2047926982510fdc65b7",
+  "future_budget": {
+    "mutation_sends": 14,
+    "logical_changes": 9,
+    "concurrent_runners": 1,
+    "job_identities": 1,
+    "checkpoint_rows": 1,
+    "callback_rows": 1,
+    "retry": 0,
+    "resend": 0,
+    "delete": 0
+  },
+  "next_owner_action": "CREATE_AND_REGISTER_STAGE3_MIGRATION_TOKEN_ONLY_NOT_EXECUTION_APPROVAL",
+  "hundred_plus_accounts": "SEPARATE_BLOCKER"
+}

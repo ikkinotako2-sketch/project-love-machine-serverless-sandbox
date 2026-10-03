@@ -7,7 +7,8 @@ import {READ_ROW,PLAN} from './atomicity-test.mjs';
 export const MESSAGE='PLM post atomicity cleanup read-only audit 20261003-r1';
 export const PARENT='36c263a7e7f96e8c66a74ebe9c2bb21c4305c6a3';
 const RECEIPT=readFileSync(new URL('../audit-evidence/atomicity-test-once-receipt-37101718265.json',import.meta.url));
-export const SUCCESS_RECEIPT_SHA=sha(RECEIPT);
+export const SUCCESS_RECEIPT_SHA='3b91c1667066125e4bc255add16b5412b86e99f163d6c43d85dbb9b40bcbf3a2';
+if(sha(RECEIPT)!==SUCCESS_RECEIPT_SHA)throw Error('IMMUTABLE_SUCCESS_RECEIPT_DRIFT');
 export const FINAL_ROW=JSON.parse(RECEIPT).evidence.final_row;
 export async function postAtomicityAudit(e,fetcher=fetch){
  if(e.PLM_POST_ATOMICITY_PARENT!==PARENT||e.PLM_POST_ATOMICITY_MESSAGE!==MESSAGE||e.GITHUB_EVENT_NAME!=='push'||e.PLM_CF_D1_ATOMICITY_TEST_TOKEN||e.PLM_CF_WORKER_API_TOKEN||e.PLM_CF_D1_MIGRATION_V2_TOKEN)return {pass:false,failure_code:'CONTEXT_REJECTED_NO_HTTP',external_api_calls:0,d1_writes:0};

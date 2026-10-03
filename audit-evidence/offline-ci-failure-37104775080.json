@@ -1,0 +1,8 @@
+{
+  "run_id": 37104775080,
+  "conclusion": "FAILURE",
+  "sanitized_cause": "OLD_PREFLIGHT_FIXTURE_SAW_REAL_IMMUTABLE_ATOMICITY_RECEIPT",
+  "fix": "ISOLATE_MOCK_HISTORY_ONLY_KEEP_REAL_HISTORY_REJECTION",
+  "cloudflare_mutation": 0,
+  "evidence_not_deleted": true
+}

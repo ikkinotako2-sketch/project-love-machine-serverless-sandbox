@@ -1,0 +1,1225 @@
+{
+  "scope": "SECOND_SYNTHETIC_SANDBOX_PROBE_ONLY_NOT_PRODUCTION_BACKEND",
+  "sql_schema_sha256": "012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686",
+  "identity": {
+    "job_id": "plm-durable-stage2-job-001",
+    "intent_id": "plm-durable-stage2-20261003-r1",
+    "account_id": "test_reference_001",
+    "fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150"
+  },
+  "budget": {
+    "mutation_sends": 14,
+    "successful_logical_row_changes": 9,
+    "job_identities": 1,
+    "checkpoint_rows": 1,
+    "callback_rows": 1,
+    "concurrent_runners": 1,
+    "delete": 0,
+    "retry": 0,
+    "resend": 0
+  },
+  "timestamp_rule": "T0 once; offsets 0..7 are logical fixture slots",
+  "steps": [
+    {
+      "sequence": 1,
+      "id": "01_create_job",
+      "sql": "INSERT INTO durable_stage2_job VALUES(?,?,?,?, 'owner_a',1,1,1,'CLAIMED','NONE',NULL,NULL,NULL,'create',?,?)",
+      "params": [
+        "plm-durable-stage2-job-001",
+        "test_reference_001",
+        "plm-durable-stage2-20261003-r1",
+        "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "T0",
+        "T0"
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "last_operation": "create",
+            "created_at": "T0",
+            "updated_at": "T0"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 2,
+      "id": "02_handoff",
+      "sql": "UPDATE durable_stage2_job SET owner='owner_b',owner_epoch=2,fencing_token=2,version=version+1,old_owner_stop_proof=?,last_operation='handoff',updated_at=? WHERE job_id=? AND owner='owner_a' AND owner_epoch=1 AND fencing_token=1 AND version=1 AND state='CLAIMED' AND effect_state='NONE'",
+      "params": [
+        "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+        "T0+1",
+        "plm-durable-stage2-job-001"
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "last_operation": "create",
+            "created_at": "T0",
+            "updated_at": "T0"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 3,
+      "id": "03_stale_owner",
+      "sql": "UPDATE durable_stage2_job SET state='RESERVED',effect_state='RESERVED',effect_id='stage2-effect-001',version=version+1,last_operation='reserve',updated_at=? WHERE job_id=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=2 AND state='CLAIMED'",
+      "params": [
+        "T0+2",
+        "plm-durable-stage2-job-001",
+        "owner_a",
+        1,
+        1
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 4,
+      "id": "04_stale_fence",
+      "sql": "UPDATE durable_stage2_job SET state='RESERVED',effect_state='RESERVED',effect_id='stage2-effect-001',version=version+1,last_operation='reserve',updated_at=? WHERE job_id=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=2 AND state='CLAIMED'",
+      "params": [
+        "T0+2",
+        "plm-durable-stage2-job-001",
+        "owner_b",
+        2,
+        1
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 5,
+      "id": "05_duplicate_handoff",
+      "sql": "UPDATE durable_stage2_job SET owner='owner_b',owner_epoch=2,fencing_token=2,version=version+1,old_owner_stop_proof=?,last_operation='handoff',updated_at=? WHERE job_id=? AND owner='owner_a' AND owner_epoch=1 AND fencing_token=1 AND version=1 AND state='CLAIMED' AND effect_state='NONE'",
+      "params": [
+        "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+        "T0+1",
+        "plm-durable-stage2-job-001"
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 6,
+      "id": "06_checkpoint_started",
+      "sql": "INSERT INTO durable_stage2_checkpoint VALUES('stage2-checkpoint-001',?,?,?,?,NULL,NULL,1,'STARTED',?,?) ON CONFLICT(checkpoint_id) DO NOTHING",
+      "params": [
+        "plm-durable-stage2-job-001",
+        "plm-durable-stage2-20261003-r1",
+        "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+        "T0+2",
+        "T0+2"
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": null,
+            "output_ref": null,
+            "version": 1,
+            "state": "STARTED",
+            "created_at": "T0+2",
+            "updated_at": "T0+2"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 7,
+      "id": "07_checkpoint_completed",
+      "sql": "UPDATE durable_stage2_checkpoint SET output_fingerprint=?,output_ref='fixture://stage2/generation.json',version=version+1,state='COMPLETED',updated_at=? WHERE checkpoint_id='stage2-checkpoint-001' AND job_id=? AND generation_fingerprint=? AND request_contract_fingerprint=? AND version=1 AND state='STARTED' AND EXISTS(SELECT 1 FROM durable_stage2_job j WHERE j.job_id=durable_stage2_checkpoint.job_id AND j.owner=? AND j.owner_epoch=? AND j.fencing_token=?)",
+      "params": [
+        "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+        "T0+3",
+        "plm-durable-stage2-job-001",
+        "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+        "owner_b",
+        2,
+        2
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": null,
+            "output_ref": null,
+            "version": 1,
+            "state": "STARTED",
+            "created_at": "T0+2",
+            "updated_at": "T0+2"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 8,
+      "id": "08_checkpoint_duplicate",
+      "sql": "INSERT INTO durable_stage2_checkpoint VALUES('stage2-checkpoint-001',?,?,?,?,NULL,NULL,1,'STARTED',?,?) ON CONFLICT(checkpoint_id) DO NOTHING",
+      "params": [
+        "plm-durable-stage2-job-001",
+        "plm-durable-stage2-20261003-r1",
+        "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+        "T0+2",
+        "T0+2"
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 9,
+      "id": "09_reservation",
+      "sql": "UPDATE durable_stage2_job SET state='RESERVED',effect_state='RESERVED',effect_id='stage2-effect-001',version=version+1,last_operation='reserve',updated_at=? WHERE job_id=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=2 AND state='CLAIMED'",
+      "params": [
+        "T0+4",
+        "plm-durable-stage2-job-001",
+        "owner_b",
+        2,
+        2
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "CLAIMED",
+            "effect_state": "NONE",
+            "effect_id": null,
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "handoff",
+            "created_at": "T0",
+            "updated_at": "T0+1"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "RESERVED",
+            "effect_state": "RESERVED",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "reserve",
+            "created_at": "T0",
+            "updated_at": "T0+4"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 10,
+      "id": "10_sent_fixture",
+      "sql": "UPDATE durable_stage2_job SET state='SENT',effect_state='SENT',version=version+1,last_operation='sent',updated_at=? WHERE job_id=? AND owner='owner_b' AND owner_epoch=2 AND fencing_token=2 AND version=3 AND state='RESERVED'",
+      "params": [
+        "T0+5",
+        "plm-durable-stage2-job-001"
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "RESERVED",
+            "effect_state": "RESERVED",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "reserve",
+            "created_at": "T0",
+            "updated_at": "T0+4"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SENT",
+            "effect_state": "SENT",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "sent",
+            "created_at": "T0",
+            "updated_at": "T0+5"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 11,
+      "id": "11_unknown_fixture",
+      "sql": "UPDATE durable_stage2_job SET state='UNKNOWN',effect_state='UNKNOWN',version=version+1,last_operation='unknown',updated_at=? WHERE job_id=? AND owner='owner_b' AND owner_epoch=2 AND fencing_token=2 AND version=4 AND state='SENT'",
+      "params": [
+        "T0+6",
+        "plm-durable-stage2-job-001"
+      ],
+      "expected_changes": 1,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SENT",
+            "effect_state": "SENT",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "sent",
+            "created_at": "T0",
+            "updated_at": "T0+5"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 5,
+            "state": "UNKNOWN",
+            "effect_state": "UNKNOWN",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "unknown",
+            "created_at": "T0",
+            "updated_at": "T0+6"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 12,
+      "id": "12_stale_callback",
+      "sql": "INSERT INTO durable_stage2_callback SELECT 'stage2-delivery-001',job_id,account_id,owner_epoch,fencing_token,?,'stage2-result-001','SUCCEEDED',? FROM durable_stage2_job WHERE job_id=? AND account_id=? AND owner_epoch=? AND fencing_token=? AND state IN ('UNKNOWN','SUCCEEDED') ON CONFLICT(delivery_id) DO NOTHING",
+      "params": [
+        "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+        "T0+7",
+        "plm-durable-stage2-job-001",
+        "test_reference_001",
+        1,
+        1
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 5,
+            "state": "UNKNOWN",
+            "effect_state": "UNKNOWN",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "unknown",
+            "created_at": "T0",
+            "updated_at": "T0+6"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 5,
+            "state": "UNKNOWN",
+            "effect_state": "UNKNOWN",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "unknown",
+            "created_at": "T0",
+            "updated_at": "T0+6"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      }
+    },
+    {
+      "sequence": 13,
+      "id": "13_callback_terminal_atomic",
+      "sql": "INSERT INTO durable_stage2_callback SELECT 'stage2-delivery-001',job_id,account_id,owner_epoch,fencing_token,?,'stage2-result-001','SUCCEEDED',? FROM durable_stage2_job WHERE job_id=? AND account_id=? AND owner_epoch=? AND fencing_token=? AND state IN ('UNKNOWN','SUCCEEDED') ON CONFLICT(delivery_id) DO NOTHING",
+      "params": [
+        "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+        "T0+7",
+        "plm-durable-stage2-job-001",
+        "test_reference_001",
+        2,
+        2
+      ],
+      "expected_changes": 2,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 5,
+            "state": "UNKNOWN",
+            "effect_state": "UNKNOWN",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": null,
+            "last_operation": "unknown",
+            "created_at": "T0",
+            "updated_at": "T0+6"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": []
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 6,
+            "state": "SUCCEEDED",
+            "effect_state": "CONFIRMED",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": "stage2-result-001",
+            "last_operation": "callback",
+            "created_at": "T0",
+            "updated_at": "T0+7"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": [
+          {
+            "delivery_id": "stage2-delivery-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_fingerprint": "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+            "result_id": "stage2-result-001",
+            "terminal_state": "SUCCEEDED",
+            "consumed_at": "T0+7"
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 14,
+      "id": "14_callback_duplicate",
+      "sql": "INSERT INTO durable_stage2_callback SELECT 'stage2-delivery-001',job_id,account_id,owner_epoch,fencing_token,?,'stage2-result-001','SUCCEEDED',? FROM durable_stage2_job WHERE job_id=? AND account_id=? AND owner_epoch=? AND fencing_token=? AND state IN ('UNKNOWN','SUCCEEDED') ON CONFLICT(delivery_id) DO NOTHING",
+      "params": [
+        "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+        "T0+7",
+        "plm-durable-stage2-job-001",
+        "test_reference_001",
+        2,
+        2
+      ],
+      "expected_changes": 0,
+      "next_on_match": "NEXT_FIXED_STEP",
+      "on_mismatch_or_unknown": "STOP_NO_RESEND_ONE_READ_RECONCILIATION",
+      "expected_before_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 6,
+            "state": "SUCCEEDED",
+            "effect_state": "CONFIRMED",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": "stage2-result-001",
+            "last_operation": "callback",
+            "created_at": "T0",
+            "updated_at": "T0+7"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": [
+          {
+            "delivery_id": "stage2-delivery-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_fingerprint": "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+            "result_id": "stage2-result-001",
+            "terminal_state": "SUCCEEDED",
+            "consumed_at": "T0+7"
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "durable_stage2_job": [
+          {
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 6,
+            "state": "SUCCEEDED",
+            "effect_state": "CONFIRMED",
+            "effect_id": "stage2-effect-001",
+            "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+            "result_id": "stage2-result-001",
+            "last_operation": "callback",
+            "created_at": "T0",
+            "updated_at": "T0+7"
+          }
+        ],
+        "durable_stage2_checkpoint": [
+          {
+            "checkpoint_id": "stage2-checkpoint-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "intent_id": "plm-durable-stage2-20261003-r1",
+            "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+            "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+            "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+            "output_ref": "fixture://stage2/generation.json",
+            "version": 2,
+            "state": "COMPLETED",
+            "created_at": "T0+2",
+            "updated_at": "T0+3"
+          }
+        ],
+        "durable_stage2_callback": [
+          {
+            "delivery_id": "stage2-delivery-001",
+            "job_id": "plm-durable-stage2-job-001",
+            "account_id": "test_reference_001",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_fingerprint": "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+            "result_id": "stage2-result-001",
+            "terminal_state": "SUCCEEDED",
+            "consumed_at": "T0+7"
+          }
+        ]
+      }
+    }
+  ],
+  "expected_final_rows": {
+    "durable_stage2_job": [
+      {
+        "job_id": "plm-durable-stage2-job-001",
+        "account_id": "test_reference_001",
+        "intent_id": "plm-durable-stage2-20261003-r1",
+        "content_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "owner": "owner_b",
+        "owner_epoch": 2,
+        "fencing_token": 2,
+        "version": 6,
+        "state": "SUCCEEDED",
+        "effect_state": "CONFIRMED",
+        "effect_id": "stage2-effect-001",
+        "old_owner_stop_proof": "8506dfc41a15c2e1d9bd9633b8147853f608922325f970704c0ff986b534d983",
+        "result_id": "stage2-result-001",
+        "last_operation": "callback",
+        "created_at": "T0",
+        "updated_at": "T0+7"
+      }
+    ],
+    "durable_stage2_checkpoint": [
+      {
+        "checkpoint_id": "stage2-checkpoint-001",
+        "job_id": "plm-durable-stage2-job-001",
+        "intent_id": "plm-durable-stage2-20261003-r1",
+        "generation_fingerprint": "d3bf9c3af993956a0f2a94507f3a8a80c989845814523eeb1366ac0b56a3a150",
+        "request_contract_fingerprint": "8e89a4ebc31b289e6a1c0c43164185fd048201fcfd6f784edc1747ecb1200565",
+        "output_fingerprint": "a7f9a14d7806fd6c1d5f565a6f3579c7cfd2659119ed6cb02b3a0b4bb39b6158",
+        "output_ref": "fixture://stage2/generation.json",
+        "version": 2,
+        "state": "COMPLETED",
+        "created_at": "T0+2",
+        "updated_at": "T0+3"
+      }
+    ],
+    "durable_stage2_callback": [
+      {
+        "delivery_id": "stage2-delivery-001",
+        "job_id": "plm-durable-stage2-job-001",
+        "account_id": "test_reference_001",
+        "owner_epoch": 2,
+        "fencing_token": 2,
+        "payload_fingerprint": "8d1b4ea15f2103df4988aecddf4ca70d3b7bd7d6f069b10da95b6fee7d373fba",
+        "result_id": "stage2-result-001",
+        "terminal_state": "SUCCEEDED",
+        "consumed_at": "T0+7"
+      }
+    ]
+  },
+  "parameters": "replace only timestamp constants with single T0+offset; no new SQL or identities",
+  "owner_stop_proof": "PUBLIC SYNTHETIC FIXTURE, NOT REAL OWNER STOP PROOF",
+  "AI_and_side_effect": "SENT/UNKNOWN simulated SQL state only; actual outbound=0",
+  "callback_terminal_changes": 2,
+  "trigger_changes_meta_REST_semantics": "UNVERIFIED_UNTIL_REMOTE",
+  "deferred": [
+    "arbitrary overwrite remote abort probe",
+    "multiple delivery races",
+    "real AI/callback/provider reconciliation",
+    "full production backend"
+  ],
+  "execution_approved": false,
+  "allow": false,
+  "live_ready": false,
+  "posting_permitted": false
+}
