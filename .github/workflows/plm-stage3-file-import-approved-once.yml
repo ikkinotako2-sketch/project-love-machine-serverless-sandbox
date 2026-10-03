@@ -1,0 +1,45 @@
+name: PLM Approved Fixed File Import Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage3-file-import-approved-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  import:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'beb715262785488f89c5c2f4892f92e94e5813e2' && github.event.head_commit.message == 'PLM execute approved fixed file import once 20261003-r1'
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE3_IMPORT_ALLOW: 'true'
+      PLM_STAGE3_IMPORT_OWNER_APPROVAL: APPROVE_NEW_FILE_IMPORT_ONCE
+      PLM_IMPORT_EXEC_CODE_PIN: beb715262785488f89c5c2f4892f92e94e5813e2
+      PLM_IMPORT_EXEC_BEFORE: ${{ github.event.before }}
+      PLM_IMPORT_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
+      PLM_IMPORT_SQL_SHA: c01e08915c97aaf457879aa163dcd0e02faabab36a7ef044c3e5acaca2d1c23f
+      PLM_IMPORT_PLAN_SHA: 32e1d91c2907fd70bdd0a0d5e6379c7f24af9d04906ad8a265cce951aa694b14
+      PLM_IMPORT_RECEIPT_SHA: 3752f35cb2996dd2e7676fbabc7ca1aa8cd042bb8c5d7857e9260d0b6f98b0ef
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: beb715262785488f89c5c2f4892f92e94e5813e2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fresh read-only preflight then bounded approved import and one post-check
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_STAGE3_IMPORT_TOKEN: ${{ secrets.PLM_CF_D1_STAGE3_IMPORT_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/stage3-import-execution-entry.mjs
