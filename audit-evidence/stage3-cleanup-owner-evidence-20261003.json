@@ -1,0 +1,12 @@
+{
+  "evidence_kind": "OWNER_EVIDENCE_ONLY",
+  "cloudflare_token": "plm-sandbox-d1-stage3-schema-once",
+  "cloudflare_revoked_or_deleted": true,
+  "github_secret": "PLM_CF_D1_STAGE3_MIGRATION_TOKEN",
+  "github_secret_deleted": true,
+  "read_token_retained": true,
+  "token_management_api_verified": false,
+  "new_write_token_requested": false,
+  "failed_run": 37108371746,
+  "old_sent_receipt_preserved": true
+}
