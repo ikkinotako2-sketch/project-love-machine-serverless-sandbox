@@ -9,7 +9,7 @@ permissions:
 jobs:
   preflight:
     # Preparation only. Activate exactly one pinned read-only run in a separate commit.
-    if: false
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '1233ed94342d113571f2cc6a71eab70ae625ac99' && github.event.head_commit.message == 'PLM atomicity final read-only preflight 20261003-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -23,13 +23,13 @@ jobs:
       PLM_ATOMICITY_ALLOW: 'false'
       PLM_ATOMICITY_OWNER_APPROVAL: UNAPPROVED
       PLM_ATOMICITY_PLAN_SHA: cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28
-      PLM_PREFLIGHT_CODE_PIN: UNAPPROVED
+      PLM_PREFLIGHT_CODE_PIN: 1233ed94342d113571f2cc6a71eab70ae625ac99
       PLM_PREFLIGHT_EVENT_BEFORE: ${{ github.event.before }}
       PLM_PREFLIGHT_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: 1233ed94342d113571f2cc6a71eab70ae625ac99
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
