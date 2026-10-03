@@ -1,0 +1,21 @@
+{
+  "evidence_kind": "OWNER_EVIDENCE_ONLY",
+  "registered_date": "2026-10-03",
+  "token_name": "plm-sandbox-d1-schema-v2-once",
+  "account_owned": true,
+  "permission": "Account D1 Edit/Write only",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "forbidden_permissions": [
+    "Workers",
+    "Admin",
+    "Billing",
+    "Token management",
+    "DNS",
+    "Routes"
+  ],
+  "finite_ttl_owner_confirmed": true,
+  "github_secret": "PLM_CF_D1_MIGRATION_V2_TOKEN",
+  "secret_registered_owner_confirmed": true,
+  "token_scope_api_verified": false,
+  "migration_execution_approved": false
+}
