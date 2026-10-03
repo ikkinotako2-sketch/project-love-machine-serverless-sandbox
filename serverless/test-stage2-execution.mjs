@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {runFixed,timestamp,expectedRows,executionEntry,MESSAGE} from './stage2-execution-entry.mjs';
+import {runFixed,timestamp,expectedRows,executionEntry,localChecks,MESSAGE} from './stage2-execution-entry.mjs';
 import {stage2Plan,STAGE2_PLAN_SHA} from './durable-stage2-contract.mjs';
 import {ACCOUNT,DB,REPO,BRANCH} from './atomicity-schema-audit.mjs';
 const p=stage2Plan(),t0=1791036000,e={PLM_CF_D1_STAGE2_TEST_TOKEN:'PUBLIC_WRITE'};
@@ -10,3 +10,5 @@ test('exact changes with failed post cannot PASS',async()=>{const m=mock({postPa
 test('timestamp changes only T0 offsets; expected final identities fixed',()=>{const rows=expectedRows(p.expected_final_rows,t0);assert.equal(rows.durable_stage2_job[0].version,6);assert.equal(rows.durable_stage2_job[0].updated_at,t0+7);assert.equal(timestamp('fixture://stage2/generation.json',t0),'fixture://stage2/generation.json');});
 test('no approval refuses before HTTP',async()=>{let n=0;const r=await executionEntry({},async()=>{n++;},{checkout:'a'.repeat(40)});assert.equal(n,0);assert.equal(r.mutation_sends,0);});
 test('fresh preflight failure cannot send even with owner approval',async()=>{const pin='a'.repeat(40),env={...e,GITHUB_REPOSITORY:REPO,GITHUB_REF:`refs/heads/${BRANCH}`,GITHUB_EVENT_NAME:'push',GITHUB_RUN_ATTEMPT:'1',GITHUB_RUN_ID:'80000',CLOUDFLARE_ACCOUNT_ID:ACCOUNT,PLM_D1_DATABASE_ID:DB,TEST_ONLY:'true',DRY_RUN:'true',NO_PUBLISH:'true',EMERGENCY_STOP:'true',PLM_STAGE2_EXEC_CODE_PIN:pin,PLM_STAGE2_EXEC_BEFORE:pin,PLM_STAGE2_EXEC_MESSAGE:MESSAGE,PLM_STAGE2_ALLOW:'true',PLM_STAGE2_OWNER_APPROVAL:'APPROVE_FIXED_14_STEP_ONCE',PLM_STAGE2_PLAN_SHA:STAGE2_PLAN_SHA,PLM_HISTORY_GITHUB_TOKEN:'PUBLIC_HISTORY',PLM_CF_D1_READ_TOKEN:'PUBLIC_READ'};let writes=0;const r=await executionEntry(env,async(u)=>{if(!u.startsWith('https://api.github.com/'))writes++;return Response.json({total_count:0,workflow_runs:[]});},{checkout:pin,checks:()=>true,fresh:async()=>({pass:false})});assert.equal(writes,0);assert.equal(r.mutation_sends,0);});
+
+test('consumed real stage2 receipt blocks reuse before HTTP',()=>assert.throws(localChecks,/STAGE2_PRIOR_SENT_NO_RESUME/));

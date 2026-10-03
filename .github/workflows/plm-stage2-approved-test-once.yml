@@ -8,7 +8,8 @@ permissions:
   actions: read
 jobs:
   test:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'ef11d79bc734849b474bb82f0c8b00558fba23c9' && github.event.head_commit.message == 'PLM execute approved fixed14 stage2 once 20261003-r1'
+    # Consumed fixed14 test run 37128618965. Never rerun or resume.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -19,8 +20,8 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_STAGE2_ALLOW: 'true'
-      PLM_STAGE2_OWNER_APPROVAL: APPROVE_FIXED_14_STEP_ONCE
+      PLM_STAGE2_ALLOW: 'false'
+      PLM_STAGE2_OWNER_APPROVAL: UNAPPROVED
       PLM_STAGE2_PLAN_SHA: 230c1acee56c3be8a68cac3c29341675a67cc43d926f2047926982510fdc65b7
       PLM_STAGE2_EXEC_CODE_PIN: ef11d79bc734849b474bb82f0c8b00558fba23c9
       PLM_STAGE2_EXEC_BEFORE: ${{ github.event.before }}
