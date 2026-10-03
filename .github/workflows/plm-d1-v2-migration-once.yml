@@ -8,8 +8,8 @@ permissions:
   actions: read
 jobs:
   migrate:
-    # Explicit owner approval 2026-10-03; exact independently tested code checkout.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.before == 'a7946f12db41414c401a68a89755fdd16c5a6ff5' && github.event.head_commit.message == 'PLM D1 schema v2 execute approved once 20261003-r1' && github.run_attempt == 1
+    # RETIRED: one owner approval consumed by run 37098401244. Never reopen.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -20,9 +20,9 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_D1_V2_MIGRATION_ALLOW: 'true'
-      PLM_D1_V2_OWNER_APPROVAL: MIGRATE_FIXED_SCHEMA_V2_ONCE
-      PLM_D1_V2_APPROVED_COMMIT: a7946f12db41414c401a68a89755fdd16c5a6ff5
+      PLM_D1_V2_MIGRATION_ALLOW: ${{ vars.PLM_D1_V2_MIGRATION_ALLOW || 'false' }}
+      PLM_D1_V2_OWNER_APPROVAL: UNAPPROVED
+      PLM_D1_V2_APPROVED_COMMIT: ${{ vars.PLM_D1_V2_APPROVED_COMMIT || 'UNAPPROVED' }}
       PLM_D1_V2_EXECUTION_CODE_COMMIT: a7946f12db41414c401a68a89755fdd16c5a6ff5
       PLM_D1_V2_EVENT_BEFORE: ${{ github.event.before }}
       PLM_D1_V2_ACTIVATION_MESSAGE: ${{ github.event.head_commit.message }}
