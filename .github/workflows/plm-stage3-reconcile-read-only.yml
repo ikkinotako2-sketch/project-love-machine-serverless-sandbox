@@ -7,11 +7,8 @@ permissions:
   contents: read
 jobs:
   reconcile:
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.run_attempt == 1 &&
-      github.event.before == '137fb1d7a8e5835fa504e6d355a7432c6b5465ff' &&
-      github.event.head_commit.message == 'PLM stage3 manual read-only reconciliation 20261003-r1'
+    # Consumed once by run 37109169905; no further audit authorized.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false

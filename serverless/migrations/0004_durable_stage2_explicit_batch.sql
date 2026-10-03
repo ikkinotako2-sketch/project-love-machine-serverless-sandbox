@@ -1,0 +1,56 @@
+CREATE TABLE durable_stage2_job (
+ job_id TEXT PRIMARY KEY CHECK(job_id='plm-durable-stage2-job-001'),
+ account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),
+ intent_id TEXT NOT NULL UNIQUE CHECK(intent_id='plm-durable-stage2-20261003-r1'),
+ content_fingerprint TEXT NOT NULL CHECK(length(content_fingerprint)=64),
+ owner TEXT NOT NULL CHECK(owner IN ('owner_a','owner_b')),
+ owner_epoch INTEGER NOT NULL CHECK(owner_epoch>0),
+ fencing_token INTEGER NOT NULL CHECK(fencing_token>0),
+ version INTEGER NOT NULL CHECK(version>0),
+ state TEXT NOT NULL CHECK(state IN ('CLAIMED','RESERVED','SENT','UNKNOWN','SUCCEEDED')),
+ effect_state TEXT NOT NULL CHECK(effect_state IN ('NONE','RESERVED','SENT','UNKNOWN','CONFIRMED')),
+ effect_id TEXT UNIQUE CHECK(effect_id IS NULL OR effect_id='stage2-effect-001'),
+ old_owner_stop_proof TEXT CHECK(old_owner_stop_proof IS NULL OR length(old_owner_stop_proof)=64),
+ result_id TEXT UNIQUE,
+ last_operation TEXT NOT NULL,
+ created_at INTEGER NOT NULL CHECK(created_at>0),
+ updated_at INTEGER NOT NULL CHECK(updated_at>=created_at),
+ CHECK((state='CLAIMED' AND effect_state='NONE' AND effect_id IS NULL AND result_id IS NULL)
+ OR (state='RESERVED' AND effect_state='RESERVED' AND effect_id IS NOT NULL AND result_id IS NULL)
+ OR (state='SENT' AND effect_state='SENT' AND effect_id IS NOT NULL AND result_id IS NULL)
+ OR (state='UNKNOWN' AND effect_state='UNKNOWN' AND effect_id IS NOT NULL AND result_id IS NULL)
+ OR (state='SUCCEEDED' AND effect_state='CONFIRMED' AND effect_id IS NOT NULL AND result_id IS NOT NULL))
+);
+CREATE TABLE durable_stage2_checkpoint (
+ checkpoint_id TEXT PRIMARY KEY CHECK(checkpoint_id='stage2-checkpoint-001'),
+ job_id TEXT NOT NULL UNIQUE REFERENCES durable_stage2_job(job_id),
+ intent_id TEXT NOT NULL CHECK(intent_id='plm-durable-stage2-20261003-r1'),
+ generation_fingerprint TEXT NOT NULL CHECK(length(generation_fingerprint)=64),
+ request_contract_fingerprint TEXT NOT NULL CHECK(length(request_contract_fingerprint)=64),
+ output_fingerprint TEXT CHECK(output_fingerprint IS NULL OR length(output_fingerprint)=64),
+ output_ref TEXT CHECK(output_ref IS NULL OR output_ref='fixture://stage2/generation.json'),
+ version INTEGER NOT NULL CHECK(version>0),
+ state TEXT NOT NULL CHECK(state IN ('STARTED','COMPLETED','UNKNOWN')),
+ created_at INTEGER NOT NULL CHECK(created_at>0),
+ updated_at INTEGER NOT NULL CHECK(updated_at>=created_at),
+ CHECK((state='STARTED' AND version=1 AND output_fingerprint IS NULL AND output_ref IS NULL)
+ OR (state='COMPLETED' AND version=2 AND output_fingerprint IS NOT NULL AND output_ref IS NOT NULL)
+ OR (state='UNKNOWN' AND version=2 AND output_fingerprint IS NULL AND output_ref IS NULL))
+);
+CREATE TABLE durable_stage2_callback (
+ delivery_id TEXT PRIMARY KEY CHECK(delivery_id='stage2-delivery-001'),
+ job_id TEXT NOT NULL REFERENCES durable_stage2_job(job_id),
+ account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),
+ owner_epoch INTEGER NOT NULL,
+ fencing_token INTEGER NOT NULL,
+ payload_fingerprint TEXT NOT NULL CHECK(length(payload_fingerprint)=64),
+ result_id TEXT NOT NULL UNIQUE CHECK(result_id='stage2-result-001'),
+ terminal_state TEXT NOT NULL CHECK(terminal_state='SUCCEEDED'),
+ consumed_at INTEGER NOT NULL CHECK(consumed_at>0)
+);
+CREATE TRIGGER durable_stage2_job_guard BEFORE UPDATE ON durable_stage2_job WHEN NEW.job_id IS NOT OLD.job_id OR NEW.account_id IS NOT OLD.account_id OR NEW.intent_id IS NOT OLD.intent_id OR NEW.content_fingerprint IS NOT OLD.content_fingerprint OR NEW.created_at IS NOT OLD.created_at OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1 OR NOT((OLD.state='CLAIMED' AND OLD.effect_state='NONE' AND NEW.state='CLAIMED' AND NEW.owner IS NOT OLD.owner AND NEW.owner_epoch=OLD.owner_epoch+1 AND NEW.fencing_token=OLD.fencing_token+1 AND NEW.old_owner_stop_proof IS NOT NULL AND NOT EXISTS(SELECT 1 FROM durable_stage2_checkpoint k WHERE k.job_id=OLD.job_id AND k.state IN ('STARTED','UNKNOWN'))) OR (NEW.owner IS OLD.owner AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token AND NEW.old_owner_stop_proof IS OLD.old_owner_stop_proof AND (OLD.effect_id IS NULL OR NEW.effect_id IS OLD.effect_id) AND ((OLD.state='CLAIMED' AND NEW.state='RESERVED') OR (OLD.state='RESERVED' AND NEW.state='SENT') OR (OLD.state='SENT' AND NEW.state='UNKNOWN') OR (OLD.state='UNKNOWN' AND NEW.state='SUCCEEDED' AND NEW.effect_id IS OLD.effect_id AND EXISTS(SELECT 1 FROM durable_stage2_callback c WHERE c.job_id=OLD.job_id AND c.owner_epoch=OLD.owner_epoch AND c.fencing_token=OLD.fencing_token AND c.result_id=NEW.result_id))))) BEGIN SELECT RAISE(ABORT,'stage2_job_guard'); END;
+CREATE TRIGGER durable_stage2_checkpoint_insert_guard BEFORE INSERT ON durable_stage2_checkpoint WHEN NEW.state!='STARTED' OR NEW.version!=1 OR NOT EXISTS(SELECT 1 FROM durable_stage2_job j WHERE j.job_id=NEW.job_id AND j.intent_id=NEW.intent_id AND j.content_fingerprint=NEW.generation_fingerprint) OR EXISTS(SELECT 1 FROM durable_stage2_checkpoint k WHERE k.checkpoint_id=NEW.checkpoint_id AND (k.job_id IS NOT NEW.job_id OR k.intent_id IS NOT NEW.intent_id OR k.generation_fingerprint IS NOT NEW.generation_fingerprint OR k.request_contract_fingerprint IS NOT NEW.request_contract_fingerprint)) BEGIN SELECT RAISE(ABORT,'stage2_checkpoint_identity'); END;
+CREATE TRIGGER durable_stage2_checkpoint_guard BEFORE UPDATE ON durable_stage2_checkpoint WHEN NEW.checkpoint_id IS NOT OLD.checkpoint_id OR NEW.job_id IS NOT OLD.job_id OR NEW.intent_id IS NOT OLD.intent_id OR NEW.generation_fingerprint IS NOT OLD.generation_fingerprint OR NEW.request_contract_fingerprint IS NOT OLD.request_contract_fingerprint OR NEW.created_at IS NOT OLD.created_at OR NEW.version!=OLD.version+1 OR NEW.updated_at<OLD.updated_at OR NOT(OLD.state='STARTED' AND NEW.state IN ('COMPLETED','UNKNOWN')) BEGIN SELECT RAISE(ABORT,'stage2_checkpoint_guard'); END;
+CREATE TRIGGER durable_stage2_callback_insert_guard BEFORE INSERT ON durable_stage2_callback WHEN EXISTS(SELECT 1 FROM durable_stage2_callback c WHERE c.delivery_id=NEW.delivery_id AND (c.job_id IS NOT NEW.job_id OR c.account_id IS NOT NEW.account_id OR c.owner_epoch!=NEW.owner_epoch OR c.fencing_token!=NEW.fencing_token OR c.payload_fingerprint IS NOT NEW.payload_fingerprint OR c.result_id IS NOT NEW.result_id OR c.terminal_state IS NOT NEW.terminal_state)) OR (NOT EXISTS(SELECT 1 FROM durable_stage2_callback c WHERE c.delivery_id=NEW.delivery_id) AND NOT EXISTS(SELECT 1 FROM durable_stage2_job j JOIN durable_stage2_checkpoint k ON k.job_id=j.job_id WHERE j.job_id=NEW.job_id AND j.account_id=NEW.account_id AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token AND j.state='UNKNOWN' AND k.state='COMPLETED')) BEGIN SELECT RAISE(ABORT,'stage2_callback_identity_or_state'); END;
+CREATE TRIGGER durable_stage2_callback_immutable BEFORE UPDATE ON durable_stage2_callback BEGIN SELECT RAISE(ABORT,'stage2_callback_immutable'); END;
+CREATE TRIGGER durable_stage2_callback_apply AFTER INSERT ON durable_stage2_callback BEGIN UPDATE durable_stage2_job SET state='SUCCEEDED',effect_state='CONFIRMED',result_id=NEW.result_id, version=version+1,last_operation='callback',updated_at=NEW.consumed_at WHERE job_id=NEW.job_id AND account_id=NEW.account_id AND owner_epoch=NEW.owner_epoch AND fencing_token=NEW.fencing_token AND state='UNKNOWN'; SELECT CASE WHEN changes()!=1 THEN RAISE(ABORT,'stage2_callback_terminal_atomicity') END; END;

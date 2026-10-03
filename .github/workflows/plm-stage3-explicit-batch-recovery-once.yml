@@ -1,0 +1,42 @@
+name: PLM Stage3 Explicit Batch Recovery Prepared Disabled
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage3-explicit-batch-recovery-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepare:
+    # Registration is not approval. Live entry/history/journal activation needs a separate approval.
+    if: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE3_RECOVERY_ALLOW: 'false'
+      PLM_STAGE3_RECOVERY_OWNER_APPROVAL: UNAPPROVED
+      PLM_STAGE3_RECOVERY_APPROVED_COMMIT: UNAPPROVED
+      PLM_STAGE3_RECOVERY_SQL_SHA: c2d3c40447490932df83ecf52797d493787cc2a76a4a4efbc1b0a11a633381c4
+      PLM_STAGE3_RECOVERY_REQUEST_SHA: 7a22f2ec5eed90e658f934fb6005289752470193a213b084cfb1f21700278d58
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: UNAPPROVED
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read-only preflight mode only
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_STAGE3_RECOVERY_TOKEN: ${{ secrets.PLM_CF_D1_STAGE3_RECOVERY_TOKEN }}
+        run: node serverless/stage3-recovery-contract.mjs
