@@ -8,8 +8,12 @@ permissions:
   actions: read
 jobs:
   preflight:
-    # Prepare first, activate once with an exact code checkout pin.
-    if: false
+    # One authorized read-only push. No rerun, retry or fallback.
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.run_attempt == 1 &&
+      github.event.before == '82804491e01139e67f9374ad82bec22c08d65879' &&
+      github.event.head_commit.message == 'PLM stage3 final read-only preflight 20261003-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -23,13 +27,13 @@ jobs:
       PLM_STAGE3_ALLOW: 'false'
       PLM_STAGE3_OWNER_APPROVAL: UNAPPROVED
       PLM_STAGE3_SQL_SHA: 012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686
-      PLM_STAGE3_APPROVED_COMMIT: UNAPPROVED
+      PLM_STAGE3_APPROVED_COMMIT: 82804491e01139e67f9374ad82bec22c08d65879
       PLM_STAGE3_EVENT_BEFORE: ${{ github.event.before }}
       PLM_STAGE3_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: 82804491e01139e67f9374ad82bec22c08d65879
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -42,3 +46,4 @@ jobs:
           PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
           PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
         run: node serverless/d1-stage3-final-preflight.mjs
+
