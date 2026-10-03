@@ -7,7 +7,8 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'fd59bc72b3d41412d51ab403435da1db3bbcdf48' && github.event.head_commit.message == 'PLM atomicity preparation read-only audit 20261003-r1'
+    # RETIRED after one successful read-only audit 37099745940.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false

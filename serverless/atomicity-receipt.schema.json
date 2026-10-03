@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bounded first sandbox atomicity probe receipt",
+  "type": "object",
+  "required": ["status", "mutation_submissions", "successful_logical_row_changes", "reconciliation_sets", "retry", "resend", "delete", "live_ready", "posting_permitted"],
+  "properties": {
+    "status": {"enum": ["BLOCKED", "STOP", "PASS_BOUNDED_FIRST_PROBE"]},
+    "mutation_submissions": {"type": "integer", "minimum": 0, "maximum": 9},
+    "successful_logical_row_changes": {"type": "integer", "minimum": 0},
+    "reconciliation_sets": {"type": "integer", "minimum": 0, "maximum": 1},
+    "reconciliation": {"enum": ["COMMITTED", "NOT_COMMITTED", "STILL_UNKNOWN"]},
+    "retry": {"const": 0}, "resend": {"const": 0}, "delete": {"const": 0},
+    "live_ready": {"const": false}, "posting_permitted": {"const": false},
+    "final_row": {"type": "object", "minProperties": 15, "maxProperties": 15},
+    "client_request_overlap": {"type": "boolean"}
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "PASS_BOUNDED_FIRST_PROBE"}}}, "then": {"properties": {"mutation_submissions": {"const": 9}, "successful_logical_row_changes": {"const": 3}, "client_request_overlap": {"const": true}}, "required": ["final_row", "client_request_overlap"]}}],
+  "$comment": "On failure report actual observed changes even if an invariant breaks its budget; never suppress an over-budget observation. Fields emitted by engine are sanitized, not provider raw responses. Successful outcome alone uses the 3-change bound."
+}

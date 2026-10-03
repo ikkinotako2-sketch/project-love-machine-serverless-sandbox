@@ -1,0 +1,12 @@
+{
+  "evidence_kind": "OWNER_ATTESTATION_NOT_TOKEN_MANAGEMENT_API_VERIFICATION",
+  "schema_v2_token_revoked_deleted": true,
+  "github_migration_v2_secret_deleted": true,
+  "d1_read_token_retained": true,
+  "worker_editor_token_absent": true,
+  "atomicity_write_token_created": false,
+  "token_scope_api_verified": false,
+  "no_token_management_permission_requested": true,
+  "live_ready": false,
+  "posting_permitted": false
+}
