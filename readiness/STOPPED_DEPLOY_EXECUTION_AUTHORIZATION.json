@@ -1,0 +1,18 @@
+{
+  "deploy_approved": true,
+  "owner_approval_date": "2026-10-03",
+  "owner_approval_scope": "ONE_CANONICAL_STOPPED_DEPLOY_ONLY",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "worker_name": "plm-serverless-sandbox-control",
+  "rollback_receipt_sha256": "84ab929bcb389ff8d75c36832bc039c07fb763145b0a4786bc48a0eb87b00538",
+  "rollback_deployment_id": "1fbeef3b-34a2-4902-89f1-460c055945e2",
+  "rollback_version_id": "8e4d2c71-1c71-4346-911a-016ce63ef57d",
+  "snapshot_run": 37088180262,
+  "code_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "config_sha256": "cefa60606ca3e3820116a56671d83125ea86ac6e3a5e771761dd2e3508c96cf5",
+  "max_deploy_attempts": 1,
+  "retries": 0,
+  "fallbacks": 0,
+  "automatic_rollback": false,
+  "token_revocation_required_after_any_outcome": true
+}
