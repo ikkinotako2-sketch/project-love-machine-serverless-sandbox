@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    # Variables are deliberately unset/false now. Policy approval is not execution approval.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.run_attempt == 1 && vars.PLM_STOPPED_DEPLOY_ALLOW == 'true' && github.sha == vars.PLM_STOPPED_DEPLOY_APPROVED_COMMIT
+    # RETIRED: owner-approved operation consumed by run 37089851089.
+    # Never reopen this workflow for another deploy. Old run rerun attempt 2 is denied by its original guards.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

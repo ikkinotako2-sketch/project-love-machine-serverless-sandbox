@@ -1,0 +1,96 @@
+{
+  "run_id": 37089851089,
+  "run_attempt": 1,
+  "approved_commit": "afe1cb5c904c51c763a03ff53708e8120eecb80a",
+  "result": {
+    "get": 17,
+    "mutation_attempts": 1,
+    "deploy_attempts": 1,
+    "retries": 0,
+    "fallbacks": 0,
+    "live_jobs": 0,
+    "render_executions": 0,
+    "db_queries": 0,
+    "worker_invocations": 0,
+    "live_ready": false,
+    "posting_permitted": false,
+    "automatic_rollback": false,
+    "token_revocation_required": true,
+    "post": {
+      "snapshot": {
+        "deployment_id": "a514d0bb-e8e8-4b14-becf-a94ebfb0f92f",
+        "version_id": "3f87a1b1-6300-4b69-9b2d-be78346611a0",
+        "stable": true,
+        "inventory": {
+          "module_count": 1,
+          "modules": [
+            {
+              "name": "bootstrap-placeholder.mjs",
+              "content_type": "application/javascript+module",
+              "byte_size": 323,
+              "sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+            }
+          ],
+          "main_module_name": "bootstrap-placeholder.mjs",
+          "main_module_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+          "entrypoint_source": "CF_ENTRYPOINT",
+          "raw_body_name_is_synthetic": false
+        },
+        "bindings": [
+          {
+            "type": "d1",
+            "name": "DB",
+            "id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e"
+          },
+          {
+            "type": "plain_text",
+            "name": "DRY_RUN",
+            "text": "true"
+          },
+          {
+            "type": "plain_text",
+            "name": "EMERGENCY_STOP",
+            "text": "true"
+          },
+          {
+            "type": "plain_text",
+            "name": "NO_PUBLISH",
+            "text": "true"
+          },
+          {
+            "type": "plain_text",
+            "name": "TEST_ONLY",
+            "text": "true"
+          }
+        ],
+        "workers_dev": false,
+        "preview_urls": false,
+        "secrets": [],
+        "cron": [],
+        "handlers": [
+          "fetch"
+        ],
+        "compatibility_date": "2026-10-01"
+      },
+      "check": {
+        "status": "PASS",
+        "worker_invoked": false,
+        "db_queried": false,
+        "routes": "OWNER CONFIRMED NONE; NOT API VERIFIED",
+        "custom_domains": "OWNER CONFIRMED NONE; NOT API VERIFIED"
+      }
+    },
+    "status": "PASS"
+  },
+  "put_result": "SUCCESS_RESPONSE_AND_POSTCHECK_PASS",
+  "put_http_status": "NOT_RECORDED",
+  "single_version_100_percent_verified": true,
+  "rollback_receipt_sha256": "84ab929bcb389ff8d75c36832bc039c07fb763145b0a4786bc48a0eb87b00538",
+  "token_revocation": "REQUIRED_OWNER_ACTION_NOT_ASSUMED",
+  "github_worker_secret_deletion": "REQUIRED_OWNER_ACTION_NOT_ASSUMED",
+  "allow_false_readback": "BLOCKED_BY_GITHUB_CONFIRM_ACCESS; FALSE_NOT_SAVED",
+  "cloudflare_api_calls": 18,
+  "cloudflare_get_calls": 17,
+  "cloudflare_mutations": 1,
+  "remote_backend_behavior": "UNVERIFIED"
+}
