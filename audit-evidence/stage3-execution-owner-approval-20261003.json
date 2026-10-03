@@ -1,0 +1,18 @@
+{
+  "evidence_kind": "OWNER_EXPLICIT_FINAL_EXECUTION_APPROVAL",
+  "sql_file": "0003_durable_stage2_probe.sql",
+  "sql_sha256": "012eae70985512f4672546e8f773ed43392754fc95149192b4b0108daf836686",
+  "account": "6c8ccd6aface937ab5dabef61cb64534",
+  "db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "db_name": "plm-serverless-sandbox-state",
+  "maximum_mutation_http_requests": 1,
+  "retry": 0,
+  "resend": 0,
+  "fallback": 0,
+  "automatic_rollback": 0,
+  "stage2_test_authorized": false,
+  "worker_operations_authorized": false,
+  "ai_render_posting_authorized": false,
+  "cleanup_required_after_any_outcome": true,
+  "approved_preflight_receipt_sha256": "2c3f36f52093082072d2764c9dd341b5018519f001293806204f7d67c9cc235d"
+}

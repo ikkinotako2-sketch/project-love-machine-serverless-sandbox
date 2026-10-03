@@ -28,7 +28,7 @@ const PATHS=new Map([
  ['.github/workflows/plm-d1-v2-migration-once.yml',37098401244],
  ['.github/workflows/plm-d1-stage3-migration-once.yml',null]
 ]);
-export async function migrationHistory(fetchPage){
+export async function migrationHistory(fetchPage,{currentRun=null}={}){
  let total;const seen=new Set(),known=new Set(),pages=[];
  for(let page=1;page<=100;page++){
   const d=await fetchPage(page);
@@ -39,12 +39,13 @@ export async function migrationHistory(fetchPage){
    if(!Number.isSafeInteger(r.id)||seen.has(r.id))throw Error('STAGE3_HISTORY_DUPLICATE_OR_UNKNOWN');seen.add(r.id);
    if(!PATHS.has(r.path))continue;
    selected.push({run_id:r.id,path:r.path,status:r.status,conclusion:r.conclusion,attempt:r.run_attempt});
+   if(currentRun!==null&&String(r.id)===String(currentRun)){if(r.path!=='.github/workflows/plm-d1-stage3-migration-once.yml'||r.run_attempt!==1||r.status!=='in_progress'||r.conclusion!==null)throw Error('STAGE3_CURRENT_EXECUTION_UNCONFIRMED');known.add(r.id);continue;}
    if(r.status!=='completed'||r.run_attempt!==1)throw Error('STAGE3_PRIOR_RUN_UNCONFIRMED');
    if(r.id===PATHS.get(r.path)&&r.conclusion==='success'){known.add(r.id);continue;}
    if(r.conclusion!=='skipped')throw Error('STAGE3_PRIOR_MUTATION_RUN_NO_RESUME');
   }
   pages.push({page,total_count:total,repository_runs:d.workflow_runs.length,migration_runs:selected});
-  if(seen.size===total){if(!known.has(37063527954)||!known.has(37098401244))throw Error('STAGE3_PRIOR_SUCCESS_HISTORY_MISSING');return {complete:true,repository_run_count:total,pages,prior_stage3_mutation_run:false};}
+  if(seen.size===total){if(!known.has(37063527954)||!known.has(37098401244)||currentRun!==null&&!known.has(Number(currentRun)))throw Error('STAGE3_PRIOR_SUCCESS_HISTORY_MISSING');return {complete:true,repository_run_count:total,pages,prior_stage3_mutation_run:false};}
   if(!d.workflow_runs.length||seen.size>total)throw Error('STAGE3_HISTORY_INCOMPLETE');
  }
  throw Error('STAGE3_HISTORY_PAGE_LIMIT');
