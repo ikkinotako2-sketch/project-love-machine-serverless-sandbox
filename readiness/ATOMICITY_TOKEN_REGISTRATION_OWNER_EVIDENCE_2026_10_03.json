@@ -1,0 +1,24 @@
+{
+  "evidence_kind": "OWNER_ATTESTATION_NOT_API_SCOPE_VERIFIED",
+  "token_name": "plm-sandbox-d1-atomicity-test-once",
+  "secret_name": "PLM_CF_D1_ATOMICITY_TEST_TOKEN",
+  "registered_by_owner": true,
+  "account_owned": true,
+  "account": "6c8ccd6aface937ab5dabef61cb64534",
+  "permissions": [
+    "D1 Edit/Write"
+  ],
+  "excluded": [
+    "Workers",
+    "Admin",
+    "Billing",
+    "Token management",
+    "DNS",
+    "Routes"
+  ],
+  "finite_ttl_owner_confirmed": true,
+  "token_scope_api_verified": false,
+  "test_execution_approved": false,
+  "live_ready": false,
+  "posting_permitted": false
+}
