@@ -7,7 +7,8 @@ permissions:
   contents: read
 jobs:
   preflight:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '868f12603369571fb4a34d504d9cc1da695728c5' && github.event.head_commit.message == 'PLM stage2 token verify read-only once 20261003-r1'
+    # Consumed final preflight 37128116994; real stage2 test remains unapproved.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
