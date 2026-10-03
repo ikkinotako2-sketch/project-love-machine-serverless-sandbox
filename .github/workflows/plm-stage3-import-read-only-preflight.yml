@@ -1,0 +1,42 @@
+name: PLM Stage3 Import Read Only Preflight
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage3-import-read-only-preflight.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  preflight:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'eb337124f00681471ee467541214bedc5032d4eb' && github.event.head_commit.message == 'PLM stage3 import verify read-only once 20261003-r1'
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE3_IMPORT_ALLOW: 'false'
+      PLM_STAGE3_IMPORT_OWNER_APPROVAL: UNAPPROVED
+      PLM_IMPORT_PREFLIGHT_CODE_PIN: eb337124f00681471ee467541214bedc5032d4eb
+      PLM_IMPORT_EVENT_BEFORE: ${{ github.event.before }}
+      PLM_IMPORT_EVENT_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eb337124f00681471ee467541214bedc5032d4eb
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify import credential and use Read Token for D1 audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_STAGE3_IMPORT_TOKEN: ${{ secrets.PLM_CF_D1_STAGE3_IMPORT_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/stage3-import-final-preflight.mjs
