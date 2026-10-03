@@ -1,0 +1,24 @@
+{
+  "evidence_kind": "GUARDED_OFFLINE_CI",
+  "run_id": 37113957317,
+  "job_id": 111177028414,
+  "tested_commit": "2bf3de9683ce30932ab054a0f64fb8bcf0fda200",
+  "conclusion": "success",
+  "python_pass": 453,
+  "node_pass": 413,
+  "total_pass": 866,
+  "fail": 0,
+  "additional_tests": 10,
+  "external_api_calls": 0,
+  "d1_write": 0,
+  "render_executions": 0,
+  "posting": 0,
+  "sanitized_evidence": [
+    "2026-10-03T09:42:40.3351069Z Ran 453 tests in 0.606s",
+    "2026-10-03T09:42:40.3448295Z OFFLINE_GUARD_EVIDENCE {\"blocked_probe_attempts\": {\"blocked_exec\": 10, \"blocked_import\": 10, \"blocked_media_write\": 5, \"blocked_network\": 2}, \"exec_syscalls_denied\": true, \"external_api_calls\": 0, \"native_seccomp_active\": true, \"render_executions\": 0, \"socket_syscalls_denied\": true}",
+    "2026-10-03T09:42:40.5107659Z NODE_OFFLINE_GUARD_EVIDENCE render_executions=0 external_api_calls=0 exec/socket probes=DENIED",
+    "2026-10-03T09:42:41.3288744Z ℹ tests 413",
+    "2026-10-03T09:42:41.3289702Z ℹ pass 413",
+    "2026-10-03T09:42:41.3290463Z ℹ fail 0"
+  ]
+}

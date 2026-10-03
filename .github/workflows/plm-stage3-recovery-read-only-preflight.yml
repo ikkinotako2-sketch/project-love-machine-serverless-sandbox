@@ -9,11 +9,8 @@ permissions:
 jobs:
   preflight:
     # Previous run stopped before Cloudflare; replaced by a separately pinned new run.
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.run_attempt == 1 &&
-      github.event.before == '2bf3de9683ce30932ab054a0f64fb8bcf0fda200' &&
-      github.event.head_commit.message == 'PLM stage3 recovery verify read-only once 20261003-r1'
+    # Consumed read-only audit run 37113996434. Migration remains separately unapproved.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
