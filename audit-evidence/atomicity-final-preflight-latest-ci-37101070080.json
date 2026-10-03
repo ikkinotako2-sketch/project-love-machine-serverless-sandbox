@@ -1,0 +1,37 @@
+{
+  "run_id": 37101070080,
+  "attempt": 1,
+  "commit": "9c49ae67b5ef58634a9263b15e0c1b07e39049e4",
+  "conclusion": "success",
+  "python_pass": 406,
+  "node_pass": 291,
+  "fail": 0,
+  "guard": {
+    "blocked_probe_attempts": {
+      "blocked_exec": 10,
+      "blocked_import": 10,
+      "blocked_media_write": 5,
+      "blocked_network": 2
+    },
+    "exec_syscalls_denied": true,
+    "external_api_calls": 0,
+    "native_seccomp_active": true,
+    "render_executions": 0,
+    "socket_syscalls_denied": true
+  },
+  "preflight_run_id": 37100847714,
+  "preflight_retired_run_skipped": 37101070084,
+  "execution_workflow_hard_disabled": true,
+  "cloudflare_read_only_api_calls_in_phase": 11,
+  "d1_mutations": 0,
+  "d1_writes": 0,
+  "worker_deploy": 0,
+  "worker_invocation": 0,
+  "live_job": 0,
+  "ai_api": 0,
+  "render": 0,
+  "posting": 0,
+  "live_ready": false,
+  "posting_permitted": false,
+  "total_pass": 697
+}
