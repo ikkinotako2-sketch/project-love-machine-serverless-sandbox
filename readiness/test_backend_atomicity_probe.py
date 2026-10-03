@@ -86,7 +86,7 @@ class BackendProbeTests(unittest.TestCase):
             step={**self.plan[0],**change}
             with self.assertRaises(ValueError):validate_payload(step,1790998200)
     def test_duplicate_transport_request_never_sent_twice(self):
-        ledger=OnceAttemptLedger();calls=[];transport=lambda p:(calls.append(p) or {'http_status':200,'success':True,'changes':0})
+        ledger=OnceAttemptLedger();calls=[];transport=lambda p:(calls.append(p) or {'http_status':200,'success':True,'changes':1})
         ledger.send(self.plan[0],transport)
         with self.assertRaises(ValueError):ledger.send(self.plan[0],transport)
         self.assertEqual(len(calls),1)
@@ -132,3 +132,11 @@ class BackendProbeTests(unittest.TestCase):
     def test_booleans_do_not_pass_numeric_inventory_or_attempt_gates(self):
         r=validate_remote_preconditions({'inventory_count':True,'run_attempt':True,'other_d1_count':False,'test_jobs_rows':False,'destructive_statements':False})
         for key in ('inventory_count','run_attempt','other_d1_count','test_jobs_rows','destructive_statements'):self.assertIn(key,r['failed_gates'])
+    def test_unexpected_affected_count_blocks_all_following_mutations(self):
+        ledger=OnceAttemptLedger();r=ledger.send(self.plan[0],lambda p:{'http_status':200,'success':True,'changes':0})
+        self.assertEqual(r['status'],'UNKNOWN')
+        with self.assertRaises(ValueError):ledger.reserve(self.plan[1])
+    def test_contradictory_reconciliation_and_wrong_journal_type_fail_closed(self):
+        self.init();r=reconcile(self.plan[0],self.s.read(),primary_confirmed=True,authoritative_not_committed=True)
+        self.assertEqual(r['verdict'],'STILL_UNKNOWN');self.assertFalse(r['resend_permitted'])
+        with self.assertRaises(ValueError):OnceAttemptLedger({})

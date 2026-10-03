@@ -134,4 +134,6 @@ BLOCKED: migration/remote write承認・限定Tokenなし、TEST_ONLY roundtrip�
 
 ## 最終local CI
 
-Python 400 PASS / Node 188 PASS / 合計588 PASS / FAIL 0。今回追加34 Python + 4 Node = 38 test。native seccomp/socket/exec guardを維持し、guarded CI内external_api_calls=0 / render_executions=0。実D1 read-only auditの11外部APIとは別集計。
+Python 402 PASS / Node 188 PASS / 合計590 PASS / FAIL 0。今回追加36 Python + 4 Node = 40 test。native seccomp/socket/exec guardを維持し、guarded CI内external_api_calls=0 / render_executions=0。実D1 read-only auditの11外部APIとは別集計。
+
+最終reviewで、HTTP成功でもexpected changes不一致なら後続mutationを止めること、矛盾したreconciliation証拠はSTILL_UNKNOWNにすることを追加検証。fixture journal不正型も拒否。

@@ -77,6 +77,7 @@ class SQLiteReference:
 class OnceAttemptLedger:
     """Durable fixture snapshot, record intent before mock transport; never real API."""
     def __init__(self,snapshot=None):
+        if snapshot is not None and type(snapshot) is not list:raise ValueError('BAD_JOURNAL')
         self.events=copy.deepcopy(snapshot or [])
         if type(self.events) is not list or len(self.events)>9:raise ValueError('BAD_JOURNAL')
         if any(type(e) is not dict or set(e)!={'id','status'} or type(e['id']) is not str or e['status'] not in ('SENT','ACK','UNKNOWN') for e in self.events):raise ValueError('BAD_JOURNAL')
@@ -95,6 +96,7 @@ class OnceAttemptLedger:
         try:
             response=transport(step)
             if type(response) is not dict or response.get('http_status')!=200 or response.get('success') is not True or type(response.get('changes')) is not int or response['changes'] not in (0,1):raise ValueError('AMBIGUOUS_RESPONSE')
+            if step.get('expected_changes') is not None and response['changes']!=step['expected_changes']:raise ValueError('EXPECTED_CHANGES_MISMATCH_STOP')
             self.finish(step['id'],'ACK');return response
         except Exception:
             self.finish(step['id'],'UNKNOWN')
@@ -106,14 +108,15 @@ class OnceAttemptLedger:
         return self
 
 def reconcile(step,row,*,primary_confirmed=False,authoritative_not_committed=False):
-    if authoritative_not_committed is True:return {'verdict':'NOT_COMMITTED','resend_permitted':False}
-    if primary_confirmed is not True:return {'verdict':'STILL_UNKNOWN','resend_permitted':False}
+    if primary_confirmed is not True:return {'verdict':'NOT_COMMITTED' if authoritative_not_committed is True and row is None else 'STILL_UNKNOWN','resend_permitted':False}
     committed=False
     if row and tuple(row.get(k) for k in ('platform','account_id','intent_id'))==IDENTITY and row.get('job_id')==JOB and row.get('content_fingerprint')==FP:
         if step['id']=='01_init':committed=row.get('version')==1 and row.get('last_request_id')=='init'
         elif step['id'] in ('03_claim_a','04_claim_b'):committed=row.get('version')==2 and row.get('last_request_id')==step['params'][1] and row.get('owner')==step['params'][0]
         elif step['id']=='08_terminal':committed=row.get('version')==3 and row.get('last_request_id')=='terminal' and row.get('state')==step['params'][0] and row.get('owner')==step['params'][-1] and row.get('delivery_id')=='delivery_001' and row.get('result_id')=='result_001'
     # Absence/old row is NOT proof of no commit: a request may still be in flight.
+    if authoritative_not_committed is True:
+        return {'verdict':'NOT_COMMITTED' if row is None else 'STILL_UNKNOWN','resend_permitted':False}
     return {'verdict':'COMMITTED' if committed else 'STILL_UNKNOWN','resend_permitted':False}
 
 def remote_readiness(schema_added=False,write_token=False,execution_approved=False):
