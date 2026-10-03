@@ -1,4 +1,4 @@
-name: PLM Stage3 Explicit Batch Recovery Prepared Disabled
+name: PLM Stage3 Explicit Batch Recovery Once
 on:
   push:
     branches: [plm-offline-readiness-v1-20261002]
@@ -23,6 +23,9 @@ jobs:
       PLM_STAGE3_RECOVERY_ALLOW: 'false'
       PLM_STAGE3_RECOVERY_OWNER_APPROVAL: UNAPPROVED
       PLM_STAGE3_RECOVERY_APPROVED_COMMIT: UNAPPROVED
+      PLM_RECOVERY_EVENT_BEFORE: ${{ github.event.before }}
+      PLM_RECOVERY_EVENT_MESSAGE: ${{ github.event.head_commit.message }}
+      PLM_RECOVERY_PREFLIGHT_RECEIPT_SHA: 585c75a9bc1fbbd0efb58a825260222c5f53e4d94688337d12ef81634bdfda97
       PLM_STAGE3_RECOVERY_SQL_SHA: c2d3c40447490932df83ecf52797d493787cc2a76a4a4efbc1b0a11a633381c4
       PLM_STAGE3_RECOVERY_REQUEST_SHA: 7a22f2ec5eed90e658f934fb6005289752470193a213b084cfb1f21700278d58
     steps:
@@ -33,10 +36,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Read-only preflight mode only
+      - name: Owner approved entry (disabled until exact activation)
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
           PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
           PLM_CF_D1_STAGE3_RECOVERY_TOKEN: ${{ secrets.PLM_CF_D1_STAGE3_RECOVERY_TOKEN }}
-        run: node serverless/stage3-recovery-contract.mjs
+        run: node serverless/stage3-recovery-execution-entry.mjs
+      - name: Preserve sanitized SENT journal
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage3-recovery-sent-${{ github.run_id }}
+          path: ${{ runner.temp }}/stage3-recovery-journal
+          if-no-files-found: ignore
+          retention-days: 1
