@@ -1,0 +1,472 @@
+{
+  "run_id": 37100847714,
+  "attempt": 1,
+  "activation_commit": "e0ab03f4cb08eb15680785201303e2b45e8bf04b",
+  "execution_code_commit": "1233ed94342d113571f2cc6a71eab70ae625ac99",
+  "evidence": {
+    "mode": "ATOMICITY_FINAL_READ_ONLY_PREFLIGHT",
+    "pass": true,
+    "cloudflare_read_only_api_calls": 11,
+    "cloudflare_get_calls": 5,
+    "d1_read_query_post_calls": 6,
+    "github_history_get_calls": 1,
+    "d1_mutations": 0,
+    "d1_writes": 0,
+    "probe_insert": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "live_job": 0,
+    "ai_api": 0,
+    "render": 0,
+    "posting": 0,
+    "retry": 0,
+    "fallback": 0,
+    "resend": 0,
+    "execution_workflow_hard_disabled": true,
+    "owner_execution_approval": false,
+    "live_ready": false,
+    "posting_permitted": false,
+    "token_scope_owner_evidence": true,
+    "token_scope_api_verified": false,
+    "plan_sha256": "cc4e854c77a5e3115999c7271abeb83974911b353b9afeeab3d8ae08d7d7fb28",
+    "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+    "migration_receipt_sha256": "2310028cfcc6a7222411a059fe9d62f2f5a847fbaabbeaaa1a73ef47c4263e22",
+    "local_journal_clear": true,
+    "history": {
+      "complete": true,
+      "pages": [
+        {
+          "page": 1,
+          "total_count": 1,
+          "runs": [
+            {
+              "run_id": 37100148817,
+              "attempt": 1,
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ]
+        }
+      ]
+    },
+    "verify_http_status": 200,
+    "token_active": true,
+    "token_owner_type": "account",
+    "token_expires_at": "2026-10-10T23:59:59.000Z",
+    "remote": {
+      "pass": true,
+      "external_api_calls": 10,
+      "get_calls": 4,
+      "read_query_post_calls": 6,
+      "cloudflare_mutations": 0,
+      "d1_writes": 0,
+      "deploy": 0,
+      "worker_invocation": 0,
+      "live_jobs": 0,
+      "render": 0,
+      "posting": 0,
+      "primary_reads_confirmed": true,
+      "token_active": true,
+      "read_token_owner": "user",
+      "inventory": {
+        "account": "6c8ccd6aface937ab5dabef61cb64534",
+        "db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+        "db_name": "plm-serverless-sandbox-state",
+        "total": 1,
+        "other_d1": 0,
+        "complete": true
+      },
+      "database_size_bytes": 40960,
+      "bookmark": "0000000c-00000000-000050f9-eda333ceccf63ecca9285718949e58ac",
+      "schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3",
+      "snapshot": {
+        "schema": [
+          {
+            "type": "table",
+            "name": "_cf_KV",
+            "tbl_name": "_cf_KV",
+            "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+          },
+          {
+            "type": "table",
+            "name": "backend_probe_v1",
+            "tbl_name": "backend_probe_v1",
+            "sql": "CREATE TABLE backend_probe_v1 (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n intent_id TEXT NOT NULL CHECK(intent_id='plm-d1-atomicity-20261003-r1'),\n job_id TEXT NOT NULL UNIQUE CHECK(job_id='plm-d1-atomicity-job-001'),\n content_fingerprint TEXT NOT NULL CHECK(content_fingerprint='5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b'),\n owner TEXT CHECK(owner IN ('contender_a','contender_b')),\n owner_epoch INTEGER NOT NULL CHECK(typeof(owner_epoch)='integer'),\n fencing_token INTEGER NOT NULL CHECK(typeof(fencing_token)='integer'),\n state TEXT NOT NULL CHECK(state IN ('ready','claimed','succeeded','failed')),\n version INTEGER NOT NULL CHECK(typeof(version)='integer'),\n last_request_id TEXT NOT NULL CHECK(length(last_request_id) BETWEEN 1 AND 96),\n delivery_id TEXT UNIQUE,\n result_id TEXT UNIQUE,\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n PRIMARY KEY(platform,account_id,intent_id),\n CHECK((state='ready' AND version=1 AND owner IS NULL AND owner_epoch=0 AND fencing_token=0 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state='claimed' AND version=2 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state IN ('succeeded','failed') AND version=3 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NOT NULL AND result_id IS NOT NULL))\n)"
+          },
+          {
+            "type": "table",
+            "name": "test_jobs",
+            "tbl_name": "test_jobs",
+            "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+          },
+          {
+            "type": "trigger",
+            "name": "backend_probe_v1_guard",
+            "tbl_name": "backend_probe_v1",
+            "sql": "CREATE TRIGGER backend_probe_v1_guard BEFORE UPDATE ON backend_probe_v1\nWHEN NEW.platform IS NOT OLD.platform OR NEW.account_id IS NOT OLD.account_id\n OR NEW.intent_id IS NOT OLD.intent_id OR NEW.job_id IS NOT OLD.job_id\n OR NEW.content_fingerprint IS NOT OLD.content_fingerprint OR NEW.created_at IS NOT OLD.created_at\n OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT((OLD.state='ready' AND NEW.state='claimed' AND NEW.owner_epoch=1 AND NEW.fencing_token=1)\n OR (OLD.state='claimed' AND NEW.state IN ('succeeded','failed') AND NEW.owner IS OLD.owner\n AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token))\nBEGIN\n SELECT RAISE(ABORT,'backend_probe_guard');\nEND"
+          }
+        ],
+        "test_jobs_columns": [
+          {
+            "cid": 0,
+            "name": "platform",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 1
+          },
+          {
+            "cid": 1,
+            "name": "account_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 2
+          },
+          {
+            "cid": 2,
+            "name": "job_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 3
+          },
+          {
+            "cid": 3,
+            "name": "content_fingerprint",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 4,
+            "name": "claimant",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 5,
+            "name": "state",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 6,
+            "name": "version",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 7,
+            "name": "last_operation",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 8,
+            "name": "run_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 9,
+            "name": "created_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 10,
+            "name": "updated_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          }
+        ],
+        "probe_columns": [
+          {
+            "cid": 0,
+            "name": "platform",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 1
+          },
+          {
+            "cid": 1,
+            "name": "account_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 2
+          },
+          {
+            "cid": 2,
+            "name": "intent_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 3
+          },
+          {
+            "cid": 3,
+            "name": "job_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 4,
+            "name": "content_fingerprint",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 5,
+            "name": "owner",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 6,
+            "name": "owner_epoch",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 7,
+            "name": "fencing_token",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 8,
+            "name": "state",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 9,
+            "name": "version",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 10,
+            "name": "last_request_id",
+            "type": "TEXT",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 11,
+            "name": "delivery_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 12,
+            "name": "result_id",
+            "type": "TEXT",
+            "notnull": 0,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 13,
+            "name": "created_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          },
+          {
+            "cid": 14,
+            "name": "updated_at",
+            "type": "INTEGER",
+            "notnull": 1,
+            "dflt_value": null,
+            "pk": 0
+          }
+        ],
+        "probe_indexes": [
+          {
+            "seq": 3,
+            "name": "sqlite_autoindex_backend_probe_v1_1",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 2,
+            "name": "sqlite_autoindex_backend_probe_v1_2",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 1,
+            "name": "sqlite_autoindex_backend_probe_v1_3",
+            "unique": 1,
+            "origin": "u",
+            "partial": 0
+          },
+          {
+            "seq": 0,
+            "name": "sqlite_autoindex_backend_probe_v1_4",
+            "unique": 1,
+            "origin": "pk",
+            "partial": 0
+          }
+        ]
+      },
+      "probe_row_count": 0,
+      "test_jobs_row_count": 0,
+      "old_schema_unchanged": true,
+      "account_isolation": "unverified",
+      "d1_isolation": "COMPLETE_INVENTORY_TARGET_ONLY"
+    },
+    "budget": {
+      "identities": 1,
+      "mutation_sql_submissions": 9,
+      "successful_logical_row_changes": 3,
+      "concurrent_client_contenders": 2,
+      "github_hosted_runners": 1,
+      "delete": 0,
+      "retry": 0,
+      "resend": 0,
+      "unknown_reconciliation_sets": 1
+    },
+    "steps": [
+      {
+        "id": "01_init",
+        "expected_changes": 1,
+        "expected_state": "absent",
+        "expected_version": null,
+        "next_version": 1,
+        "expected_claimant": null,
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "02_identity_replay",
+        "expected_changes": 0,
+        "expected_state": "ready",
+        "expected_version": 1,
+        "next_version": 1,
+        "expected_claimant": null,
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "03_claim_a",
+        "expected_changes": null,
+        "expected_state": "ready",
+        "expected_version": 1,
+        "next_version": 2,
+        "expected_claimant": "contender_a_or_contender_b",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "04_claim_b",
+        "expected_changes": null,
+        "expected_state": "ready",
+        "expected_version": 1,
+        "next_version": 2,
+        "expected_claimant": "contender_a_or_contender_b",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "05_stale_version",
+        "expected_changes": 0,
+        "expected_state": "claimed",
+        "expected_version": 2,
+        "next_version": 2,
+        "expected_claimant": "WINNER",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "06_stale_owner",
+        "expected_changes": 0,
+        "expected_state": "claimed",
+        "expected_version": 2,
+        "next_version": 2,
+        "expected_claimant": "WINNER",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "07_wrong_fingerprint",
+        "expected_changes": 0,
+        "expected_state": "claimed",
+        "expected_version": 2,
+        "next_version": 2,
+        "expected_claimant": "WINNER",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "08_terminal",
+        "expected_changes": 1,
+        "expected_state": "claimed",
+        "expected_version": 2,
+        "next_version": 3,
+        "expected_claimant": "WINNER",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      },
+      {
+        "id": "09_terminal_replay",
+        "expected_changes": 0,
+        "expected_state": "succeeded",
+        "expected_version": 3,
+        "next_version": 3,
+        "expected_claimant": "WINNER",
+        "expected_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b"
+      }
+    ],
+    "expected_final_row": {
+      "platform": "test",
+      "account_id": "test_reference_001",
+      "intent_id": "plm-d1-atomicity-20261003-r1",
+      "job_id": "plm-d1-atomicity-job-001",
+      "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+      "owner": "WINNER",
+      "owner_epoch": 1,
+      "fencing_token": 1,
+      "state": "succeeded",
+      "version": 3,
+      "last_request_id": "terminal",
+      "delivery_id": "delivery_001",
+      "result_id": "result_001",
+      "created_at": "T0",
+      "updated_at": "T2"
+    },
+    "concurrent_http_required": true,
+    "d1_internal_parallel_execution_claimed": false
+  }
+}

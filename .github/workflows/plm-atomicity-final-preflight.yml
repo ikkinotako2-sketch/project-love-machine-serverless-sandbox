@@ -9,7 +9,8 @@ permissions:
 jobs:
   preflight:
     # Preparation only. Activate exactly one pinned read-only run in a separate commit.
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '1233ed94342d113571f2cc6a71eab70ae625ac99' && github.event.head_commit.message == 'PLM atomicity final read-only preflight 20261003-r1'
+    # RETIRED after successful read-only preflight 37100847714. No rerun.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
