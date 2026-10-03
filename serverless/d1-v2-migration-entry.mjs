@@ -4,6 +4,9 @@ import {readFileSync} from 'node:fs';
 import {pathToFileURL} from 'node:url';
 import {executionContext,migrateSchemaOnce,exclusiveJournal,jsonBounded} from './d1-v2-migration.mjs';
 const REPO='ikkinotako2-sketch/project-love-machine-serverless-sandbox';
+export function checkoutPinVerified(env,head){
+ return /^[a-f0-9]{40}$/.test(head)&&head===env.PLM_D1_V2_APPROVED_COMMIT&&head===(env.PLM_D1_V2_EXECUTION_CODE_COMMIT||env.GITHUB_SHA);
+}
 export function historyPageClear(d,currentRun,page,total){
  if(!Number.isSafeInteger(d?.total_count)||d.total_count<0||d.total_count>10000||!Array.isArray(d.workflow_runs)||d.workflow_runs.length>100||total!==null&&d.total_count!==total)throw Error('HISTORY_UNCONFIRMED');
  if(d.workflow_runs.some(x=>!Number.isSafeInteger(x.id)||x.id!==Number(currentRun)&&x.conclusion!=='skipped'))throw Error('PREVIOUS_EXECUTION_OR_UNKNOWN_NO_WRITE');
@@ -11,6 +14,9 @@ export function historyPageClear(d,currentRun,page,total){
 }
 export async function entry(env,fetcher=fetch){
  if(!executionContext(env))return {status:'BLOCKED',mutation_requests:0};
+ // The activation run SHA and immutable checked-out code SHA are distinct.
+ // Require an actual detached checkout; env alone is not proof of the code pin.
+ if(!checkoutPinVerified(env,readFileSync('.git/HEAD','utf8').trim()))throw Error('ACTUAL_CHECKOUT_PIN_MISMATCH');
  const raw=readFileSync(new URL('../audit-evidence/d1-v2-final-preflight.json',import.meta.url));
  if(!/^[a-f0-9]{64}$/.test(env.PLM_D1_V2_PREFLIGHT_RECEIPT_SHA||'')||createHash('sha256').update(raw).digest('hex')!==env.PLM_D1_V2_PREFLIGHT_RECEIPT_SHA)throw Error('APPROVED_PREFLIGHT_RECEIPT_REQUIRED');
  const approved=JSON.parse(raw).evidence;

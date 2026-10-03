@@ -1,0 +1,22 @@
+{
+  "evidence_kind": "EXPLICIT_OWNER_EXECUTION_APPROVAL",
+  "reported_at": "2026-10-03T13:54:18+09:00",
+  "account": "6c8ccd6aface937ab5dabef61cb64534",
+  "database": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "database_name": "plm-serverless-sandbox-state",
+  "sql_sha256": "ca2ee1a2c618c5f71b43ade4620d9ded3eb105282be9a610c492632fec59fdc3",
+  "max_mutation_http_requests": 1,
+  "retry": 0,
+  "fallback": 0,
+  "automatic_rollback": 0,
+  "remote_probe_insert": 0,
+  "remote_atomicity_test": 0,
+  "worker_deploy": 0,
+  "worker_invocation": 0,
+  "live_jobs": 0,
+  "render": 0,
+  "posting": 0,
+  "token_revocation_required_after_any_result": true,
+  "posting_permitted": false,
+  "live_ready": false
+}

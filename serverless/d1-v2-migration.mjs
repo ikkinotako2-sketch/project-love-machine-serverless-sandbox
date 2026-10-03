@@ -24,7 +24,11 @@ function context(env){
  return env.GITHUB_REPOSITORY===REPO&&env.GITHUB_REF===`refs/heads/${BRANCH}`&&env.GITHUB_EVENT_NAME==='push'&&env.GITHUB_RUN_ATTEMPT==='1'&&/^[a-f0-9]{40}$/.test(env.GITHUB_SHA||'')&&/^\d+$/.test(env.GITHUB_RUN_ID||'')&&env.CLOUDFLARE_ACCOUNT_ID===ACCOUNT&&env.PLM_D1_DATABASE_ID===DB&&env.PLM_CF_ACCOUNT_ISOLATION==='unverified'&&FLAGS.every(k=>env[k]==='true');
 }
 export function readContext(env){return context(env)&&env.PLM_V2_PREFLIGHT_PARENT===APPROVED_PARENT&&env.PLM_V2_PREFLIGHT_MESSAGE===MESSAGE;}
-export function executionContext(env){return context(env)&&env.PLM_D1_V2_MIGRATION_ALLOW==='true'&&env.PLM_D1_V2_OWNER_APPROVAL==='MIGRATE_FIXED_SCHEMA_V2_ONCE'&&env.GITHUB_SHA===env.PLM_D1_V2_APPROVED_COMMIT&&/^[a-f0-9]{40}$/.test(env.PLM_D1_V2_APPROVED_COMMIT||'')&&env.PLM_D1_V2_SQL_SHA===SQL_SHA;}
+export const ACTIVATION_MESSAGE='PLM D1 schema v2 execute approved once 20261003-r1';
+export function executionContext(env){
+ const pin=env.GITHUB_SHA===env.PLM_D1_V2_APPROVED_COMMIT || (env.PLM_D1_V2_EXECUTION_CODE_COMMIT===env.PLM_D1_V2_APPROVED_COMMIT&&env.PLM_D1_V2_EVENT_BEFORE===env.PLM_D1_V2_APPROVED_COMMIT&&env.PLM_D1_V2_ACTIVATION_MESSAGE===ACTIVATION_MESSAGE);
+ return context(env)&&env.PLM_D1_V2_MIGRATION_ALLOW==='true'&&env.PLM_D1_V2_OWNER_APPROVAL==='MIGRATE_FIXED_SCHEMA_V2_ONCE'&&pin&&/^[a-f0-9]{40}$/.test(env.PLM_D1_V2_APPROVED_COMMIT||'')&&env.PLM_D1_V2_SQL_SHA===SQL_SHA;
+}
 function secret(token){return typeof token==='string'&&token.length>0&&token.length<=4096&&!/[\r\n]/.test(token);}
 function cleanSql(s){return typeof s==='string'?s.trim().replace(/;$/,''):null;}
 function schemaEqual(a,b){
