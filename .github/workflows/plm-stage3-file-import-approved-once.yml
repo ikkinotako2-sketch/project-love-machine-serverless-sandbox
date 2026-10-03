@@ -8,7 +8,8 @@ permissions:
   actions: read
 jobs:
   import:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'beb715262785488f89c5c2f4892f92e94e5813e2' && github.event.head_commit.message == 'PLM execute approved fixed file import once 20261003-r1'
+    # Consumed approved import 37121596347. Never rerun or resume.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -19,8 +20,8 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_STAGE3_IMPORT_ALLOW: 'true'
-      PLM_STAGE3_IMPORT_OWNER_APPROVAL: APPROVE_NEW_FILE_IMPORT_ONCE
+      PLM_STAGE3_IMPORT_ALLOW: 'false'
+      PLM_STAGE3_IMPORT_OWNER_APPROVAL: UNAPPROVED
       PLM_IMPORT_EXEC_CODE_PIN: beb715262785488f89c5c2f4892f92e94e5813e2
       PLM_IMPORT_EXEC_BEFORE: ${{ github.event.before }}
       PLM_IMPORT_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
