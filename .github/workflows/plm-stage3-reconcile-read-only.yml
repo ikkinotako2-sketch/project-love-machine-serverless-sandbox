@@ -7,7 +7,11 @@ permissions:
   contents: read
 jobs:
   reconcile:
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.run_attempt == 1 &&
+      github.event.before == '137fb1d7a8e5835fa504e6d355a7432c6b5465ff' &&
+      github.event.head_commit.message == 'PLM stage3 manual read-only reconciliation 20261003-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -18,13 +22,13 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_RECONCILE_CODE_PIN: UNAPPROVED
+      PLM_RECONCILE_CODE_PIN: 137fb1d7a8e5835fa504e6d355a7432c6b5465ff
       PLM_RECONCILE_BEFORE: ${{ github.event.before }}
       PLM_RECONCILE_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: 137fb1d7a8e5835fa504e6d355a7432c6b5465ff
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
