@@ -1,0 +1,214 @@
+{
+  "scope": "STAGE3_FILE_IMPORT_READ_ONLY_PREFLIGHT",
+  "run_id": 37120415637,
+  "attempt": 1,
+  "code_commit": "eb337124f00681471ee467541214bedc5032d4eb",
+  "activation_commit": "1fe9e5b266fc499908ede5658886b381376d9af6",
+  "owner_evidence": {
+    "import_token_registered": true,
+    "import_execution_approved": false
+  },
+  "evidence": {
+    "pass": false,
+    "audit_pass": false,
+    "cloudflare_read_only_api_calls": 12,
+    "github_history_get_calls": 1,
+    "d1_mutation": 0,
+    "d1_write": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "ai_api": 0,
+    "render": 0,
+    "posting": 0,
+    "retry": 0,
+    "resend": 0,
+    "fallback": 0,
+    "automatic_rollback": 0,
+    "live_ready": false,
+    "posting_permitted": false,
+    "history": {
+      "complete": true,
+      "total": 1,
+      "all_skipped": true
+    },
+    "token_active": true,
+    "token_expires_at": "2026-10-10T23:59:59.000Z",
+    "token_scope_api_verified": false,
+    "token_registration_owner_evidence": true,
+    "before": {
+      "classification": "NOT_APPLIED",
+      "pass": true,
+      "cloudflare_api_calls": 10,
+      "get_calls": 4,
+      "read_query_post_calls": 6,
+      "d1_mutation": 0,
+      "d1_write": 0,
+      "worker_deploy": 0,
+      "worker_invocation": 0,
+      "ai_api": 0,
+      "render": 0,
+      "posting": 0,
+      "retry": 0,
+      "resend": 0,
+      "fallback": 0,
+      "live_ready": false,
+      "posting_permitted": false,
+      "inventory": {
+        "account": "6c8ccd6aface937ab5dabef61cb64534",
+        "db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+        "db_name": "plm-serverless-sandbox-state",
+        "total": 1,
+        "other_d1": 0,
+        "complete": true
+      },
+      "database_size_bytes": 40960,
+      "size_unchanged": true,
+      "schema": [
+        {
+          "type": "table",
+          "name": "_cf_KV",
+          "tbl_name": "_cf_KV",
+          "sql": "CREATE TABLE _cf_KV (\n        key TEXT PRIMARY KEY,\n        value BLOB\n      ) WITHOUT ROWID"
+        },
+        {
+          "type": "table",
+          "name": "backend_probe_v1",
+          "tbl_name": "backend_probe_v1",
+          "sql": "CREATE TABLE backend_probe_v1 (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n intent_id TEXT NOT NULL CHECK(intent_id='plm-d1-atomicity-20261003-r1'),\n job_id TEXT NOT NULL UNIQUE CHECK(job_id='plm-d1-atomicity-job-001'),\n content_fingerprint TEXT NOT NULL CHECK(content_fingerprint='5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b'),\n owner TEXT CHECK(owner IN ('contender_a','contender_b')),\n owner_epoch INTEGER NOT NULL CHECK(typeof(owner_epoch)='integer'),\n fencing_token INTEGER NOT NULL CHECK(typeof(fencing_token)='integer'),\n state TEXT NOT NULL CHECK(state IN ('ready','claimed','succeeded','failed')),\n version INTEGER NOT NULL CHECK(typeof(version)='integer'),\n last_request_id TEXT NOT NULL CHECK(length(last_request_id) BETWEEN 1 AND 96),\n delivery_id TEXT UNIQUE,\n result_id TEXT UNIQUE,\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n PRIMARY KEY(platform,account_id,intent_id),\n CHECK((state='ready' AND version=1 AND owner IS NULL AND owner_epoch=0 AND fencing_token=0 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state='claimed' AND version=2 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NULL AND result_id IS NULL)\n OR (state IN ('succeeded','failed') AND version=3 AND owner IS NOT NULL AND owner_epoch=1 AND fencing_token=1 AND delivery_id IS NOT NULL AND result_id IS NOT NULL))\n)"
+        },
+        {
+          "type": "table",
+          "name": "test_jobs",
+          "tbl_name": "test_jobs",
+          "sql": "CREATE TABLE test_jobs (\n platform TEXT NOT NULL CHECK(platform='test'),\n account_id TEXT NOT NULL CHECK(account_id='test_reference_001'),\n job_id TEXT NOT NULL,\n content_fingerprint TEXT NOT NULL,\n claimant TEXT NOT NULL,\n state TEXT NOT NULL CHECK(state IN ('ready','dispatching','running','succeeded','unknown')),\n version INTEGER NOT NULL CHECK(version>0),\n last_operation TEXT NOT NULL,\n run_id TEXT,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL,\n PRIMARY KEY(platform,account_id,job_id)\n)"
+        },
+        {
+          "type": "trigger",
+          "name": "backend_probe_v1_guard",
+          "tbl_name": "backend_probe_v1",
+          "sql": "CREATE TRIGGER backend_probe_v1_guard BEFORE UPDATE ON backend_probe_v1\nWHEN NEW.platform IS NOT OLD.platform OR NEW.account_id IS NOT OLD.account_id\n OR NEW.intent_id IS NOT OLD.intent_id OR NEW.job_id IS NOT OLD.job_id\n OR NEW.content_fingerprint IS NOT OLD.content_fingerprint OR NEW.created_at IS NOT OLD.created_at\n OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT((OLD.state='ready' AND NEW.state='claimed' AND NEW.owner_epoch=1 AND NEW.fencing_token=1)\n OR (OLD.state='claimed' AND NEW.state IN ('succeeded','failed') AND NEW.owner IS OLD.owner\n AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token))\nBEGIN\n SELECT RAISE(ABORT,'backend_probe_guard');\nEND"
+        }
+      ],
+      "old_schema_unchanged": true,
+      "old_columns_indexes_unchanged": true,
+      "atomicity_row_unchanged": true,
+      "atomicity_row": {
+        "platform": "test",
+        "account_id": "test_reference_001",
+        "intent_id": "plm-d1-atomicity-20261003-r1",
+        "job_id": "plm-d1-atomicity-job-001",
+        "content_fingerprint": "5bb172915fd10aac8565814c5157a28ded8001e0c8cc5a85317f2d0e2a7feb6b",
+        "owner": "contender_a",
+        "owner_epoch": 1,
+        "fencing_token": 1,
+        "state": "succeeded",
+        "version": 3,
+        "last_request_id": "terminal",
+        "delivery_id": "delivery_001",
+        "result_id": "result_001",
+        "created_at": 1791007331,
+        "updated_at": 1791007333
+      },
+      "test_jobs_unchanged": true,
+      "kv_schema_unchanged": true,
+      "kv_content_verified": false,
+      "stage3_table_details": {},
+      "bookmark": "00000014-00000000-000050f9-0db01b5d17461876677e885560ee9031",
+      "objects": [
+        {
+          "type": "table",
+          "name": "durable_stage2_callback",
+          "exists": false
+        },
+        {
+          "type": "table",
+          "name": "durable_stage2_checkpoint",
+          "exists": false
+        },
+        {
+          "type": "table",
+          "name": "durable_stage2_job",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_callback_apply",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_callback_immutable",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_callback_insert_guard",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_checkpoint_guard",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_checkpoint_insert_guard",
+          "exists": false
+        },
+        {
+          "type": "trigger",
+          "name": "durable_stage2_job_guard",
+          "exists": false
+        }
+      ],
+      "canonical_before_schema_fingerprint": "540a69aa2297b7484138e948cd852f42e2791e3909625d16d3ac24474859e8c3"
+    },
+    "failure_code": "IMPORT_KV_READ_UNCONFIRMED"
+  },
+  "offline_ci": {
+    "run_id": 37120363461,
+    "conclusion": "success",
+    "python": 456,
+    "node": 447,
+    "total": 903,
+    "fail": 0,
+    "external_api_calls": 0,
+    "render_executions": 0
+  },
+  "fixed_local_contract": {
+    "sql_sha256": "c01e08915c97aaf457879aa163dcd0e02faabab36a7ef044c3e5acaca2d1c23f",
+    "plan_sha256": "32e1d91c2907fd70bdd0a0d5e6379c7f24af9d04906ad8a265cce951aa694b14",
+    "flow": [
+      "init",
+      "upload",
+      "ingest",
+      "status_poll"
+    ],
+    "side_effect_http_max": 3,
+    "poll_max": 3,
+    "import_http_max": 6,
+    "query_mutation_max": 0,
+    "retry": 0,
+    "resend": 0,
+    "fallback": 0,
+    "automatic_rollback": 0,
+    "diagnostics": "errors[].code plus allowlisted bounded message only",
+    "forbidden_receipt_material": [
+      "signed URL",
+      "Token",
+      "raw headers",
+      "raw provider body"
+    ],
+    "workflow_hard_disabled": true,
+    "allow": false,
+    "owner_execution_approval": false
+  },
+  "status": "BLOCKED_NOT_ALL_PASS",
+  "unresolved": [
+    "KV_COUNT_READ_UNCONFIRMED",
+    "KV_HISTORICAL_CONTENT_BASELINE_MISSING"
+  ],
+  "next_gate": "STOP_NO_IMPORT_EXECUTION_APPROVAL_REQUEST",
+  "past_sent_receipts_modified": false,
+  "protected_paths_modified": false
+}
