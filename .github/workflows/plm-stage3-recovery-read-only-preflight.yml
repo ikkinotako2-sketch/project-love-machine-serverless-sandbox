@@ -8,7 +8,11 @@ permissions:
   actions: read
 jobs:
   preflight:
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.run_attempt == 1 &&
+      github.event.before == 'b62dd580a584870f9122407b52d5f5403780c847' &&
+      github.event.head_commit.message == 'PLM stage3 recovery verify read-only once 20261003-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -21,13 +25,13 @@ jobs:
       EMERGENCY_STOP: 'true'
       PLM_STAGE3_RECOVERY_ALLOW: 'false'
       PLM_STAGE3_RECOVERY_OWNER_APPROVAL: UNAPPROVED
-      PLM_RECOVERY_PREFLIGHT_CODE_PIN: UNAPPROVED
+      PLM_RECOVERY_PREFLIGHT_CODE_PIN: b62dd580a584870f9122407b52d5f5403780c847
       PLM_RECOVERY_EVENT_BEFORE: ${{ github.event.before }}
       PLM_RECOVERY_EVENT_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: UNAPPROVED
+          ref: b62dd580a584870f9122407b52d5f5403780c847
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
