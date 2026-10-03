@@ -8,8 +8,7 @@ permissions:
   actions: read
 jobs:
   preflight:
-    # Consumed read-only preflight 37120415637. No rerun; import remains disabled.
-    if: false
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '51c9e79d7bb725be135f5a597ecde028b35d06e8' && github.event.head_commit.message == 'PLM stage3 import verify read-only once 20261003-r2'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -22,13 +21,13 @@ jobs:
       EMERGENCY_STOP: 'true'
       PLM_STAGE3_IMPORT_ALLOW: 'false'
       PLM_STAGE3_IMPORT_OWNER_APPROVAL: UNAPPROVED
-      PLM_IMPORT_PREFLIGHT_CODE_PIN: eb337124f00681471ee467541214bedc5032d4eb
+      PLM_IMPORT_PREFLIGHT_CODE_PIN: 51c9e79d7bb725be135f5a597ecde028b35d06e8
       PLM_IMPORT_EVENT_BEFORE: ${{ github.event.before }}
       PLM_IMPORT_EVENT_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: eb337124f00681471ee467541214bedc5032d4eb
+          ref: 51c9e79d7bb725be135f5a597ecde028b35d06e8
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
