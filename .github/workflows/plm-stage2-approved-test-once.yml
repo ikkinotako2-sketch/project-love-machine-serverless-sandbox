@@ -1,0 +1,43 @@
+name: PLM Approved Fixed14 Stage2 Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-stage2-approved-test-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  test:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == 'ef11d79bc734849b474bb82f0c8b00558fba23c9' && github.event.head_commit.message == 'PLM execute approved fixed14 stage2 once 20261003-r1'
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_STAGE2_ALLOW: 'true'
+      PLM_STAGE2_OWNER_APPROVAL: APPROVE_FIXED_14_STEP_ONCE
+      PLM_STAGE2_PLAN_SHA: 230c1acee56c3be8a68cac3c29341675a67cc43d926f2047926982510fdc65b7
+      PLM_STAGE2_EXEC_CODE_PIN: ef11d79bc734849b474bb82f0c8b00558fba23c9
+      PLM_STAGE2_EXEC_BEFORE: ${{ github.event.before }}
+      PLM_STAGE2_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ef11d79bc734849b474bb82f0c8b00558fba23c9
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fresh preflight fixed14 once and Read Token postcheck
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_STAGE2_TEST_TOKEN: ${{ secrets.PLM_CF_D1_STAGE2_TEST_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/stage2-execution-entry.mjs
