@@ -14,7 +14,7 @@ account-owned verifyはHTTP 200、active、expiry 2026-10-10T23:59:59.000Z。Tok
 
 offline CI run 37085331897 SUCCESS：Python366、Node125、計491 PASS/FAIL0。native socket/exec guardのCI証拠はrender_executions=0、external_api_calls=0。今回の実read-only preflightのCloudflare GET8回とは集計範囲を分ける。
 
-production mainとsandbox mainは変更なし。PR15/16はopen/Draft/未mergeを再確認。migration workflow、過去のreceipt、SQL、n8n/V1/既存YouTube/1h/24h/Improvementは変更なし。migration成功累計1・再送0を維持。D1最新queryは今回禁止されているため行っていない。
+Workによるproduction/main・sandbox/mainへの書き込みは0。sandbox mainは8ac2337a37072ae23f7781e2f47e8dfc7016b30fを再確認。production mainの今回観測値はab8aaff63e83474ea0240903615f90c0b12a7d0eで、過去観測f8f8cc93feb8ef81b5fbf5ff09a40d120e916f1fとは異なる。Workはproductionへ変更操作をしておらず、外部変更の由来・差分は今回未調査。PR15/16はopen/Draft/未mergeを再確認。migration workflow、過去のreceipt、SQL、n8n/V1/既存YouTube/1h/24h/Improvementは変更なし。migration成功累計1・再送0を維持。D1最新queryは今回禁止されているため行っていない。
 
 remote atomicity/CAS/version monotonicity/concurrent claim/stale owner/fencing/checkpoint/restart/replay/unknown side effect照合はUNVERIFIED。test_jobsはfull durable contractではない。Worker存在API read成功をこれらのPASSに使わない。100+ accountsは別BLOCKER。
 
