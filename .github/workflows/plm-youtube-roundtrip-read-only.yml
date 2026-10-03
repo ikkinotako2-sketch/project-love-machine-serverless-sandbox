@@ -7,7 +7,8 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.head_commit.message == 'PLM YouTube roundtrip readiness read-only once 20261003-r1'
+    # Consumed read-only audit run 37129858947. No rerun.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
