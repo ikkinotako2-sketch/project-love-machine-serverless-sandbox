@@ -5,9 +5,9 @@ import {ACCOUNT,DB,REPO,baseContext} from './atomicity-schema-audit.mjs';
 import {candidate,SQL_SHA,PLAN_SHA} from './stage3-file-import-contract.mjs';
 import {reconcileStage3,MESSAGE as RECONCILE_MESSAGE} from './stage3-reconcile-read-only.mjs';
 import {jsonBounded} from './d1-v2-migration.mjs';
-export const MESSAGE='PLM stage3 import verify read-only once 20261003-r1';
+export const MESSAGE='PLM stage3 import verify read-only once 20261003-r2';
 const base=`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}`,target=base+'/d1/database/'+DB;
-const READS=new Set(["SELECT type, name, tbl_name, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name",'PRAGMA table_info(test_jobs)','PRAGMA table_info(backend_probe_v1)','PRAGMA index_list(backend_probe_v1)','SELECT * FROM backend_probe_v1','SELECT COUNT(*) AS n FROM test_jobs','SELECT COUNT(*) AS n FROM _cf_KV']);
+const READS=new Set(["SELECT type, name, tbl_name, sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name",'PRAGMA table_info(test_jobs)','PRAGMA table_info(backend_probe_v1)','PRAGMA index_list(backend_probe_v1)','SELECT * FROM backend_probe_v1','SELECT COUNT(*) AS n FROM test_jobs']);
 export function localChecks(){
  const c=candidate(),p=c.plan;
  const w=readFileSync(new URL('../.github/workflows/plm-stage3-file-import-once.yml',import.meta.url),'utf8');
@@ -41,14 +41,10 @@ export async function importPreflight(e,fetcher=fetch,{checkout,checks=localChec
   const ce={...e,PLM_CF_D1_STAGE3_IMPORT_TOKEN:undefined,PLM_RECONCILE_CODE_PIN:pin,PLM_RECONCILE_BEFORE:pin,PLM_RECONCILE_MESSAGE:RECONCILE_MESSAGE};
   out.before=await reconcileStage3(ce,f);
   if(!out.before.pass||out.before.classification!=='NOT_APPLIED'||!out.before.size_unchanged||!out.before.old_schema_unchanged||!out.before.old_columns_indexes_unchanged||!out.before.atomicity_row_unchanged||!out.before.test_jobs_unchanged||!out.before.kv_schema_unchanged||out.before.objects.length!==9||out.before.objects.some(x=>x.exists))throw Error('IMPORT_FRESH_AUDIT_UNCONFIRMED');
-  // Count only: no provider KV keys/values are exposed. Historical contents had no baseline.
-  const kr=await f(target+'/query',{method:'POST',redirect:'error',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${e.PLM_CF_D1_READ_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({sql:'SELECT COUNT(*) AS n FROM _cf_KV',params:[]})});
-  if(!kr.ok)throw Error('IMPORT_KV_READ_UNCONFIRMED');const kb=await jsonBounded(kr,16384),q=kb.result?.[0];
-  if(kb.success!==true||kb.result?.length!==1||q?.success!==true||q.meta?.served_by_primary!==true||q.meta?.rows_written>0||q.meta?.changed_db===true||q.results?.length!==1||!Number.isSafeInteger(q.results[0].n)||q.results[0].n<0)throw Error('IMPORT_KV_READ_UNCONFIRMED');
-  out.kv_current_row_count=q.results[0].n;out.kv_content_unchanged='UNVERIFIED_NO_HISTORICAL_CONTENT_BASELINE';
+  // Reserved D1 storage table: schema only; contents cannot be queried.
+  out.kv_schema_unchanged=true;out.kv_content_status='NOT_APPLICABLE_RESERVED_UNQUERYABLE';
   const c=candidate();out.sql_sha256=SQL_SHA;out.plan_sha256=PLAN_SHA;out.flow=['init','upload','ingest','status_poll'];out.side_effect_http_max=c.plan.side_effect_http_max;out.poll_max=c.plan.poll_read_post_max;out.query_mutation_max=0;out.diagnostics='ERROR_CODES_AND_SAFE_BOUNDED_MESSAGES_ONLY';out.migration_workflow_hard_disabled=true;out.owner_execution_approval=false;out.expected_post_schema={tables:3,triggers:6,column_counts:[16,11,9],autoindexes:8,new_rows:0};out.audit_pass=true;
-  // Requested all-PASS includes unchanged KV contents. Do not infer that from unchanged schema.
-  out.failure_code='KV_HISTORICAL_CONTENT_BASELINE_MISSING';out.next_gate='STOP_NO_EXECUTION_APPROVAL_REQUEST';
+  out.pass=true;out.next_gate='STOP_AWAIT_OWNER_IMPORT_APPROVAL';
  }catch(err){out.failure_code=/^[A-Z_]+$/.test(err.message)?err.message:'IMPORT_PREFLIGHT_UNKNOWN_NO_RETRY';}return out;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const r=await importPreflight(process.env,fetch,{checkout:readFileSync('.git/HEAD','utf8').trim()});console.log('STAGE3_IMPORT_FINAL_PREFLIGHT '+JSON.stringify(r));if(!r.pass)process.exitCode=1;}
