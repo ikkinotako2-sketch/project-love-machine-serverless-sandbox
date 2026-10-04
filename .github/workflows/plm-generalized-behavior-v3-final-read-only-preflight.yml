@@ -9,12 +9,8 @@ permissions:
 jobs:
   audit:
     # Prepare only. No execution approval or Write Token.
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
-      github.run_attempt == 1 &&
-      github.event.before == 'e3b0688fd18af15e9c9df5c4ae0fb63a32aa5a78' &&
-      github.event.head_commit.message == 'PLM v3 fixed final read-only preflight once 20261004-r1'
+    # Consumed final read-only preflight run 37171104181. No execution approval.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
