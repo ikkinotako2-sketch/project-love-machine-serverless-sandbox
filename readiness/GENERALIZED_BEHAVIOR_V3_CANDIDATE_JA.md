@@ -4,8 +4,8 @@
 
 新identity: rt-behavior-20261004-003 / youtube_synthetic_rt_003。candidate段階ではremote rowを作らない。Write Token未要求、実test未承認、execution runner未作成。
 
-固定plan raw SHA256: 080d6aacc968cfc1de5b6061037e9b6bc23e5fac78535b7e3d0d4c50bd87134d
-固定offline oracle raw SHA256: 33cceab6d611fda4e80df624c0947c94dbc33f7d571b8811e2b725f56372074b
+固定plan raw SHA256: ecfa8fc1590f3cc705a4b87bc8f935d9a21f7b592e8474eab2128ec1e79117e2
+固定offline oracle raw SHA256: 5b32227e555e86b56d1e51837512475808ec0bca4e612376e17874aa9f25f366
 
 33steps / mutation sends最大33 / successful logical changes最大18 / runner1。16 APPLIED +17 NO_OP。job/script/render各1、GENERATION/RENDER/UPLOAD各1、callback1、新規最終7rows。最終global counts: job3（既存ACTIVE2＋新SUCCEEDED1）、script1/render1/effect3/callback1。全SQL/paramsと全before/after/final rowsは固定planに収録。old2rowは全stepでexact保持。
 
@@ -31,3 +31,5 @@ retry/resend/fallback/delete/drop/reset/automatic rollback0。unknown→次mutat
 次の本人操作は1つ: 「このv3固定planで、Write Tokenを使わないfresh read-only preflightを進めてください」と依頼する。Token発行依頼・登録・最終実test承認は別段階。今回新Write Tokenを要求しない。
 
 production / sandbox main / n8n / V1 /既存YouTube Pipeline / PR15/16変更なし。
+
+Read Tokenだけのschema audit37170582256 PASS: 39calls、旧ACTIVE2row exact不変、新job003不存在、schema FULL_APPLIED、DBsize196608、fresh bookmark取得。schema/SQL hashは最終candidateでも同一。auditは作成中candidateのhashを記録しており、最終planのSHAを用いたfresh final preflightは次段階で別途行う。新account/intentも003へ固定した最終planをoffline CIで確認する。

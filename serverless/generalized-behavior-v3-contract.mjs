@@ -1,11 +1,11 @@
 import {readFileSync} from 'node:fs';
 import {sha,canonical} from './atomicity-schema-audit.mjs';
-export const V3_PLAN_SHA='080d6aacc968cfc1de5b6061037e9b6bc23e5fac78535b7e3d0d4c50bd87134d';
-export const V3_ORACLE_SHA='33cceab6d611fda4e80df624c0947c94dbc33f7d571b8811e2b725f56372074b';
+export const V3_PLAN_SHA='ecfa8fc1590f3cc705a4b87bc8f935d9a21f7b592e8474eab2128ec1e79117e2';
+export const V3_ORACLE_SHA='5b32227e555e86b56d1e51837512475808ec0bca4e612376e17874aa9f25f366';
 export function v3Plan(){
  const raw=readFileSync(new URL('./generalized-behavior-v3-test-plan.json',import.meta.url));if(sha(raw)!==V3_PLAN_SHA)throw Error('RT_V3_PLAN_DRIFT');const p=JSON.parse(raw);
  const oldRaw=readFileSync(new URL('../audit-evidence/generalized-behavior-v2-approved-result-37169509729.json',import.meta.url));if(sha(oldRaw)!==p.immutable_old_execution_receipt_sha256)throw Error('RT_V3_BASELINE_RECEIPT_DRIFT');const old=JSON.parse(oldRaw).result.post.rows;
- if(p.identity.job_id!=='rt-behavior-20261004-003'||p.steps.length!==33||p.budgets.mutation_sends!==33||p.budgets.successful_logical_row_changes!==18||p.budgets.runner!==1||p.allow!==false||p.execution_approved!==false||canonical(p.before_rows)!==canonical(old))throw Error('RT_V3_BASELINE_OR_BUDGET_DRIFT');
+ if(p.identity.job_id!=='rt-behavior-20261004-003'||p.identity.account_id!=='youtube_synthetic_rt_003'||p.identity.intent_id!=='private-roundtrip-behavior-20261004-003'||p.steps.length!==33||p.budgets.mutation_sends!==33||p.budgets.successful_logical_row_changes!==18||p.budgets.runner!==1||p.allow!==false||p.execution_approved!==false||canonical(p.before_rows)!==canonical(old))throw Error('RT_V3_BASELINE_OR_BUDGET_DRIFT');
  if(p.steps.some((s,i)=>s.sequence!==i+1||!['APPLIED','NO_OP'].includes(s.expected.outcome)||s.expected.safe_error_token!==null||s.expected.meta_changes!==s.expected.logical_changes||canonical(s.before_rows)!==canonical(i?p.steps[i-1].after_rows:p.before_rows)||s.params.some(v=>typeof v==='string'&&p.protected_old_identities.some(id=>v.includes(id)))||canonical(s.after_rows.plm_rt_v1_job.filter(r=>p.protected_old_identities.includes(r.job_id)))!==canonical(old.plm_rt_v1_job))||p.steps.reduce((n,s)=>n+s.expected.logical_changes,0)!==18||canonical(p.steps.at(-1).after_rows)!==canonical(p.expected_final_rows))throw Error('RT_V3_SEQUENCE_OR_OLD_ROWS_DRIFT');
  if(p.rejection_policy.remote_intentional_abort_steps!==0||p.rejection_policy.code_7500_success!==false||p.rejection_policy.remote_error_text_success_evidence!==false)throw Error('RT_V3_ERROR_TEXT_DEPENDENCY');
  const wf=readFileSync(new URL('../.github/workflows/plm-generalized-behavior-v3-test-once.yml',import.meta.url),'utf8');if(!wf.includes('if: false')||!wf.includes("PLM_RT_V3_ALLOW: 'false'")||!wf.includes('UNAPPROVED')||wf.includes('secrets.'))throw Error('RT_V3_NOT_DISABLED');

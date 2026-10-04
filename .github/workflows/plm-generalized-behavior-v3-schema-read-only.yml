@@ -7,12 +7,8 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
-      github.run_attempt == 1 &&
-      github.event.before == 'a8600ef0c62b02d7fddcf879901dcfc56036b6ad' &&
-      github.event.head_commit.message == 'PLM v3 exact migrated schema read only once 20261004-r1'
+    # Consumed read-only audit run 37170582256. No execution approval.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
