@@ -1,0 +1,15 @@
+{
+  "all_three_behavior_identities_permanently_consumed": true,
+  "cloudflare_token_name": "plm-sandbox-d1-roundtrip-behavior-v3-once",
+  "cloudflare_token_revoked_and_deleted": true,
+  "evidence_scope": "OWNER_EVIDENCE_NOT_INDEPENDENT_CREDENTIAL_OR_SECRET_AUDIT",
+  "execution_run_id": 37173135193,
+  "execution_status": "SUCCESS",
+  "github_secret_deleted": true,
+  "github_secret_name": "PLM_CF_D1_ROUNDTRIP_BEHAVIOR_V3_TOKEN",
+  "independently_verified": false,
+  "kind": "OWNER_CONFIRMED_V3_CREDENTIAL_CLEANUP",
+  "owner_report_date": "2026-10-04",
+  "read_token_maintained": true,
+  "resume_retry_resend_delete_reset": 0
+}

@@ -1,0 +1,52 @@
+{
+  "as_of": "2026-10-04",
+  "decision": "BLOCKED_NO_COMPLIANT_ZERO_COST_PROVIDER",
+  "fail": 0,
+  "fresh_remote_audit": false,
+  "kind": "AI_ELIGIBILITY_LOCAL_GUARDED_OFFLINE_CI",
+  "live_ready": false,
+  "node_pass": 943,
+  "posting_permitted": false,
+  "python_pass": 522,
+  "raw_sha256": {
+    ".github/workflows/plm-offline-readiness.yml": "4533038ec75610cc88c975722323d44111b95c7f9c94920467890777d6743208",
+    ".github/workflows/plm-provider-neutral-backend-migration-once.yml": "9391ff9dc0ae330169ca89b3ccf22fcec7b7b86be7f60c86d0d0307934e2287c",
+    "audit-evidence/generalized-behavior-v3-owner-cleanup-20261004.json": "758aeb0d831e024748d03a3d980734433fc7a2baeea21cc944f127d4bae180b0",
+    "readiness/AI_PROVIDER_ELIGIBILITY_20261004.json": "d3261477a5554e09f36a681e0b2c83dacb624fdb3eec7da9b37a3d11876a9e13",
+    "readiness/AI_PROVIDER_ELIGIBILITY_20261004.md": "f4ad30365d4d22399743ea1ad1679e643570ee5e0d50a1c135226313fb4a1962",
+    "readiness/provider_neutral_generation.py": "f2c03d3cca689f18c15862ebf4e23923182e80994bce4992248dd04c4523c307",
+    "readiness/test_provider_neutral_audit.py": "016f3c644bdf68dbcc93f5f52c141d5de908713e3573afca8d839cd65866650a",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+    "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+    "serverless/provider-neutral-backend-contract.mjs": "e76c5fe5e2382a3d8d9ba4a09da9041e1a5768fc91ce329f4c28bcd1995ad4e2",
+    "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a",
+    "serverless/provider-neutral-backend-sha256.json": "7c7840e87b67b5a6793eacfe199bb10867094dfe6aef02101985ad889300ddc5",
+    "serverless/test-provider-neutral-backend.mjs": "40326954a593127d5c893f9863e4003286551cb8b809cc265d7c2c1ad3db740a"
+  },
+  "remote_operations": {
+    "ai_inference": 0,
+    "automatic_rollback": 0,
+    "credential_create": 0,
+    "credential_register": 0,
+    "d1_mutation": 0,
+    "d1_read": 0,
+    "external_provider_api": 0,
+    "render": 0,
+    "resend": 0,
+    "retry": 0,
+    "sns_posting": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "youtube": 0
+  },
+  "safety_flags": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "source_receipt_is_existing_evidence_only": true,
+  "total_pass": 1465,
+  "workflow_hard_disabled_readback_local": true
+}

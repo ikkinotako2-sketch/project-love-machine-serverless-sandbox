@@ -1,0 +1,819 @@
+{
+  "as_of": "2026-10-04",
+  "capacity_arithmetic_only": {
+    "cf_qwen_neurons_per_day": "805.7856 < 10000",
+    "days_budgeted": 31,
+    "hf_nscale_monthly_usd": "0.02666496 < 0.10",
+    "input_tokens_cap_scenario": 2048,
+    "no_automatic_retry_requests_in_demand": true,
+    "not_owner_entitlement_or_performance_or_exact_output_proof": true,
+    "output_tokens_cap_scenario": 4096,
+    "requests_per_day": 6
+  },
+  "credentials_requested": false,
+  "decision": "BLOCKED_NO_COMPLIANT_ZERO_COST_PROVIDER",
+  "decision_scope": "NO_FULL_PASS_IN_AUDITED_CANDIDATES_WITH_CURRENT_OWNER_EVIDENCE_NOT_GLOBAL_IMPOSSIBILITY",
+  "durability_boundary": {
+    "effect_reserved_sent_before_future_external_call": true,
+    "model_price_quota_terms_drift": "STOP_NO_PAID_UPGRADE",
+    "no_regeneration_after_checkpoint": true,
+    "primary_and_fallback_require_FULL_PASS": true,
+    "timeout_ambiguous": "UNKNOWN_STOP_NO_RETRY_NO_FALLBACK_NO_RENDER",
+    "validated_script_json_and_sha_before_render": true
+  },
+  "fallback": null,
+  "jurisdiction_context": "Japan",
+  "kind": "READ_ONLY_AI_PROVIDER_ELIGIBILITY_ZERO_COST_AUDIT",
+  "legal_zero_cost_options": [
+    "AI-free offline script JSON/checkpoint/render-input fixtures; no inference/render/posting",
+    "Mistral/HF own-name use only after genuine age/legal-capacity/guardian-consent proof and official free quota/model/provider terms proof; do not create credential now",
+    "Wait until personally eligible; no other-person credentials, false age, card, trial-to-production workaround"
+  ],
+  "live_ready": false,
+  "mandatory": [
+    "ongoing_zero_cost",
+    "no_paid_contract",
+    "no_payment_method",
+    "owner_age_and_contract_eligible",
+    "headless_server_inference",
+    "at_least_6_generations_per_day",
+    "japanese_script_capability",
+    "safe_json_validation"
+  ],
+  "next_owner_operation": "AIを使わない台本JSON fixtureでoffline接続監査を続けるかを選ぶ。credential/account作成は要求しない。",
+  "operations": {
+    "ai_inference": 0,
+    "automatic_rollback": 0,
+    "credential_create": 0,
+    "credential_register": 0,
+    "d1_mutation": 0,
+    "d1_read": 0,
+    "external_provider_api": 0,
+    "render": 0,
+    "resend": 0,
+    "retry": 0,
+    "sns_posting": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "youtube": 0
+  },
+  "owner_profile": {
+    "age_at_least_13_evidence": null,
+    "age_policy_context": "Gemini禁止の本人指示を尊重。正確な本人年齢は未収集で、18歳未満と独立認定したものではない。",
+    "cloudflare_existing_account_is_eligibility_proof": false,
+    "eighteen_plus_eligibility_not_proven": true,
+    "exact_age_collected": false,
+    "guardian_consent_evidence": null
+  },
+  "posting_permitted": false,
+  "primary": null,
+  "providers": [
+    {
+      "authentication": "禁止",
+      "blockers": [
+        "OWNER_EXCLUDED_18_PLUS"
+      ],
+      "commercial_automatic_sns": "禁止",
+      "data_usage": "既存fixtureは実AI responseではない",
+      "fallback": false,
+      "free_quota": "NOT_APPLICABLE",
+      "free_tier": "調査候補から明示除外",
+      "headless_automation": "禁止",
+      "id": "gemini",
+      "maximum_output": "NOT_APPLICABLE",
+      "minimum_age": 18,
+      "minor_conditions": "18歳未満に向けた/利用されるAPI Clientsも制限。本人指示でcredential作成/使用禁止。",
+      "model_retirement_risk": "候補にしない",
+      "ongoing_zero_cost_proven": null,
+      "owner_age_eligibility_proven": false,
+      "payment_method_required": "NOT_AUDITED_AFTER_OWNER_EXCLUSION",
+      "primary": false,
+      "public_model_examples_not_selected": [],
+      "quota_reset": "NOT_APPLICABLE",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "gemini_terms"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "NOT_APPLICABLE"
+    },
+    {
+      "authentication": "既存GitHub tokenをinferenceへ転用しない",
+      "blockers": [
+        "RETIRED_20260730"
+      ],
+      "commercial_automatic_sns": "NOT_AVAILABLE",
+      "data_usage": "NOT_APPLICABLE",
+      "fallback": false,
+      "free_quota": 0,
+      "free_tier": "RETIRED",
+      "headless_automation": "inference API退役",
+      "id": "github_models",
+      "maximum_output": "NOT_APPLICABLE",
+      "minimum_age": "NOT_APPLICABLE_RETIRED_API",
+      "minor_conditions": "GitHub account条件とモデルAPI availabilityは別",
+      "model_retirement_risk": "2026-07-30退役済み",
+      "ongoing_zero_cost_proven": false,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "NOT_APPLICABLE",
+      "primary": false,
+      "public_model_examples_not_selected": [],
+      "quota_reset": "NONE",
+      "six_per_day_capacity_proven": false,
+      "source_keys": [
+        "github_retired"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "NOT_APPLICABLE"
+    },
+    {
+      "authentication": "Bearer API key",
+      "blockers": [
+        "AGE_18_PLUS"
+      ],
+      "commercial_automatic_sns": "service/model AUP・権利・非欺瞞を要確認。今回年齢で除外",
+      "data_usage": "推論contentは通常保持しない、信頼性/abuse時最大30日。usage metadata保持",
+      "fallback": false,
+      "free_quota": "gpt-oss-20b/120b:30 RPM,1000 RPD,8000 TPM,200000 TPD",
+      "free_tier": "Free plan usage-based limits",
+      "headless_automation": "文書化API integration許可。将来headless HTTP可能、SDK retryは使わない",
+      "id": "groq",
+      "maximum_output": "gpt-oss20b/120b max completion65536、Qwen3.8 max16384。Free throughput limitsは別",
+      "minimum_age": 18,
+      "minor_conditions": "18歳未満はCloud Services access/use禁止。保護者代理credential案なし。",
+      "model_retirement_risk": "Previewは短期廃止可。古いLlama無料枠情報は使わない",
+      "ongoing_zero_cost_proven": true,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "公式資料からカード不要を独立確定できず。年齢hard fail後に登録画面を開かない",
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "openai/gpt-oss-20b",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.8-27b"
+      ],
+      "quota_reset": "RPD/TPM reset headerで相対reset。固定daily timezoneはこの資料で確定しない",
+      "six_per_day_capacity_proven": true,
+      "source_keys": [
+        "groq_terms",
+        "groq_limits",
+        "groq_models",
+        "groq_json",
+        "groq_data"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "上記3モデルはjson_schema strict:true対応"
+    },
+    {
+      "authentication": "Account-scoped Bearer API Token, future Workers AI最小scope。D1 Read Token流用不可",
+      "blockers": [
+        "OWNER_CONTRACT_ELIGIBILITY_UNPROVEN",
+        "ABSOLUTE_OUTPUT_LIMIT_UNVERIFIED"
+      ],
+      "commercial_automatic_sns": "SSA2.7 spam/technical abuse等禁止。Developer terms第三者model terms遵守。正常なAPI automationとquota回避を混同しない",
+      "data_usage": "AI inputs/outputsはCustomer Content、同意なしgenerative model trainingに使わない",
+      "fallback": false,
+      "free_quota": "10000 Neurons/day。Qwen3-30b入力4625/output30475 Neurons/M tokens",
+      "free_tier": "Workers Free ongoing allocation; no paid upgrade",
+      "headless_automation": "REST AI run endpointでheadless可能。Worker deploy/invocation不要だが今回inference0",
+      "id": "cloudflare_workers_ai",
+      "maximum_output": "max_tokens default2000、absolute output ceilingは公開parameter schemaに明記なし。4096要求の事前保証なし",
+      "minimum_age": null,
+      "minor_conditions": "現行SSA/Developer Platformに明示的数値年齢や未成年同意の承認経路を確認できない。契約成立・本人の契約能力/適格性を未証明。Website TermsはSSA製品を適用外とするため別規約の年齢を流用しない。既存accountは証明ではない。",
+      "model_retirement_risk": "SSA8で変更/廃止可。Freeアクセス/paid指定やモデルcatalog driftでSTOP",
+      "ongoing_zero_cost_proven": true,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "Freeはカード不要。Paidやfrontier/prepaid creditは除外",
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "@cf/qwen/qwen3-30b-a3b-fp8"
+      ],
+      "quota_reset": "00:00 UTC daily",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "cf_ssa",
+        "cf_dev",
+        "cf_website",
+        "cf_price",
+        "cf_card",
+        "cf_model",
+        "cf_json",
+        "cf_data",
+        "japan_majority"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "response_format JSON/schema対応。local validation必須"
+    },
+    {
+      "authentication": "Bearer API key; expiry設定可。Vibe plan keyをAPIへ流用しない",
+      "blockers": [
+        "OWNER_AGE_GUARDIAN_EVIDENCE_MISSING",
+        "PUBLIC_NUMERIC_QUOTA_UNVERIFIED",
+        "FREE_PRODUCTION_SUITABILITY_UNVERIFIED"
+      ],
+      "commercial_automatic_sns": "Commercial API契約/usage policy遵守。Freeはevaluation/prototyping向けの記載。長期商用SNSへの継続適合は未確定で禁止断定もしない",
+      "data_usage": "Free mode input/output training使用可、opt-out可。ZDRはFreeそのままでは利用不可(PayGo必要)",
+      "fallback": false,
+      "free_quota": "numeric RPS/TPM/month allowanceは本人OrganizationのLimits pageに依存。公開資料のみで6/day確定不能",
+      "free_tier": "Free mode recurring monthly usage, trial creditと同一視しない",
+      "headless_automation": "Free mode/PayGo Studio API keyでautomation可。Vibe Code CLI plan keyはautomation不適合",
+      "id": "mistral",
+      "maximum_output": "model context:Small4/Large3 256k input+output。absolute output上限は別、固定pinなしでは未確定",
+      "minimum_age": 13,
+      "minor_conditions": "未成年本人のaccount/API利用には適法な保護者/法定代理人同意。本人の13歳以上/同意evidenceなし。Commercial terms2.2(c)も確認。",
+      "model_retirement_risk": "latest aliasは変動、変更時STOP。model/version固定前にquotaと契約確認",
+      "ongoing_zero_cost_proven": true,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": false,
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "mistral-small-latest",
+        "Mistral Small 4",
+        "Mistral Large 3"
+      ],
+      "quota_reset": "monthly usageあり。Freeの正確reset時刻/日付は公開資料で確定不能",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "mistral_age",
+        "mistral_consumer",
+        "mistral_commercial",
+        "mistral_key",
+        "mistral_limits",
+        "mistral_usage",
+        "mistral_models",
+        "mistral_chat",
+        "mistral_json",
+        "mistral_data",
+        "mistral_zdr",
+        "mistral_aup"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "JSON object/custom JSON schema。ローカルstrict JSON必須"
+    },
+    {
+      "authentication": "HF User Access Token(inference permission); routedなら下流provider account不要。Custom Provider Key無料credit対象外",
+      "blockers": [
+        "OWNER_LEGAL_CAPACITY_UNPROVEN",
+        "DOWNSTREAM_TERMS_AND_JSON_CAPABILITY_UNVERIFIED",
+        "ACCOUNT_RATE_LIMIT_UNVERIFIED"
+      ],
+      "commercial_automatic_sns": "HF terms/model Apache2.0・下流条件確認必須。未確認の下流年齢条件をHF accountだけでPASSにしない",
+      "data_usage": "HFはrouting body/responseを保存・training利用しない、debug logs最大30日content/tokenなし。下流data policyは別で未固定",
+      "fallback": false,
+      "free_quota": "$0.10/month subject to change。公式catalog Qwen3-4B-Instruct-2507:nscale input $0.01/M output $0.03/M",
+      "free_tier": "Free user monthly credit; one-time trialではない",
+      "headless_automation": "REST/routerまたはInferenceClientでheadless可能。auto provider routing/SDK retriesは将来禁止",
+      "id": "huggingface_routed",
+      "maximum_output": "Qwen card/context262144は最大outputではない。absolute output/provider throughput未確定",
+      "minimum_age": 13,
+      "minor_conditions": "13歳以上account条件に加えTerms Execution条項のlegal right/capacity。本人適格性evidenceと下流サービス条件の適合未証明。HF経由を18歳条件回避に使わない。",
+      "model_retirement_risk": "credit価格/額subject to change、model/provider消滅可。固定nscale以外へ自動fallback禁止",
+      "ongoing_zero_cost_proven": true,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": false,
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "Qwen/Qwen3-4B-Instruct-2507:nscale"
+      ],
+      "quota_reset": "monthly。正確cycle/timeは公開pricingで確定しない",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "hf_terms",
+        "hf_price",
+        "hf_models",
+        "hf_qwen",
+        "hf_json",
+        "hf_security",
+        "hf_nscale"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "json_schema provider/modelごと対応。candidate pairでstrictのexact capability未固定"
+    },
+    {
+      "authentication": "Bearer API key",
+      "blockers": [
+        "AGE_18_PLUS",
+        "AUTOMATIC_UPSTREAM_FALLBACK_CONFLICT"
+      ],
+      "commercial_automatic_sns": "AUP/model terms、rights、nondeception。年齢で除外",
+      "data_usage": "content/model trainingとlogging permission per provider/settings。opt-in log商用利用licenseあり",
+      "fallback": false,
+      "free_quota": "公開limitsの無料table数値が取得textでは欠落。旧50/day/20RPM値を現行証明にしない",
+      "free_tier": "free variantsは存在するが適格性hard fail",
+      "headless_automation": "API自体はheadless可。ただし公式routingはupstream errorでautomatic retries/fallbackがあり本方針と不適合",
+      "id": "openrouter",
+      "maximum_output": "per-model。not fixed",
+      "minimum_age": 18,
+      "minor_conditions": "2026-08-31現行規約2。古い13歳+guardian条件を使わない。",
+      "model_retirement_risk": "モデル随時追加/削除可。route/fallback drift",
+      "ongoing_zero_cost_proven": null,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "free variant以外の課金禁止。card要否は年齢除外後未確定",
+      "primary": false,
+      "public_model_examples_not_selected": "dynamic :free catalog; no selected model",
+      "quota_reset": "free usage counter UTC day",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "openrouter_terms",
+        "openrouter_limits",
+        "openrouter_privacy"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "model/provider dependent json_schema;未選定"
+    },
+    {
+      "authentication": "Bearer API key",
+      "blockers": [
+        "PAYMENT_METHOD_REQUIRED",
+        "TRIAL_ONLY_30_DAYS",
+        "NO_RENEWING_FREE_TIER"
+      ],
+      "commercial_automatic_sns": "Model terms、Output人間生成と偽らない、commercial solicitation禁止条項。trial限定で長期SNS候補にしない",
+      "data_usage": "Terms user-content license/third-party policies。具体モデルprivacy未選定",
+      "fallback": false,
+      "free_quota": "$5 trial credits expires30days。5RPM,30k uncachedTPM,90k totalTPM,1MTPH/TPDはtrialのrate ceilings",
+      "free_tier": "Free Trialのみ",
+      "headless_automation": "API文書に沿うautomation許可。カード未登録ならAPI/Playground inactive",
+      "id": "cerebras",
+      "maximum_output": "public model-specific ceiling未固定。trial credit ceilingとoutput capは別",
+      "minimum_age": 13,
+      "minor_conditions": "国のdigital consent年齢以上。API Third-Party Model Terms別途適用。",
+      "model_retirement_risk": "serviceいつでも変更/停止可。trial30日で必ず継続不可",
+      "ongoing_zero_cost_proven": false,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": true,
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "gpt-oss-120b",
+        "qwen-3.8-27b"
+      ],
+      "quota_reset": "renewing no-cost allowanceなし。trial失効後購入必要",
+      "six_per_day_capacity_proven": false,
+      "source_keys": [
+        "cerebras_terms",
+        "cerebras_limits",
+        "cerebras_price"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "per-model Structured Outputs;無料trialであっても候補除外"
+    },
+    {
+      "authentication": "Bearer API key",
+      "blockers": [
+        "NO_ONGOING_FREE_API",
+        "PAYMENT_REQUIRED"
+      ],
+      "commercial_automatic_sns": "API application+OpenAI policies遵守。$0で除外",
+      "data_usage": "Services agreement/個別data設定確認必要。候補除外後data plan選定なし",
+      "fallback": false,
+      "free_quota": "通常APIは使用料、prepaid最小$5。ChatGPT PlusはAPI無料枠ではない",
+      "free_tier": "継続無料API allocationを確認できず",
+      "headless_automation": "API integration/headless可、今回credential0",
+      "id": "openai_api",
+      "maximum_output": "per model。NOT_PINNED_AFTER_COST_FAIL",
+      "minimum_age": null,
+      "minor_conditions": "API Services Agreementで合法な契約能力が必要。未成年End Usersはguardian consent。consumer ChatGPTの年齢/Plus資格をAPI契約に流用しない。",
+      "model_retirement_risk": "価格変更/モデル廃止。prepaidはinstant hard spending cutoffでもない",
+      "ongoing_zero_cost_proven": false,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": true,
+      "primary": false,
+      "public_model_examples_not_selected": [],
+      "quota_reset": "paid credits/rechargesのみ。FREE_QUOTA_NONE",
+      "six_per_day_capacity_proven": false,
+      "source_keys": [
+        "openai_terms",
+        "openai_billing"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "対応モデルにstructured outputsあり。$0失格のためモデル選定しない"
+    },
+    {
+      "authentication": "Bearer API key",
+      "blockers": [
+        "AGE_MAJORITY_REQUIRED",
+        "EVALUATION_NOT_FREE_PRODUCTION"
+      ],
+      "commercial_automatic_sns": "trialをproduction用途へ転用しない。deceptive fake reviews/deepfakes等usage policy禁止",
+      "data_usage": "contract/model privacy選定なし。今回評価key自体も作らない",
+      "fallback": false,
+      "free_quota": "trial1000 calls/month; Chat20RPM",
+      "free_tier": "evaluation/trial keys only; production paid",
+      "headless_automation": "API/headless可。ただしproductionはpaid key",
+      "id": "cohere",
+      "maximum_output": "per-model docs;未固定",
+      "minimum_age": "居住法域の成年年齢と法的契約能力（規約は一律数値18を規定していない）",
+      "minor_conditions": "Termsは居住国の成年+binding capacity、日本は18。minor exception未確認。",
+      "model_retirement_risk": "new models prod keysでもtrial limitの場合あり",
+      "ongoing_zero_cost_proven": false,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "production payment必要。trialのcard要否は未確認",
+      "primary": false,
+      "public_model_examples_not_selected": [
+        "Command A",
+        "Command A+",
+        "Command R7B"
+      ],
+      "quota_reset": "monthly。正確resetcycleは未確認",
+      "six_per_day_capacity_proven": false,
+      "source_keys": [
+        "cohere_terms",
+        "cohere_limits",
+        "cohere_prod",
+        "cohere_models",
+        "cohere_aup"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "supported models JSON/schema。未選定output pinなし"
+    },
+    {
+      "authentication": "Bearer API key cloud direct",
+      "blockers": [
+        "AGE_18_PLUS",
+        "NUMERIC_FREE_ALLOWANCE_UNVERIFIED"
+      ],
+      "commercial_automatic_sns": "ownoutputs/review責任。18歳条件あり",
+      "data_usage": "cloud prompts/responses logged/trainedしないとpricing/terms明記",
+      "fallback": false,
+      "free_quota": "Free starter amount数値とmodel範囲の固定根拠なし。concurrency1",
+      "free_tier": "Free starter usage monthly resets",
+      "headless_automation": "documented APIでheadless可。今回local/cloud inference両方0",
+      "id": "ollama_cloud",
+      "maximum_output": "per model;未固定",
+      "minimum_age": 18,
+      "minor_conditions": "May2026 Terms2で18歳以上。Local open-source licenseとcloud契約は別監査。",
+      "model_retirement_risk": "monthly free amount未固定。terms/modellist変化",
+      "ongoing_zero_cost_proven": null,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "Free signup card要否は公式pricingのみで未確定",
+      "primary": false,
+      "public_model_examples_not_selected": "starter cloud models; exact entitlement未固定",
+      "quota_reset": "signup日基準monthly、繰越なし",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "ollama_terms",
+        "ollama_price",
+        "ollama_privacy",
+        "ollama_api"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "cloud model-dependent; local structured output機能をcloudの保証へ流用しない"
+    },
+    {
+      "authentication": "gateway API key/Bearer",
+      "blockers": [
+        "AGE_18_PLUS",
+        "STARTER_CREDIT_NOT_ONGOING_FREE",
+        "NO_UNSUPERVISED_SOCIAL_POSTING"
+      ],
+      "commercial_automatic_sns": "Terms1.4 unsafe automation:human oversightなしSNS posting禁止。本目標に不適合",
+      "data_usage": "research data sharing opt-out、external modelproviderdata terms",
+      "fallback": false,
+      "free_quota": "new account $2 starter credit; recurring証明なし",
+      "free_tier": "API $2 starter credit; recurring free quotaを確認せず",
+      "headless_automation": "API可、account作成botは禁止。headless inferenceはAPI docsに従う",
+      "id": "publicai_co",
+      "maximum_output": "per-model;未固定",
+      "minimum_age": 18,
+      "minor_conditions": "AI inference utility Terms1.2。publicai.io(別サービス)規約と混同しない。",
+      "model_retirement_risk": "research/educationprimary・service/modellist変化",
+      "ongoing_zero_cost_proven": false,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "starter後payment条件未確定",
+      "primary": false,
+      "public_model_examples_not_selected": "public gateway catalog;not selected",
+      "quota_reset": "starter replenishment根拠なし",
+      "six_per_day_capacity_proven": false,
+      "source_keys": [
+        "publicai_terms",
+        "publicai_docs"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "OpenAI-compatible API;strict pair未固定"
+    },
+    {
+      "authentication": "current API key/OAuth docs;匿名利用条件未確定",
+      "blockers": [
+        "OFFICIAL_TERMS_UNRETRIEVABLE",
+        "ONGOING_FREE_QUOTA_UNVERIFIED"
+      ],
+      "commercial_automatic_sns": "UNVERIFIED",
+      "data_usage": "UNVERIFIED",
+      "fallback": false,
+      "free_quota": "Anonymous/Seedの旧rate情報を現行根拠にしない。quest creditは無条件ongoing allocationではない",
+      "free_tier": "Pollen/quests案内。現行always-free quotaを確定できず",
+      "headless_automation": "public API headless仕様あり。terms適格性未証明",
+      "id": "pollinations",
+      "maximum_output": "UNVERIFIED",
+      "minimum_age": null,
+      "minor_conditions": "official enter termsがpublic retrievalで本文0行。age/minor/contract条件証明不能。非公式pollinations-ai.comを根拠にしない。",
+      "model_retirement_risk": "gateway/model/tier/creditsに変更リスク",
+      "ongoing_zero_cost_proven": null,
+      "owner_age_eligibility_proven": null,
+      "payment_method_required": "UNVERIFIED",
+      "primary": false,
+      "public_model_examples_not_selected": "official dynamic catalog includes third-party models;禁止Gemini等は選ばない",
+      "quota_reset": "UNVERIFIED",
+      "six_per_day_capacity_proven": null,
+      "source_keys": [
+        "pollinations_terms",
+        "pollinations_docs",
+        "pollinations_dashboard"
+      ],
+      "status": "EXCLUDED_FROM_EXECUTABLE_CANDIDATES",
+      "structured_json": "chat-completion API、strict schema/current output ceiling未証明"
+    }
+  ],
+  "safety_flags": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "sources": {
+    "cerebras_limits": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://inference-docs.cerebras.ai/support/rate-limits"
+    },
+    "cerebras_price": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cerebras.ai/pricing"
+    },
+    "cerebras_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cerebras.ai/terms-of-service"
+    },
+    "cf_card": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cloudflare.com/products/workers-ai/"
+    },
+    "cf_data": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://developers.cloudflare.com/workers-ai/platform/data-usage/"
+    },
+    "cf_dev": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cloudflare.com/service-specific-terms-developer-platform/"
+    },
+    "cf_json": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://developers.cloudflare.com/workers-ai/features/json-mode/"
+    },
+    "cf_model": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://developers.cloudflare.com/workers-ai/models/qwen3-30b-a3b-fp8/"
+    },
+    "cf_price": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://developers.cloudflare.com/workers-ai/platform/pricing/"
+    },
+    "cf_ssa": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cloudflare.com/terms/"
+    },
+    "cf_website": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.cloudflare.com/website-terms/"
+    },
+    "cohere_aup": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.cohere.com/docs/usage-policy/"
+    },
+    "cohere_limits": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.cohere.com/docs/rate-limits"
+    },
+    "cohere_models": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.cohere.com/docs/models"
+    },
+    "cohere_prod": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.cohere.com/docs/going-live"
+    },
+    "cohere_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://cohere.com/terms-of-use"
+    },
+    "gemini_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://ai.google.dev/gemini-api/terms"
+    },
+    "github_retired": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://github.blog/changelog/2026-07-30-github-models-is-now-retired/"
+    },
+    "groq_data": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://console.groq.com/docs/your-data"
+    },
+    "groq_json": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://console.groq.com/docs/structured-outputs"
+    },
+    "groq_limits": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://console.groq.com/docs/rate-limits"
+    },
+    "groq_models": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://console.groq.com/docs/models"
+    },
+    "groq_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://console.groq.com/docs/legal/services-agreement"
+    },
+    "hf_json": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/docs/inference-providers/guides/structured-output"
+    },
+    "hf_models": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/inference/models"
+    },
+    "hf_nscale": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/docs/inference-providers/providers/nscale"
+    },
+    "hf_price": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/docs/inference-providers/pricing"
+    },
+    "hf_qwen": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507"
+    },
+    "hf_security": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/docs/inference-providers/security"
+    },
+    "hf_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://huggingface.co/terms-of-service"
+    },
+    "japan_majority": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://www.moj.go.jp/MINJI/minji07_00238.html"
+    },
+    "mistral_age": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://help.mistral.ai/en/articles/347631-can-children-use-mistral-products-and-services"
+    },
+    "mistral_aup": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://legal.mistral.ai/terms/usage-policy/"
+    },
+    "mistral_chat": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.mistral.ai/api/endpoint/chat"
+    },
+    "mistral_commercial": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://legal.mistral.ai/terms/commercial-terms-of-service/"
+    },
+    "mistral_consumer": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://legal.mistral.ai/terms/row-consumer-terms/"
+    },
+    "mistral_data": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models"
+    },
+    "mistral_json": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.mistral.ai/studio/conversations/structured-output/custom"
+    },
+    "mistral_key": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.mistral.ai/getting-started/quickstarts/studio/activate-and-generate-api-key"
+    },
+    "mistral_limits": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://help.mistral.ai/en/articles/698531-why-am-i-hitting-api-rate-limits-and-how-do-i-increase-them"
+    },
+    "mistral_models": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.mistral.ai/models"
+    },
+    "mistral_usage": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://docs.mistral.ai/admin/billing-usage/usage-limits"
+    },
+    "mistral_zdr": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://help.mistral.ai/en/articles/347612-can-i-activate-zero-data-retention-zdr"
+    },
+    "ollama_api": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://github.com/ollama/ollama/blob/main/docs/api/introduction.mdx"
+    },
+    "ollama_price": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://ollama.com/pricing"
+    },
+    "ollama_privacy": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://ollama.com/privacy"
+    },
+    "ollama_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://ollama.com/terms"
+    },
+    "openai_billing": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://help.openai.com/en/articles/8264644-setting-up-and-managing-prepaid-api-billing"
+    },
+    "openai_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://openai.com/policies/services-agreement/"
+    },
+    "openrouter_limits": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://openrouter.ai/docs/api_reference/limits"
+    },
+    "openrouter_privacy": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://openrouter.ai/privacy/"
+    },
+    "openrouter_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://openrouter.ai/terms"
+    },
+    "pollinations_dashboard": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://pollinations.ai/dashboard/api-keys"
+    },
+    "pollinations_docs": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://gen.pollinations.ai/docs"
+    },
+    "pollinations_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://enter.pollinations.ai/terms"
+    },
+    "publicai_docs": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://platform.publicai.co/docs"
+    },
+    "publicai_terms": {
+      "primary_official": true,
+      "retrieval_date": "2026-10-04",
+      "url": "https://publicai.co/tc"
+    }
+  }
+}
