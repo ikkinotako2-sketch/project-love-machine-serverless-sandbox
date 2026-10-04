@@ -1,0 +1,105 @@
+{
+  "kind": "V3_FRESH_FINAL_READ_ONLY_PREFLIGHT_FINAL_CI_AND_READBACK",
+  "preflight_run": 37171104181,
+  "ci_run": 37171191483,
+  "ci_job": 111344321000,
+  "code_sha": "37fc749d20c0fd0b433b87b279244cecf69c566a",
+  "ci_pass": true,
+  "python_tests": 488,
+  "node_tests": 858,
+  "total_tests": 1346,
+  "failures": 0,
+  "plan_sha256": "ecfa8fc1590f3cc705a4b87bc8f935d9a21f7b592e8474eab2128ec1e79117e2",
+  "plan_unchanged": true,
+  "oracle_unchanged": true,
+  "offline_abort_oracles": 17,
+  "remote_intentional_abort": 0,
+  "remote_steps": 33,
+  "applied_steps": 16,
+  "noop_steps": 17,
+  "mutation_sends_max": 33,
+  "logical_changes_max": 18,
+  "schema_sql_hash_exact": true,
+  "table_count": 5,
+  "trigger_count": 11,
+  "autoindex_count": 14,
+  "new_identity_rows_all_five_tables": 0,
+  "old_two_active_jobs_exact_unchanged": true,
+  "old_runs_permanently_consumed": [
+    37167246069,
+    37169509729
+  ],
+  "prior_v3_execution": 0,
+  "current_preflight_unique": true,
+  "read_only_calls": 39,
+  "workflow_readback": [
+    {
+      "workflow": "v3-final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "v3-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "v3-schema-read-only",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": false
+    },
+    {
+      "workflow": "v2-approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    }
+  ],
+  "allow": false,
+  "execution_approved": false,
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "worker": 0,
+  "ai": 0,
+  "render_execution": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "retry": 0,
+  "resend": 0,
+  "fallback": 0,
+  "automatic_rollback": 0,
+  "delete": 0,
+  "reset": 0,
+  "write_token_requested": false,
+  "write_token_used": false,
+  "write_token_registered": false,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-v3-final-read-only-preflight.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-behavior-v3-final-preflight-37171104181.json",
+    "readiness/GENERALIZED_BEHAVIOR_V3_FINAL_PREFLIGHT_JA.md",
+    "serverless/generalized-behavior-v3-final-preflight.mjs",
+    "serverless/test-generalized-behavior-v3-final-preflight.mjs"
+  ],
+  "noop_proof_scope": "CLIENT_SQL_PREDICATE_NOOP_NOT_DB_TRIGGER_REJECTION",
+  "trigger_proof_scope": "REMOTE_EXACT_SCHEMA_HASH_PLUS_OFFLINE_EXACT_SQL_ORACLE",
+  "next_owner_operation": "Request V3 credential preparation instructions; no creation or registration requested in this preflight"
+}
