@@ -1,0 +1,44 @@
+name: PLM Approved Generalized Behavior V2 Test Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-behavior-v2-approved-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  behavior:
+    # V2 preparation only: owner fixed-plan approval recorded; no send until pinned activation.
+    if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_RT_V2_ALLOW: 'false'
+      PLM_RT_V2_OWNER_APPROVAL: UNAPPROVED
+      PLM_RT_V2_EXEC_PIN: PREPARE_PIN
+      PLM_RT_V2_EXEC_BEFORE: ${{ github.event.before }}
+      PLM_RT_V2_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
+      PLM_RT_V2_APPROVED_PLAN_SHA: 9d1fa88573219b5f90bdd50a90045b9b73229fd7041a79c48ddb09b38c120a1d
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: PREPARE_PIN
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fresh gate and fixed 33-step SQL-only test once
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_ROUNDTRIP_BEHAVIOR_V2_TOKEN: ${{ secrets.PLM_CF_D1_ROUNDTRIP_BEHAVIOR_V2_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/generalized-behavior-v2-execution-entry.mjs
