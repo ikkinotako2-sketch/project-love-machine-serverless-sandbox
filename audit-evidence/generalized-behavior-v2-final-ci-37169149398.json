@@ -1,0 +1,101 @@
+{
+  "kind": "V2_FINAL_READ_ONLY_PREFLIGHT_OFFLINE_CI_AND_DISABLED_READBACK",
+  "preflight_run": 37169074210,
+  "ci_run": 37169149398,
+  "ci_job": 111338359225,
+  "code_sha": "7b0c43c012ef4427c096aa8478fffa9a30986184",
+  "ci_pass": true,
+  "python_tests": 488,
+  "node_tests": 764,
+  "total_tests": 1252,
+  "failed_tests": 0,
+  "parser_negative_categories": [
+    "multiple_token",
+    "substring_confusion",
+    "oversized",
+    "control_char",
+    "unrelated_7500"
+  ],
+  "parser_source_unchanged": true,
+  "plan_source_unchanged": true,
+  "plan_raw_sha256": "9d1fa88573219b5f90bdd50a90045b9b73229fd7041a79c48ddb09b38c120a1d",
+  "old_consumed_receipt_unchanged": true,
+  "old_active_job_exact_unchanged": true,
+  "old_run_permanently_consumed": true,
+  "token_verify_sends": 1,
+  "read_token_only_d1_audit_calls": 39,
+  "prior_v2_execution": 0,
+  "current_preflight_unique": true,
+  "workflow_readback": [
+    {
+      "workflow": "v2-final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "v2-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "root-read-only",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": false
+    },
+    {
+      "workflow": "final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    }
+  ],
+  "allow": false,
+  "execution_approved": false,
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "retry": 0,
+  "resend": 0,
+  "delete": 0,
+  "reset": 0,
+  "rollback": 0,
+  "fallback": 0,
+  "worker": 0,
+  "ai": 0,
+  "render": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "sandbox_branch": "plm-offline-readiness-v1-20261002",
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-v2-final-read-only-preflight.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-behavior-v2-final-preflight-37169074210.json",
+    "readiness/GENERALIZED_BEHAVIOR_V2_FINAL_PREFLIGHT_JA.md",
+    "serverless/generalized-behavior-v2-final-preflight.mjs",
+    "serverless/test-generalized-behavior-v2-final-preflight.mjs"
+  ],
+  "next_gate": "STOP_AWAIT_SEPARATE_OWNER_FIXED_V2_33_STEP_APPROVAL"
+}
