@@ -26,6 +26,8 @@ PREFLIGHT_V2_ID = 'manual-fixture-runtime-preflight-20261004-002'
 SPEC[PREFLIGHT_V2_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v2-once.yml', 'readiness/cloud-runtime-preflight-v2-policy.json')
 PREFLIGHT_V3_ID = 'manual-fixture-runtime-preflight-20261004-003'
 SPEC[PREFLIGHT_V3_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v3-once.yml', 'readiness/cloud-runtime-preflight-v3-package-plan.json')
+PREFLIGHT_V4_ID = 'manual-fixture-runtime-preflight-20261005-004'
+SPEC[PREFLIGHT_V4_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4-once.yml', 'readiness/cloud-runtime-preflight-v4-resolver-plan.json')
 FIELDS = {'identity','kind','approved_parent_sha','workflow_sha256','plan_sha256',
           'fixture_sha256','created_for_once_only','no_retry','no_resume'}
 API = 'https://api.github.com/repos/' + REPO
