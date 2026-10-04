@@ -8,7 +8,8 @@ permissions:
   actions: read
 jobs:
   import:
-    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.run_attempt == 1 && github.event.before == '1a41fc374ccf64a523bc3d9238079254848cca16' && github.event.head_commit.message == 'PLM execute approved generalized backend file import once 20261004-r1'
+    # Consumed SUCCESS run 37164056976. Never rerun or resume.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -19,8 +20,8 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_GENERALIZED_ALLOW: 'true'
-      PLM_GENERALIZED_OWNER_APPROVAL: EXECUTE_FIXED_GENERALIZED_IMPORT_ONCE
+      PLM_GENERALIZED_ALLOW: 'false'
+      PLM_GENERALIZED_OWNER_APPROVAL: UNAPPROVED
       PLM_GENERALIZED_EXEC_PIN: 1a41fc374ccf64a523bc3d9238079254848cca16
       PLM_GENERALIZED_EXEC_BEFORE: ${{ github.event.before }}
       PLM_GENERALIZED_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
