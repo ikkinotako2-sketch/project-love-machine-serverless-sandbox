@@ -1,0 +1,21 @@
+{
+  "kind": "OWNER_CONFIRMED_V2_BEHAVIOR_CREDENTIAL_CLEANUP",
+  "owner_confirmed": true,
+  "independently_verified": false,
+  "cloudflare_token_revoked_deleted": true,
+  "github_secret_deleted": true,
+  "read_token_maintained": true,
+  "old_runs_permanently_consumed": [
+    37167246069,
+    37169509729
+  ],
+  "identities_no_reuse": [
+    "rt-behavior-20261004-001",
+    "rt-behavior-20261004-002"
+  ],
+  "mutation": 0,
+  "retry": 0,
+  "resend": 0,
+  "delete": 0,
+  "reset": 0
+}

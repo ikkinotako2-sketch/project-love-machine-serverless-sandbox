@@ -1,0 +1,3763 @@
+{
+  "kind": "EXACT_MIGRATED_SQL_OFFLINE_ABORT_ORACLE_ONLY",
+  "remote_execution_permitted": false,
+  "identity": {
+    "job_id": "rt-behavior-20261004-003",
+    "platform": "youtube",
+    "account_id": "youtube_synthetic_rt_003",
+    "intent_id": "private-roundtrip-behavior-20261004-002"
+  },
+  "schema": [
+    {
+      "type": "table",
+      "name": "plm_rt_v1_callback",
+      "tbl_name": "plm_rt_v1_callback",
+      "sql": "CREATE TABLE plm_rt_v1_callback (\n delivery_id TEXT PRIMARY KEY REFERENCES plm_rt_v1_effect(delivery_id),\n callback_id TEXT NOT NULL UNIQUE CHECK(length(callback_id) BETWEEN 1 AND 96),\n job_id TEXT NOT NULL REFERENCES plm_rt_v1_job(job_id),\n account_id TEXT NOT NULL,\n owner_epoch INTEGER NOT NULL,\n fencing_token INTEGER NOT NULL,\n payload_sha256 TEXT NOT NULL CHECK(length(payload_sha256)=64 AND payload_sha256 NOT GLOB '*[^0-9a-f]*'),\n result_id TEXT NOT NULL UNIQUE CHECK(length(result_id) BETWEEN 1 AND 128),\n state TEXT NOT NULL CHECK(state='CONFIRMED'),\n consumed_at INTEGER NOT NULL CHECK(typeof(consumed_at)='integer' AND consumed_at>0)\n)"
+    },
+    {
+      "type": "table",
+      "name": "plm_rt_v1_effect",
+      "tbl_name": "plm_rt_v1_effect",
+      "sql": "CREATE TABLE plm_rt_v1_effect (\n effect_id TEXT PRIMARY KEY CHECK(length(effect_id) BETWEEN 1 AND 96),\n job_id TEXT NOT NULL REFERENCES plm_rt_v1_job(job_id),\n kind TEXT NOT NULL CHECK(kind IN ('GENERATION','RENDER','UPLOAD')),\n owner TEXT NOT NULL,\n owner_epoch INTEGER NOT NULL,\n fencing_token INTEGER NOT NULL,\n request_sha256 TEXT NOT NULL CHECK(length(request_sha256)=64 AND request_sha256 NOT GLOB '*[^0-9a-f]*'),\n delivery_id TEXT NOT NULL UNIQUE CHECK(length(delivery_id) BETWEEN 1 AND 96),\n result_id TEXT UNIQUE CHECK(result_id IS NULL OR length(result_id) BETWEEN 1 AND 128),\n version INTEGER NOT NULL CHECK(typeof(version)='integer' AND version>0),\n state TEXT NOT NULL CHECK(state IN ('RESERVED','SENT','UNKNOWN','CONFIRMED')),\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n UNIQUE(job_id,kind),\n CHECK((state IN ('RESERVED','SENT','UNKNOWN') AND result_id IS NULL) OR (state='CONFIRMED' AND result_id IS NOT NULL))\n)"
+    },
+    {
+      "type": "table",
+      "name": "plm_rt_v1_job",
+      "tbl_name": "plm_rt_v1_job",
+      "sql": "CREATE TABLE plm_rt_v1_job (\n job_id TEXT PRIMARY KEY CHECK(length(job_id) BETWEEN 1 AND 64),\n platform TEXT NOT NULL CHECK(platform='youtube'),\n account_id TEXT NOT NULL CHECK(length(account_id) BETWEEN 1 AND 64),\n intent_id TEXT NOT NULL CHECK(length(intent_id) BETWEEN 1 AND 96),\n owner TEXT NOT NULL CHECK(length(owner) BETWEEN 1 AND 64),\n owner_epoch INTEGER NOT NULL CHECK(typeof(owner_epoch)='integer' AND owner_epoch>0),\n fencing_token INTEGER NOT NULL CHECK(typeof(fencing_token)='integer' AND fencing_token>0),\n version INTEGER NOT NULL CHECK(typeof(version)='integer' AND version>0),\n state TEXT NOT NULL CHECK(state IN ('ACTIVE','UNKNOWN','SUCCEEDED')),\n old_owner_stop_proof TEXT CHECK(old_owner_stop_proof IS NULL OR (length(old_owner_stop_proof)=64 AND old_owner_stop_proof NOT GLOB '*[^0-9a-f]*')),\n result_id TEXT UNIQUE CHECK(result_id IS NULL OR length(result_id) BETWEEN 1 AND 128),\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n UNIQUE(platform,account_id,intent_id),\n CHECK((state IN ('ACTIVE','UNKNOWN') AND result_id IS NULL) OR (state='SUCCEEDED' AND result_id IS NOT NULL))\n)"
+    },
+    {
+      "type": "table",
+      "name": "plm_rt_v1_render",
+      "tbl_name": "plm_rt_v1_render",
+      "sql": "CREATE TABLE plm_rt_v1_render (\n artifact_id TEXT PRIMARY KEY CHECK(length(artifact_id) BETWEEN 1 AND 96),\n job_id TEXT NOT NULL UNIQUE REFERENCES plm_rt_v1_job(job_id),\n owner TEXT NOT NULL,\n owner_epoch INTEGER NOT NULL,\n fencing_token INTEGER NOT NULL,\n script_sha256 TEXT NOT NULL CHECK(length(script_sha256)=64 AND script_sha256 NOT GLOB '*[^0-9a-f]*'),\n artifact_sha256 TEXT NOT NULL CHECK(length(artifact_sha256)=64 AND artifact_sha256 NOT GLOB '*[^0-9a-f]*'),\n artifact_ref TEXT NOT NULL CHECK(length(artifact_ref) BETWEEN 12 AND 256 AND artifact_ref GLOB 'artifact://*' AND artifact_ref NOT GLOB '*[?&#]*'),\n render_run_id TEXT NOT NULL CHECK(length(render_run_id) BETWEEN 1 AND 32 AND render_run_id NOT GLOB '*[^0-9]*'),\n quality_gate TEXT NOT NULL CHECK(quality_gate='PASS'),\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0)\n)"
+    },
+    {
+      "type": "table",
+      "name": "plm_rt_v1_script",
+      "tbl_name": "plm_rt_v1_script",
+      "sql": "CREATE TABLE plm_rt_v1_script (\n checkpoint_id TEXT PRIMARY KEY CHECK(length(checkpoint_id) BETWEEN 1 AND 96),\n job_id TEXT NOT NULL UNIQUE REFERENCES plm_rt_v1_job(job_id),\n owner TEXT NOT NULL,\n owner_epoch INTEGER NOT NULL,\n fencing_token INTEGER NOT NULL,\n version INTEGER NOT NULL CHECK(typeof(version)='integer' AND version IN (1,2)),\n state TEXT NOT NULL CHECK(state IN ('STARTED','UNKNOWN','COMPLETED')),\n provider TEXT NOT NULL CHECK(provider='gemini'),\n model TEXT NOT NULL CHECK(length(model) BETWEEN 1 AND 96),\n request_sha256 TEXT NOT NULL CHECK(length(request_sha256)=64 AND request_sha256 NOT GLOB '*[^0-9a-f]*'),\n script_json TEXT CHECK(script_json IS NULL OR (json_valid(script_json) AND json_type(script_json)='object' AND length(CAST(script_json AS BLOB))<=65536)),\n script_sha256 TEXT CHECK(script_sha256 IS NULL OR (length(script_sha256)=64 AND script_sha256 NOT GLOB '*[^0-9a-f]*')),\n created_at INTEGER NOT NULL CHECK(typeof(created_at)='integer' AND created_at>0),\n updated_at INTEGER NOT NULL CHECK(typeof(updated_at)='integer' AND updated_at>=created_at),\n CHECK((state='STARTED' AND version=1 AND script_json IS NULL AND script_sha256 IS NULL) OR\n (state='UNKNOWN' AND version=2 AND script_json IS NULL AND script_sha256 IS NULL) OR\n (state='COMPLETED' AND version=2 AND script_json IS NOT NULL AND script_sha256 IS NOT NULL))\n)"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_callback_apply",
+      "tbl_name": "plm_rt_v1_callback",
+      "sql": "CREATE TRIGGER plm_rt_v1_callback_apply AFTER INSERT ON plm_rt_v1_callback\nBEGIN\n UPDATE plm_rt_v1_effect SET state='CONFIRMED',result_id=NEW.result_id,version=version+1,updated_at=NEW.consumed_at WHERE delivery_id=NEW.delivery_id AND kind='UPLOAD' AND state IN ('SENT','UNKNOWN');\n SELECT CASE WHEN changes()!=1 THEN RAISE(ABORT,'rt_callback_effect_atomicity') END;\n UPDATE plm_rt_v1_job SET state='SUCCEEDED',result_id=NEW.result_id,version=version+1,updated_at=NEW.consumed_at WHERE job_id=NEW.job_id AND state IN ('ACTIVE','UNKNOWN') AND owner_epoch=NEW.owner_epoch AND fencing_token=NEW.fencing_token;\n SELECT CASE WHEN changes()!=1 THEN RAISE(ABORT,'rt_callback_job_atomicity') END;\nEND"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_callback_immutable",
+      "tbl_name": "plm_rt_v1_callback",
+      "sql": "CREATE TRIGGER plm_rt_v1_callback_immutable BEFORE UPDATE ON plm_rt_v1_callback\nBEGIN SELECT RAISE(ABORT,'rt_callback_immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_callback_insert",
+      "tbl_name": "plm_rt_v1_callback",
+      "sql": "CREATE TRIGGER plm_rt_v1_callback_insert BEFORE INSERT ON plm_rt_v1_callback\nWHEN EXISTS(SELECT 1 FROM plm_rt_v1_callback c WHERE (c.delivery_id=NEW.delivery_id OR c.callback_id=NEW.callback_id OR c.result_id=NEW.result_id)\n AND (c.delivery_id IS NOT NEW.delivery_id OR c.callback_id IS NOT NEW.callback_id OR c.job_id IS NOT NEW.job_id OR c.account_id IS NOT NEW.account_id OR c.owner_epoch!=NEW.owner_epoch OR c.fencing_token!=NEW.fencing_token OR c.payload_sha256 IS NOT NEW.payload_sha256 OR c.result_id IS NOT NEW.result_id OR c.consumed_at!=NEW.consumed_at))\n OR (NOT EXISTS(SELECT 1 FROM plm_rt_v1_callback WHERE delivery_id=NEW.delivery_id)\n AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_effect e JOIN plm_rt_v1_job j ON j.job_id=e.job_id JOIN plm_rt_v1_render r ON r.job_id=j.job_id\n WHERE e.delivery_id=NEW.delivery_id AND e.kind='UPLOAD' AND e.state IN ('SENT','UNKNOWN') AND e.job_id=NEW.job_id\n AND j.account_id=NEW.account_id AND j.state IN ('ACTIVE','UNKNOWN') AND j.owner=e.owner AND j.owner_epoch=NEW.owner_epoch AND e.owner_epoch=NEW.owner_epoch\n AND j.fencing_token=NEW.fencing_token AND e.fencing_token=NEW.fencing_token AND NEW.consumed_at>=e.updated_at AND NEW.consumed_at>=j.updated_at))\nBEGIN SELECT RAISE(ABORT,'rt_callback_identity_or_fence'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_effect_guard",
+      "tbl_name": "plm_rt_v1_effect",
+      "sql": "CREATE TRIGGER plm_rt_v1_effect_guard BEFORE UPDATE ON plm_rt_v1_effect\nWHEN NEW.effect_id IS NOT OLD.effect_id OR NEW.job_id IS NOT OLD.job_id OR NEW.kind IS NOT OLD.kind OR NEW.owner IS NOT OLD.owner\n OR NEW.owner_epoch!=OLD.owner_epoch OR NEW.fencing_token!=OLD.fencing_token OR NEW.request_sha256 IS NOT OLD.request_sha256\n OR NEW.delivery_id IS NOT OLD.delivery_id OR NEW.created_at IS NOT OLD.created_at OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT EXISTS(SELECT 1 FROM plm_rt_v1_job j WHERE j.job_id=OLD.job_id AND j.state IN ('ACTIVE','UNKNOWN') AND j.owner=NEW.owner AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token)\n OR NOT((OLD.state='RESERVED' AND NEW.state='SENT') OR (OLD.state='SENT' AND NEW.state='UNKNOWN')\n OR (OLD.state IN ('SENT','UNKNOWN') AND NEW.state='CONFIRMED'\n AND ((OLD.kind='GENERATION' AND EXISTS(SELECT 1 FROM plm_rt_v1_script s WHERE s.job_id=OLD.job_id AND s.state='COMPLETED' AND s.request_sha256=OLD.request_sha256))\n OR (OLD.kind='RENDER' AND EXISTS(SELECT 1 FROM plm_rt_v1_render r WHERE r.job_id=OLD.job_id AND r.quality_gate='PASS'))\n OR (OLD.kind='UPLOAD' AND EXISTS(SELECT 1 FROM plm_rt_v1_callback c WHERE c.delivery_id=OLD.delivery_id AND c.job_id=OLD.job_id AND c.result_id=NEW.result_id)))))\nBEGIN SELECT RAISE(ABORT,'rt_effect_no_resend_or_fence'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_effect_insert",
+      "tbl_name": "plm_rt_v1_effect",
+      "sql": "CREATE TRIGGER plm_rt_v1_effect_insert BEFORE INSERT ON plm_rt_v1_effect\nWHEN NEW.state!='RESERVED' OR NEW.version!=1 OR NOT EXISTS(SELECT 1 FROM plm_rt_v1_job j WHERE j.job_id=NEW.job_id AND j.state='ACTIVE' AND j.owner=NEW.owner AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token AND NEW.created_at>=j.updated_at)\n OR (NEW.kind='GENERATION' AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_script s WHERE s.job_id=NEW.job_id AND s.state='STARTED' AND s.request_sha256=NEW.request_sha256))\n OR (NEW.kind='RENDER' AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_script s JOIN plm_rt_v1_effect e ON e.job_id=s.job_id AND e.kind='GENERATION' WHERE s.job_id=NEW.job_id AND s.state='COMPLETED' AND e.state='CONFIRMED'))\n OR (NEW.kind='UPLOAD' AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_render r JOIN plm_rt_v1_effect e ON e.job_id=r.job_id AND e.kind='RENDER' WHERE r.job_id=NEW.job_id AND e.state='CONFIRMED'))\nBEGIN SELECT RAISE(ABORT,'rt_effect_precondition'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_job_guard",
+      "tbl_name": "plm_rt_v1_job",
+      "sql": "CREATE TRIGGER plm_rt_v1_job_guard BEFORE UPDATE ON plm_rt_v1_job\nWHEN NEW.job_id IS NOT OLD.job_id OR NEW.platform IS NOT OLD.platform OR NEW.account_id IS NOT OLD.account_id\n OR NEW.intent_id IS NOT OLD.intent_id OR NEW.created_at IS NOT OLD.created_at OR NEW.updated_at<OLD.updated_at OR NEW.version!=OLD.version+1\n OR NOT((OLD.state='ACTIVE' AND NEW.state='ACTIVE' AND NEW.owner IS NOT OLD.owner\n AND NEW.owner_epoch=OLD.owner_epoch+1 AND NEW.fencing_token=OLD.fencing_token+1 AND NEW.old_owner_stop_proof IS NOT NULL\n AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_script WHERE job_id=OLD.job_id)\n AND NOT EXISTS(SELECT 1 FROM plm_rt_v1_effect WHERE job_id=OLD.job_id))\n OR (NEW.owner IS OLD.owner AND NEW.owner_epoch=OLD.owner_epoch AND NEW.fencing_token=OLD.fencing_token\n AND NEW.old_owner_stop_proof IS OLD.old_owner_stop_proof\n AND ((OLD.state='ACTIVE' AND NEW.state='UNKNOWN' AND EXISTS(SELECT 1 FROM plm_rt_v1_effect WHERE job_id=OLD.job_id AND state='UNKNOWN'))\n OR (OLD.state IN ('ACTIVE','UNKNOWN') AND NEW.state='SUCCEEDED' AND EXISTS(SELECT 1 FROM plm_rt_v1_callback c WHERE c.job_id=OLD.job_id AND c.result_id=NEW.result_id)))))\nBEGIN SELECT RAISE(ABORT,'rt_job_fence_or_transition'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_job_insert",
+      "tbl_name": "plm_rt_v1_job",
+      "sql": "CREATE TRIGGER plm_rt_v1_job_insert BEFORE INSERT ON plm_rt_v1_job\nWHEN NEW.state!='ACTIVE' OR NEW.version!=1 OR NEW.owner_epoch!=1 OR NEW.fencing_token!=1 OR NEW.old_owner_stop_proof IS NOT NULL\nBEGIN SELECT RAISE(ABORT,'rt_job_initial_state'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_render_immutable",
+      "tbl_name": "plm_rt_v1_render",
+      "sql": "CREATE TRIGGER plm_rt_v1_render_immutable BEFORE UPDATE ON plm_rt_v1_render\nBEGIN SELECT RAISE(ABORT,'rt_render_immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_render_insert",
+      "tbl_name": "plm_rt_v1_render",
+      "sql": "CREATE TRIGGER plm_rt_v1_render_insert BEFORE INSERT ON plm_rt_v1_render\nWHEN NOT EXISTS(SELECT 1 FROM plm_rt_v1_job j JOIN plm_rt_v1_script s ON s.job_id=j.job_id JOIN plm_rt_v1_effect e ON e.job_id=j.job_id AND e.kind='RENDER'\n WHERE j.job_id=NEW.job_id AND j.state IN ('ACTIVE','UNKNOWN') AND j.owner=NEW.owner AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token\n AND s.state='COMPLETED' AND s.script_sha256=NEW.script_sha256 AND e.state IN ('SENT','UNKNOWN') AND e.owner=NEW.owner AND e.owner_epoch=NEW.owner_epoch AND e.fencing_token=NEW.fencing_token AND NEW.created_at>=e.updated_at)\nBEGIN SELECT RAISE(ABORT,'rt_render_checkpoint_or_fence'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_script_guard",
+      "tbl_name": "plm_rt_v1_script",
+      "sql": "CREATE TRIGGER plm_rt_v1_script_guard BEFORE UPDATE ON plm_rt_v1_script\nWHEN NEW.checkpoint_id IS NOT OLD.checkpoint_id OR NEW.job_id IS NOT OLD.job_id OR NEW.owner IS NOT OLD.owner\n OR NEW.owner_epoch!=OLD.owner_epoch OR NEW.fencing_token!=OLD.fencing_token OR NEW.provider IS NOT OLD.provider OR NEW.model IS NOT OLD.model\n OR NEW.request_sha256 IS NOT OLD.request_sha256 OR NEW.created_at IS NOT OLD.created_at OR NEW.updated_at<OLD.updated_at\n OR OLD.state!='STARTED' OR NEW.state NOT IN ('COMPLETED','UNKNOWN') OR NEW.version!=OLD.version+1\n OR NOT EXISTS(SELECT 1 FROM plm_rt_v1_job j WHERE j.job_id=OLD.job_id AND j.state IN ('ACTIVE','UNKNOWN') AND j.owner=NEW.owner AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token)\n OR NOT EXISTS(SELECT 1 FROM plm_rt_v1_effect e WHERE e.job_id=OLD.job_id AND e.kind='GENERATION' AND e.state IN ('SENT','UNKNOWN') AND e.request_sha256=OLD.request_sha256 AND e.owner=NEW.owner AND e.owner_epoch=NEW.owner_epoch AND e.fencing_token=NEW.fencing_token)\nBEGIN SELECT RAISE(ABORT,'rt_script_immutable_or_unsent'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "plm_rt_v1_script_insert",
+      "tbl_name": "plm_rt_v1_script",
+      "sql": "CREATE TRIGGER plm_rt_v1_script_insert BEFORE INSERT ON plm_rt_v1_script\nWHEN NEW.state!='STARTED' OR NEW.version!=1 OR NOT EXISTS(SELECT 1 FROM plm_rt_v1_job j WHERE j.job_id=NEW.job_id AND j.state='ACTIVE' AND j.owner=NEW.owner AND j.owner_epoch=NEW.owner_epoch AND j.fencing_token=NEW.fencing_token AND NEW.created_at>=j.updated_at)\nBEGIN SELECT RAISE(ABORT,'rt_script_identity'); END"
+    }
+  ],
+  "sql_sha256": {
+    "plm_rt_v1_callback": "1dad060c9b7e5bde599f4750cb43e27fc9e797b38ac6e1c89e4646941f4a7619",
+    "plm_rt_v1_effect": "2aacdc50b5218f765976bceacd603b4b921624fdc01d8a72199afc6bf83c4422",
+    "plm_rt_v1_job": "27c00c2fdda4130b034c43e7263c3c820b8bbb68c9f65bc2dc89c49da3c3d7cc",
+    "plm_rt_v1_render": "8565472a8abc5a92ae2c9dd52904071ad6baa371fa08f49399ea93f331bbe9f9",
+    "plm_rt_v1_script": "b2e51f81d32bbccab70da28ab8c44222b52a83e27deb7bdaa2e48b2a4362914d",
+    "plm_rt_v1_callback_apply": "f8736f6e010d441a166e96392c5cb16027b6a8b0cc538e5e9a936900cd00c8cf",
+    "plm_rt_v1_callback_immutable": "13a517738a906547f6a75966f62ab530c4ed25eb305f1f801249c15e0ba137d2",
+    "plm_rt_v1_callback_insert": "0bc21740f8c9ecc6601fec113ebf996f4789b53354745b258063d5396df02ce9",
+    "plm_rt_v1_effect_guard": "44cb69fe515ab4ee0a7434f30450a28e9fa9c6a37c19160ae6c182715d6186bd",
+    "plm_rt_v1_effect_insert": "b4585f08dee66b3f3161d7bc5c9ee871ee09be5c36c7556f91949b6b337daee7",
+    "plm_rt_v1_job_guard": "c51c3c833be8e19f754285fd7603ff8012deb7111646b1b84c8f382f4282aafd",
+    "plm_rt_v1_job_insert": "e7884e82e295c353bcdaedd85acb973264791cf026bf301afc1be054588ebd11",
+    "plm_rt_v1_render_immutable": "58337ecf7559a8e95ca53acc4347e95d74af5730de33dbf2de98961ced9fb105",
+    "plm_rt_v1_render_insert": "60fd16ee7074a057608c3e7014b9120485cf20c0d4890fffc4943b371bd53906",
+    "plm_rt_v1_script_guard": "20fe810543b916117b7cae77d41bfc0303209c78b065a53a203ab00bed174209",
+    "plm_rt_v1_script_insert": "632801446f8f9cca4533fc94c5724b848b09c212a251295f0ccef3b158508089"
+  },
+  "cases": [
+    {
+      "id": "job_identity_conflict_rejected",
+      "source_sequence": 3,
+      "sql": "UPDATE plm_rt_v1_job SET intent_id=?,version=version+1,updated_at=? WHERE job_id=?",
+      "params": [
+        "private-roundtrip-behavior-20261004-002-invalid-conflict",
+        1791077401,
+        "rt-behavior-20261004-003"
+      ],
+      "expected_token": "rt_job_fence_or_transition",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077400
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077400
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      }
+    },
+    {
+      "id": "handoff_after_script_rejected",
+      "source_sequence": 8,
+      "sql": "UPDATE plm_rt_v1_job SET owner=?,owner_epoch=?,fencing_token=?,version=version+1,old_owner_stop_proof=?,updated_at=? WHERE job_id=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=?",
+      "params": [
+        "owner_a",
+        3,
+        3,
+        "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+        1791077403,
+        "rt-behavior-20261004-003",
+        "owner_b",
+        2,
+        2,
+        2
+      ],
+      "expected_token": "rt_job_fence_or_transition",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "render_before_completed_script_rejected",
+      "source_sequence": 9,
+      "sql": "INSERT INTO plm_rt_v1_effect VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "effect-RENDER-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "RENDER",
+        "owner_b",
+        2,
+        2,
+        "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+        "delivery-RENDER-rt-behavior-20261004-003",
+        null,
+        1,
+        "RESERVED",
+        1791077403,
+        1791077403
+      ],
+      "expected_token": "rt_effect_precondition",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "render_without_completed_script_rejected",
+      "source_sequence": 10,
+      "sql": "INSERT INTO plm_rt_v1_render VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "artifact-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "owner_b",
+        2,
+        2,
+        "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+        "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+        "artifact://synthetic/rt-behavior-003",
+        "1",
+        "PASS",
+        1791077403
+      ],
+      "expected_token": "rt_render_checkpoint_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "handoff_after_effect_rejected",
+      "source_sequence": 13,
+      "sql": "UPDATE plm_rt_v1_job SET owner=?,owner_epoch=?,fencing_token=?,version=version+1,old_owner_stop_proof=?,updated_at=? WHERE job_id=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=?",
+      "params": [
+        "owner_a",
+        3,
+        3,
+        "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+        1791077405,
+        "rt-behavior-20261004-003",
+        "owner_b",
+        2,
+        2,
+        2
+      ],
+      "expected_token": "rt_job_fence_or_transition",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077403,
+            "updated_at": 1791077404
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077403,
+            "updated_at": 1791077404
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "upload_sent_rejected",
+      "source_sequence": 26,
+      "sql": "UPDATE plm_rt_v1_effect SET state=?,result_id=?,version=version+1,updated_at=? WHERE job_id=? AND kind=? AND owner=? AND owner_epoch=? AND fencing_token=? AND version=?",
+      "params": [
+        "SENT",
+        null,
+        1791077414,
+        "rt-behavior-20261004-003",
+        "UPLOAD",
+        "owner_b",
+        2,
+        2,
+        3
+      ],
+      "expected_token": "rt_effect_no_resend_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "unknown_upload_rereservation_rejected",
+      "source_sequence": 27,
+      "sql": "INSERT INTO plm_rt_v1_effect VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "effect-UPLOAD-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "UPLOAD",
+        "owner_b",
+        2,
+        2,
+        "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+        "delivery-UPLOAD-rt-behavior-20261004-003",
+        null,
+        1,
+        "RESERVED",
+        1791077414,
+        1791077414
+      ],
+      "expected_token": "rt_effect_precondition",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "stale_callback_epoch_rejected",
+      "source_sequence": 28,
+      "sql": "INSERT OR IGNORE INTO plm_rt_v1_callback VALUES (?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "delivery-UPLOAD-rt-behavior-20261004-003",
+        "callback-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "youtube_synthetic_rt_003",
+        1,
+        2,
+        "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+        "synthetic_video_rt_003",
+        "CONFIRMED",
+        1791077415
+      ],
+      "expected_token": "rt_callback_identity_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "stale_callback_fence_rejected",
+      "source_sequence": 29,
+      "sql": "INSERT OR IGNORE INTO plm_rt_v1_callback VALUES (?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "delivery-UPLOAD-rt-behavior-20261004-003",
+        "callback-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "youtube_synthetic_rt_003",
+        2,
+        1,
+        "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+        "synthetic_video_rt_003",
+        "CONFIRMED",
+        1791077415
+      ],
+      "expected_token": "rt_callback_identity_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 3,
+            "state": "UNKNOWN",
+            "created_at": 1791077411,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 3,
+            "state": "UNKNOWN",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077413
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "callback_payload_conflict_rejected",
+      "source_sequence": 32,
+      "sql": "INSERT OR IGNORE INTO plm_rt_v1_callback VALUES (?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "delivery-UPLOAD-rt-behavior-20261004-003",
+        "callback-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "youtube_synthetic_rt_003",
+        2,
+        2,
+        "1e275b75771c825777ff630b83a5e5cf355ea859b09f4ea9e4b39004d45899a6",
+        "synthetic_video_rt_003",
+        "CONFIRMED",
+        1791077415
+      ],
+      "expected_token": "rt_callback_identity_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "callback_identity_conflict_rejected",
+      "source_sequence": 33,
+      "sql": "INSERT OR IGNORE INTO plm_rt_v1_callback VALUES (?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "delivery-UPLOAD-rt-behavior-20261004-003",
+        "callback-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "invalid_conflict_account",
+        2,
+        2,
+        "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+        "synthetic_video_rt_003",
+        "CONFIRMED",
+        1791077415
+      ],
+      "expected_token": "rt_callback_identity_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "initial_job_version_abort",
+      "source_sequence": 1,
+      "sql": "INSERT INTO plm_rt_v1_job VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "rt-behavior-20261004-003",
+        "youtube",
+        "youtube_synthetic_rt_003",
+        "private-roundtrip-behavior-20261004-002",
+        "owner_a",
+        1,
+        1,
+        2,
+        "ACTIVE",
+        null,
+        null,
+        1791077400,
+        1791077400
+      ],
+      "expected_token": "rt_job_initial_state",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      }
+    },
+    {
+      "id": "script_owner_abort",
+      "source_sequence": 7,
+      "sql": "INSERT INTO plm_rt_v1_script VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "params": [
+        "script-rt-behavior-20261004-003",
+        "rt-behavior-20261004-003",
+        "stale_owner",
+        2,
+        2,
+        1,
+        "STARTED",
+        "gemini",
+        "synthetic-no-provider",
+        "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+        null,
+        null,
+        1791077402,
+        1791077402
+      ],
+      "expected_token": "rt_script_identity",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": []
+      }
+    },
+    {
+      "id": "script_immutable_request_abort",
+      "source_sequence": 16,
+      "sql": "UPDATE plm_rt_v1_script SET request_sha256=? WHERE job_id=?",
+      "params": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "rt-behavior-20261004-003"
+      ],
+      "expected_token": "rt_script_immutable_or_unsent",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077403,
+            "updated_at": 1791077404
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077403,
+            "updated_at": 1791077404
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "render_immutable_ref_abort",
+      "source_sequence": 21,
+      "sql": "UPDATE plm_rt_v1_render SET artifact_ref=? WHERE job_id=?",
+      "params": [
+        "artifact://synthetic/forbidden",
+        "rt-behavior-20261004-003"
+      ],
+      "expected_token": "rt_render_immutable",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077407,
+            "updated_at": 1791077408
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 2,
+            "state": "SENT",
+            "created_at": 1791077407,
+            "updated_at": 1791077408
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    },
+    {
+      "id": "effect_immutable_delivery_abort",
+      "source_sequence": 12,
+      "sql": "UPDATE plm_rt_v1_effect SET delivery_id=? WHERE job_id=? AND kind=?",
+      "params": [
+        "forbidden-delivery",
+        "rt-behavior-20261004-003",
+        "GENERATION"
+      ],
+      "expected_token": "rt_effect_no_resend_or_fence",
+      "before_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 1,
+            "state": "RESERVED",
+            "created_at": 1791077403,
+            "updated_at": 1791077403
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": null,
+            "version": 1,
+            "state": "RESERVED",
+            "created_at": 1791077403,
+            "updated_at": 1791077403
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": null,
+            "created_at": 1791077400,
+            "updated_at": 1791077401
+          }
+        ],
+        "plm_rt_v1_render": [],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 1,
+            "state": "STARTED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": null,
+            "script_sha256": null,
+            "created_at": 1791077402,
+            "updated_at": 1791077402
+          }
+        ]
+      }
+    },
+    {
+      "id": "callback_immutable_payload_abort",
+      "source_sequence": 30,
+      "sql": "UPDATE plm_rt_v1_callback SET payload_sha256=? WHERE job_id=?",
+      "params": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "rt-behavior-20261004-003"
+      ],
+      "expected_token": "rt_callback_immutable",
+      "before_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      },
+      "expected_after_rows": {
+        "plm_rt_v1_callback": [
+          {
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "callback_id": "callback-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "account_id": "youtube_synthetic_rt_003",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "payload_sha256": "336697fc2b3db39244b3ddafd0ba8cd0e822d48ed3b94da2ebc29e9e11a68f3f",
+            "result_id": "synthetic_video_rt_003",
+            "state": "CONFIRMED",
+            "consumed_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_effect": [
+          {
+            "effect_id": "effect-GENERATION-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "GENERATION",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "delivery_id": "delivery-GENERATION-rt-behavior-20261004-003",
+            "result_id": "script-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077403,
+            "updated_at": 1791077406
+          },
+          {
+            "effect_id": "effect-RENDER-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "RENDER",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "1b19617e798fac2d8030e467053c8f275411e38a3a475b82b4a349dddfdcb359",
+            "delivery_id": "delivery-RENDER-rt-behavior-20261004-003",
+            "result_id": "artifact-rt-behavior-20261004-003",
+            "version": 3,
+            "state": "CONFIRMED",
+            "created_at": 1791077407,
+            "updated_at": 1791077410
+          },
+          {
+            "effect_id": "effect-UPLOAD-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "kind": "UPLOAD",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "request_sha256": "389a3a7b07cfdc48ec3925171c2b466b9e6eeab15ebcc0e3201aa93dd83946d2",
+            "delivery_id": "delivery-UPLOAD-rt-behavior-20261004-003",
+            "result_id": "synthetic_video_rt_003",
+            "version": 4,
+            "state": "CONFIRMED",
+            "created_at": 1791077411,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_job": [
+          {
+            "job_id": "rt-behavior-20261004-001",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_001",
+            "intent_id": "private-roundtrip-behavior-20261004-001",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791072000,
+            "updated_at": 1791072000
+          },
+          {
+            "job_id": "rt-behavior-20261004-002",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_002",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_a",
+            "owner_epoch": 1,
+            "fencing_token": 1,
+            "version": 1,
+            "state": "ACTIVE",
+            "old_owner_stop_proof": null,
+            "result_id": null,
+            "created_at": 1791073800,
+            "updated_at": 1791073800
+          },
+          {
+            "job_id": "rt-behavior-20261004-003",
+            "platform": "youtube",
+            "account_id": "youtube_synthetic_rt_003",
+            "intent_id": "private-roundtrip-behavior-20261004-002",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 4,
+            "state": "SUCCEEDED",
+            "old_owner_stop_proof": "f6af7cc22e6a9997e61e32c294c4b670d859cda2eb5a209d44ced05598656a67",
+            "result_id": "synthetic_video_rt_003",
+            "created_at": 1791077400,
+            "updated_at": 1791077415
+          }
+        ],
+        "plm_rt_v1_render": [
+          {
+            "artifact_id": "artifact-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "artifact_sha256": "250059d892b059b7295d5f438d41eaeaa3fd0d043923fea917491b4d3da8c864",
+            "artifact_ref": "artifact://synthetic/rt-behavior-003",
+            "render_run_id": "1",
+            "quality_gate": "PASS",
+            "created_at": 1791077409
+          }
+        ],
+        "plm_rt_v1_script": [
+          {
+            "checkpoint_id": "script-rt-behavior-20261004-003",
+            "job_id": "rt-behavior-20261004-003",
+            "owner": "owner_b",
+            "owner_epoch": 2,
+            "fencing_token": 2,
+            "version": 2,
+            "state": "COMPLETED",
+            "provider": "gemini",
+            "model": "synthetic-no-provider",
+            "request_sha256": "106e1b2e82ac4cdbeb714bb62d2a04ac5ec3d3f8b4c3690198d635e3bd87927d",
+            "script_json": "{\"script\":\"Offline SQL fixture only. No real generation or media.\",\"synthetic\":true,\"title\":\"Synthetic private roundtrip fixture v3\"}",
+            "script_sha256": "1517d79c570e6d5ea6b8d8e0fe9e9e4321ef978db5f7e65b70cc5aef4e97155b",
+            "created_at": 1791077402,
+            "updated_at": 1791077405
+          }
+        ]
+      }
+    }
+  ],
+  "row_invariance": "ALL_FIVE_TABLES_EXACT_EACH_ABORT",
+  "remote_error_envelope_not_used": true
+}
