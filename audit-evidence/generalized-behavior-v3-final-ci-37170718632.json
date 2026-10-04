@@ -1,0 +1,111 @@
+{
+  "kind": "V3_CANDIDATE_FINAL_OFFLINE_CI_AND_READ_ONLY_SCHEMA_PROOF",
+  "ci_run": 37170718632,
+  "ci_job": 111342948625,
+  "code_sha": "5c120b0e0d6b18538b29820d958a8af5ecd5f4a0",
+  "ci_pass": true,
+  "python_tests": 488,
+  "node_tests": 839,
+  "total_tests": 1327,
+  "failures": 0,
+  "v3_remote_steps": 33,
+  "v3_applied_steps": 16,
+  "v3_noop_steps": 17,
+  "mutation_sends_max": 33,
+  "logical_changes_max": 18,
+  "remote_intentional_abort_steps": 0,
+  "offline_exact_sql_abort_cases": 17,
+  "runner_max": 1,
+  "plan_raw_sha256": "ecfa8fc1590f3cc705a4b87bc8f935d9a21f7b592e8474eab2128ec1e79117e2",
+  "oracle_raw_sha256": "5b32227e555e86b56d1e51837512475808ec0bca4e612376e17874aa9f25f366",
+  "identity": {
+    "job_id": "rt-behavior-20261004-003",
+    "platform": "youtube",
+    "account_id": "youtube_synthetic_rt_003",
+    "intent_id": "private-roundtrip-behavior-20261004-003"
+  },
+  "old_identity_rows_exact_unchanged": true,
+  "old_runs_permanently_consumed": [
+    37167246069,
+    37169509729
+  ],
+  "old_receipts_unchanged": true,
+  "read_only_schema_audit_run": 37170582256,
+  "read_only_http": 39,
+  "audited_schema_sql_hashes_equal_final_candidate": true,
+  "audit_scope": "SCHEMA_ROWS_CANDIDATE_STAGE_NOT_FINAL_PLAN_PREFLIGHT",
+  "final_candidate_plan_fresh_final_preflight_pending": true,
+  "new_identity_remote_rows": 0,
+  "new_write_token_requested": false,
+  "remote_execution_approved": false,
+  "workflow_readback": [
+    {
+      "workflow": "v3-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "no_execution_approval": true
+    },
+    {
+      "workflow": "v3-schema-read-only",
+      "hard_disabled": true,
+      "allow_false": true,
+      "no_execution_approval": false
+    },
+    {
+      "workflow": "v2-approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "no_execution_approval": true
+    },
+    {
+      "workflow": "v2-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "no_execution_approval": true
+    },
+    {
+      "workflow": "approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "no_execution_approval": true
+    }
+  ],
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "worker": 0,
+  "ai": 0,
+  "render_execution": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "retry": 0,
+  "resend": 0,
+  "delete": 0,
+  "drop": 0,
+  "reset": 0,
+  "rollback": 0,
+  "fallback": 0,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-v3-schema-read-only.yml",
+    ".github/workflows/plm-generalized-behavior-v3-test-once.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-behavior-v2-owner-cleanup-20261004.json",
+    "audit-evidence/generalized-behavior-v3-schema-read-only-37170582256.json",
+    "readiness/GENERALIZED_BEHAVIOR_V3_CANDIDATE_JA.md",
+    "serverless/generalized-behavior-v3-contract.mjs",
+    "serverless/generalized-behavior-v3-offline-oracle.json",
+    "serverless/generalized-behavior-v3-plan-sha.json",
+    "serverless/generalized-behavior-v3-schema-read-only.mjs",
+    "serverless/generalized-behavior-v3-test-plan.json",
+    "serverless/test-generalized-behavior-v3.mjs"
+  ],
+  "next_owner_operation": "Request fresh final read-only preflight for this fixed V3 plan without Write Token"
+}
