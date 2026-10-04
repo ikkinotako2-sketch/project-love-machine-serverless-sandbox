@@ -1,0 +1,71 @@
+{
+  "kind": "AI_PROVIDER_ELIGIBILITY_GITHUB_OFFLINE_CI_AND_READBACK",
+  "as_of": "2026-10-04",
+  "decision": "BLOCKED_NO_COMPLIANT_ZERO_COST_PROVIDER",
+  "repository": "ikkinotako2-sketch/project-love-machine-serverless-sandbox",
+  "branch": "plm-offline-readiness-v1-20261002",
+  "code_commit": "ff10fa3c23f9a0b8879a7917912bde9c8d012904",
+  "run_id": 37175742949,
+  "job_id": 111357855427,
+  "conclusion": "success",
+  "python_pass": 522,
+  "node_pass": 942,
+  "total_pass": 1464,
+  "fail": 0,
+  "all_job_steps_success": true,
+  "workflow_readback": {
+    "provider_neutral_migration": {
+      "hard_disabled": true,
+      "allow": false,
+      "execution_approved": false
+    },
+    "v3_approved_once": {
+      "hard_disabled": true,
+      "allow": false,
+      "execution_approved": false
+    }
+  },
+  "scope": "PUBLIC_OFFICIAL_SOURCE_RESEARCH_AND_OFFLINE_ONLY_NO_FRESH_D1_AUDIT",
+  "migration_candidate_applied": false,
+  "owner_cleanup_evidence": "OWNER_REPORTED_NOT_INDEPENDENT_VERIFICATION",
+  "protected_old_files_unchanged_from_parent": true,
+  "changes_limited_to": [
+    "audit-evidence/generalized-behavior-v3-owner-cleanup-20261004.json",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql",
+    "serverless/provider-neutral-backend-before.json",
+    "serverless/provider-neutral-backend-after.json",
+    "serverless/provider-neutral-backend-plan.json",
+    "serverless/provider-neutral-backend-sha256.json",
+    "serverless/provider-neutral-backend-contract.mjs",
+    "serverless/test-provider-neutral-backend.mjs",
+    ".github/workflows/plm-provider-neutral-backend-migration-once.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "readiness/AI_PROVIDER_ELIGIBILITY_20261004.json",
+    "readiness/AI_PROVIDER_ELIGIBILITY_20261004.md",
+    "readiness/provider_neutral_generation.py",
+    "readiness/test_provider_neutral_audit.py",
+    "audit-evidence/ai-provider-eligibility-offline-20261004.json"
+  ],
+  "remote_operations": {
+    "credential_create": 0,
+    "credential_register": 0,
+    "d1_read": 0,
+    "d1_mutation": 0,
+    "provider_api": 0,
+    "ai_inference": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "render": 0,
+    "youtube": 0,
+    "sns": 0
+  },
+  "safety_flags": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "live_ready": false,
+  "posting_permitted": false,
+  "next_owner_operation": "AIなしの台本JSON fixtureでoffline接続監査を続けるかを選ぶ。credential登録は要求しない。"
+}
