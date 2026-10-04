@@ -1,0 +1,63 @@
+{
+  "kind": "GENERALIZED_BEHAVIOR_FINAL_OFFLINE_CI_AND_DISABLED_READBACK",
+  "run_id": 37165355547,
+  "attempt": 1,
+  "conclusion": "SUCCESS",
+  "tested_commit": "97c13b3959c5473938de1de7c562f89b8cc06028",
+  "python_tests": 488,
+  "node_tests": 599,
+  "total_tests": 1087,
+  "kernel_guard": {
+    "blocked_probe_attempts": {
+      "blocked_exec": 10,
+      "blocked_import": 10,
+      "blocked_media_write": 5,
+      "blocked_network": 2
+    },
+    "exec_syscalls_denied": true,
+    "external_api_calls": 0,
+    "native_seccomp_active": true,
+    "render_executions": 0,
+    "socket_syscalls_denied": true
+  },
+  "preflight_run_id": 37165248542,
+  "plan_sha256": "452fd980ba62164f71cfe3841ea7d399ef988c6e259945d5c67487a44eaf52c7",
+  "read_only_preflight_pass": true,
+  "behavior_workflow_hard_disabled_readback": true,
+  "preflight_workflow_hard_disabled_readback": true,
+  "allow": false,
+  "execution_approved": false,
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "worker": 0,
+  "ai": 0,
+  "render": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety_flags": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "next_operation": "Owner creates finite short-TTL D1 Edit/Write-only behavior token and registers secret; separate final execution approval remains mandatory.",
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-read-only-preflight.yml",
+    ".github/workflows/plm-generalized-behavior-test-once.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-backend-owner-cleanup-20261004.json",
+    "audit-evidence/generalized-behavior-preflight-37165248542.json",
+    "readiness/GENERALIZED_BEHAVIOR_CANDIDATE_JA.md",
+    "readiness/GENERALIZED_BEHAVIOR_PREFLIGHT_RESULT_JA.md",
+    "readiness/test_generalized_behavior.py",
+    "serverless/generalized-behavior-contract.mjs",
+    "serverless/generalized-behavior-plan-sha.json",
+    "serverless/generalized-behavior-preflight.mjs",
+    "serverless/generalized-behavior-test-plan.json",
+    "serverless/test-generalized-behavior-preflight.mjs"
+  ],
+  "protected_paths_unchanged": true
+}
