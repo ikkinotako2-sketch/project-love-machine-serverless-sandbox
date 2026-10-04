@@ -1,0 +1,49 @@
+name: PLM Cloud Runtime Package Preflight 003 Disabled Candidate
+run-name: manual-fixture-runtime-preflight-20261004-003
+on:
+  push:
+    branches: ['plm-offline-readiness-v1-20261002']
+    paths: ['audit-evidence/consumed/manual-fixture-runtime-preflight-20261004-003.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: manual-fixture-runtime-preflight-20261004-003
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: false # BLOCKED_PACKAGE_DEPENDENCY_CLOSURE; do not launch
+    # original-scope: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      allow: 'false'
+      execution_approved: 'false'
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - name: Checkout exact launch tree with read-only credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Marker-only consumption and complete history guard before runtime setup
+        id: marker
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python readiness/branch_marker_once.py --identity manual-fixture-runtime-preflight-20261004-003
+      - name: Exact Python candidate, no latest fallback
+        if: steps.marker.outputs.allow == 'true' && steps.marker.outputs.execution_approved == 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.15'
+      - name: Recheck primary marker then cloud metadata only
+        if: steps.marker.outputs.allow == 'true' && steps.marker.outputs.execution_approved == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python readiness/cloud_runtime_preflight_v3.py
+# Marker absent during preparation. Only the separately owner-approved marker-only
+# launch commit can pass guard. No workflow_dispatch or workflow ledger writes.
+# No synthesis, encode, MP4, artifact/cache, apt install, D1, AI or publishing.

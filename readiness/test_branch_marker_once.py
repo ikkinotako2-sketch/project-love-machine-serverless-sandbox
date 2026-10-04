@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 import branch_marker_once as b
 from one_shot_executor import RENDER_ID, Stop
-PREFLIGHT_ID = b.PREFLIGHT_V2_ID
+PREFLIGHT_ID = b.PREFLIGHT_V3_ID
 
 ROOT = Path(__file__).resolve().parents[1]
 PARENT, LAUNCH = 'a'*40, 'b'*40
@@ -103,6 +103,7 @@ class MarkerGateTests(unittest.TestCase):
     def test_no_marker_files_created(self):
         for identity in (PREFLIGHT_ID,RENDER_ID):self.assertFalse((ROOT/b.marker_path(identity)).exists())
         self.assertTrue((ROOT/b.marker_path(b.PREFLIGHT_ID)).is_file())
+        self.assertTrue((ROOT/b.marker_path(b.PREFLIGHT_V2_ID)).is_file())
     def test_force_push_stop(self):
         k=setup();k['context']['forced']=True;self.reject(k,'BLOCKED_HISTORY_CONTINUITY_LOST')
     def test_changed_branch_tip_stop(self):

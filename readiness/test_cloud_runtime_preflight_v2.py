@@ -106,7 +106,8 @@ class V2Tests(unittest.TestCase):
         root=v.ROOT
         marker=json.loads((root/b.marker_path(PREFLIGHT_ID)).read_text())
         self.assertEqual(marker['approved_parent_sha'],'4c9fb5130ef5dc7e99e6e4ae777a6ef3ebf36ac0')
-        for identity in (v.IDENTITY,RENDER_ID):self.assertFalse((root/b.marker_path(identity)).exists())
+        self.assertTrue((root/b.marker_path(v.IDENTITY)).is_file())
+        for identity in (b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((root/b.marker_path(identity)).exists())
         self.assertEqual(len({b.marker_path(i) for i in (PREFLIGHT_ID,v.IDENTITY,RENDER_ID)}),3)
     def test_new_workflow_exact_scope_readonly(self):
         s=(v.ROOT/b.SPEC[v.IDENTITY][1]).read_text()
