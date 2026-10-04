@@ -8,12 +8,8 @@ permissions:
   actions: read
 jobs:
   preflight:
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
-      github.run_attempt == 1 &&
-      github.event.before == '509376029bcfe15dbf2fb57519797062e68c7344' &&
-      github.event.head_commit.message == 'PLM generalized behavior read-only preflight once 20261004-r1'
+    # Consumed read-only run 37165248542. No behavior test approval.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
