@@ -1,0 +1,78 @@
+{
+  "actual_render_count": 0,
+  "blockers": [
+    "BLOCKED_RENDER_RUNTIME_UNPINNED",
+    "ARTIFACT_STORAGE_ZERO_COST_UNVERIFIED",
+    "SPEAKER_PINNED_ENGINE_METADATA_UNVERIFIED",
+    "AUDIO_POSTPROCESSING_PERMISSION_UNVERIFIED"
+  ],
+  "branch": "plm-offline-readiness-v1-20261002",
+  "ci_conclusion": "success",
+  "ci_job_id": 111433803853,
+  "ci_run_id": 37201445190,
+  "code_head": "4ee1663dc0bed79d3b3ccfb7d1584190a4c462fa",
+  "execution_approval_requested": false,
+  "fail": 0,
+  "file_sha256": {
+    ".github/workflows/plm-manual-fixture-render-prepared-once.yml": "a093eea66c2c9cfa58291b773cf79df0b1f1f3a2f6963dbbc08eccb4723abd5e",
+    "readiness/ONE_SHOT_RENDER_PREPARATION_JA.md": "e651c52adeeb7ae44378895455ef687f3ea5aa33c216ec52c943853c09250a94",
+    "readiness/one-shot-render-env.json": "2f539f2d5fa45df3f9db68353283307948b42dc86fa481a8b887133568ab8934",
+    "readiness/one-shot-render-plan.json": "3a39c4a15ebf9868d7d49a6f34e412c07827aaac22f12814a4f3b6d0fecfe246",
+    "readiness/one-shot-render-research.json": "5f6bf8b0c216f50aebceccffe24564803f88d74a4a103e0ea4fba4056da41359",
+    "readiness/one-shot-render-sha256.json": "49085e834ae6219b1781fb8b226a6f3155ae37d48aead0e0652e8c8c038447ff",
+    "readiness/one-shot-render-sources.json": "2cd7e472023dbcb240afd9b5ca9fd8be88eddde399c4a9e48f95f919443fb66e",
+    "readiness/one_shot_render_preflight.py": "5a8a4d868e113463c8024567865add65568022a0500debdf20f75fadf274732e",
+    "readiness/test_one_shot_render_preparation.py": "1504f6f07f636bdf1d0ea69247e257bd55a0c2077f9ffdcdc58b12fff94cdc67"
+  },
+  "first_stop_gate": "BLOCKED_RENDER_RUNTIME_UNPINNED",
+  "fixture_sha256": {
+    "normalized_contract_sha256": "dbcc62dfe12ef550bb37987839c6cd3e30743ca9bc307d6f8131d42e7e0f555e",
+    "render_payload_sha256": "2b92b1b2266da9be38e0cebdd061add724734049f08afc0bbffbe06b7aa53c40",
+    "script_sha256": "9077ccd4b61ff3bcdadcccaaea90219377acfd4abf19ebd414af36f7eb7c0b8b"
+  },
+  "native_guard": {
+    "active": true,
+    "exec_denied": true,
+    "external_api_calls": 0,
+    "render_executions": 0,
+    "socket_denied": true
+  },
+  "new_tests": 27,
+  "next_required_evidence": "OFFICIAL_IMMUTABLE_VOICEVOX_PULL_DIGEST_METADATA_NOT_NEW_CREDENTIAL",
+  "node_pass": 947,
+  "operations": {
+    "ai_inference": 0,
+    "credential_create": 0,
+    "credential_register": 0,
+    "d1_mutation": 0,
+    "d1_read": 0,
+    "docker_pull": 0,
+    "engine_start": 0,
+    "ffmpeg_encode": 0,
+    "migration_apply": 0,
+    "mp4_generation": 0,
+    "sns": 0,
+    "synthesis": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "youtube": 0
+  },
+  "production_sha": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
+  "python_pass": 625,
+  "raw_provider_body_saved": false,
+  "render_identity": "manual-fixture-render-20261004-001",
+  "resend": 0,
+  "retry": 0,
+  "source_snapshot_role": "READ_ONLY_OFFLINE_ORACLE_NOT_EXECUTABLE_RENDERER_FORK",
+  "status": "BLOCKED_RENDER_PREPARATION",
+  "token_headers_saved": false,
+  "total_pass": 1572,
+  "workflow_readback": {
+    "allow": false,
+    "code_head": true,
+    "execution_approved": false,
+    "hard_disabled": true,
+    "old_manual_workflow_unchanged_disabled": true,
+    "v3_consumed_workflow_unchanged_disabled": true
+  }
+}
