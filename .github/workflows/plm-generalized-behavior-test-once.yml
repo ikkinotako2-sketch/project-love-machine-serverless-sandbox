@@ -1,0 +1,20 @@
+name: PLM Generalized Roundtrip Behavior Test Once Disabled
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-behavior-test-once.yml']
+permissions:
+  contents: read
+jobs:
+  behavior:
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_RT_BEHAVIOR_ALLOW: 'false'
+      PLM_RT_BEHAVIOR_OWNER_APPROVAL: UNAPPROVED
+    steps:
+      - run: echo 'Candidate only. Token registration is not execution approval.'
