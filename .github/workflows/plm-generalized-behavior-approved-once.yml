@@ -8,12 +8,8 @@ permissions:
   actions: read
 jobs:
   behavior:
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
-      github.run_attempt == 1 &&
-      github.event.before == '3c7171d8469b0cd91b1f5c32e37cf1c221d7aff1' &&
-      github.event.head_commit.message == 'PLM execute approved fixed generalized behavior 33 steps once 20261004-r1'
+    # Consumed execution run 37167246069: STOP at step3; no resume or resend.
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -24,8 +20,8 @@ jobs:
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
-      PLM_RT_BEHAVIOR_ALLOW: 'true'
-      PLM_RT_BEHAVIOR_OWNER_APPROVAL: EXECUTE_FIXED_GENERALIZED_BEHAVIOR_33_ONCE
+      PLM_RT_BEHAVIOR_ALLOW: 'false'
+      PLM_RT_BEHAVIOR_OWNER_APPROVAL: UNAPPROVED
       PLM_RT_EXEC_PIN: 3c7171d8469b0cd91b1f5c32e37cf1c221d7aff1
       PLM_RT_EXEC_BEFORE: ${{ github.event.before }}
       PLM_RT_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
