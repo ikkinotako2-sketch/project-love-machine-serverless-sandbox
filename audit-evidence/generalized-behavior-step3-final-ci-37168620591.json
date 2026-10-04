@@ -1,0 +1,82 @@
+{
+  "ci_run": 37168620591,
+  "ci_job": 111336774348,
+  "code_sha": "94850d9504ea8f382cc5800b8be002ad92c92404",
+  "conclusion": "success",
+  "python_tests": 488,
+  "node_tests": 733,
+  "total_tests": 1221,
+  "node_fail": 0,
+  "guard_external_api_calls": 0,
+  "guard_render_executions": 0,
+  "read_audit_run": 37168560261,
+  "read_audit_pass": true,
+  "read_only_http": 39,
+  "d1_mutation": 0,
+  "d1_write": 0,
+  "worker": 0,
+  "ai": 0,
+  "render_execution": 0,
+  "youtube": 0,
+  "sns": 0,
+  "old_run_permanently_consumed": true,
+  "old_receipt_unchanged": true,
+  "old_runner_unchanged": true,
+  "old_plan_unchanged": true,
+  "migration_sql_unchanged": true,
+  "disabled_workflow_readback": [
+    {
+      "workflow": "root-read-only",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": false
+    },
+    {
+      "workflow": "v2-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    }
+  ],
+  "branch": "plm-offline-readiness-v1-20261002",
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-root-read-only.yml",
+    ".github/workflows/plm-generalized-behavior-v2-test-once.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-behavior-owner-cleanup-20261004.json",
+    "audit-evidence/generalized-behavior-step3-offline-analysis-20261004.json",
+    "audit-evidence/generalized-behavior-step3-read-only-37168560261.json",
+    "audit-evidence/generalized-behavior-step3-source-proof-20261004.json",
+    "readiness/GENERALIZED_BEHAVIOR_STEP3_ANALYSIS_RESULT_JA.md",
+    "readiness/GENERALIZED_BEHAVIOR_STEP3_ROOT_CAUSE_JA.md",
+    "serverless/generalized-behavior-root-cause.mjs",
+    "serverless/generalized-behavior-root-read-only.mjs",
+    "serverless/generalized-behavior-safe-trigger-v2.mjs",
+    "serverless/generalized-behavior-v2-contract.mjs",
+    "serverless/generalized-behavior-v2-plan-sha.json",
+    "serverless/generalized-behavior-v2-test-plan.json",
+    "serverless/test-generalized-behavior-safe-trigger-v2.mjs",
+    "serverless/test-generalized-behavior-v2-plan.mjs"
+  ],
+  "v2_plan_sha256": "9d1fa88573219b5f90bdd50a90045b9b73229fd7041a79c48ddb09b38c120a1d",
+  "v2_identity": "rt-behavior-20261004-002",
+  "v2_remote_execution_approved": false
+}
