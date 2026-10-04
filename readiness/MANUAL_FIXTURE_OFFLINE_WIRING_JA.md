@@ -52,7 +52,7 @@ input/request contract hashは入力schema/limits/renderer output仕様のhash�
 
 ## checkpointとprovider identityの分離
 
-normalized resultはsource=`manual_fixture`、provider_identity=null、model_identity=null。provider response parserは一切通さない。SQLite `offline_manual_checkpoint` は**temporary reference専用**で、STARTED/version1→検証→SHA→CAS COMPLETED/version2→commit→full read-backを実行する。request identityもimmutable。unknown/failure/mismatchはdeterministic STOP、再生成・自動補修なし。
+normalized resultはsource=`manual_fixture`、provider_identity=null、model_identity=null。provider response parserは一切通さない。SQLite `offline_manual_checkpoint` は**temporary reference専用**で、STARTED/version1→検証→SHA→CAS COMPLETED/version2→commit→full read-backを実行する。temporary file SQLiteのcommit後にconnectionを閉じて再openしても同じcheckpointとrender payloadへ復元できることを証明する。request identityもimmutable。unknown/failure/mismatchはdeterministic STOP、再生成・自動補修なし。
 
 重要な実装境界：固定provider-neutral migration候補の `plm_rt_v2_script` はprovider/modelがNOT NULLで、COMPLETED transitionにはGENERATION effect SENT/UNKNOWNを要求する。manual import用のschemaではない。sourceを架空のprovider名にしたり、実施していないgenerationをSENTと記録したりしない。今回manual reference tableを**offlineだけ**に設け、candidate migrationは4 raw SHAを含め一切変更していない。将来のremote manual import仕様は別途設計・承認が必要で、このPASSからremote write許可は生じない。
 
@@ -79,7 +79,7 @@ BGMsfxasset、image/video download、arbitrary file/path、外部URL fetchは不
 
 ## Offline CIと停止状態
 
-新testsはPython75件＋Node5件（計80件）。既存1,464件のGitHub CI suiteを保持し追加。GitHub CI実件数・run IDは今回の別audit-evidence receiptで確定する。全testsはtrusted native guard / no sockets / no exec / no media writes下で実行する。拒否probeの成功は外部通信/実行ではない。
+新testsはPython76件＋Node5件（計81件）。既存1,464件のGitHub CI suiteを保持し追加。GitHub CI実件数・run IDは今回の別audit-evidence receiptで確定する。全testsはtrusted native guard / no sockets / no exec / no media writes下で実行する。拒否probeの成功は外部通信/実行ではない。
 
 malformed JSON、missing narration、empty scenes、invalid timing、oversize、unknown/provider field、bad expected hash、persisted hash mismatch、external asset/path、immutable completion、request driftを拒否。修正・再生成・retryを伴わない。
 

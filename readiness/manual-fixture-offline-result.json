@@ -32,7 +32,7 @@
   "manual_provider_identity": null,
   "manual_reference_is_not_remote_backend_manual_support": true,
   "new_node_tests": 5,
-  "new_python_tests": 75,
+  "new_python_tests": 76,
   "next_owner_operation": "固定fixtureを使った実renderを1回だけ準備するか",
   "posting_permitted": false,
   "production_code_pin": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
@@ -66,5 +66,6 @@
     "NO_PUBLISH": true,
     "TEST_ONLY": true
   },
-  "status": "PASS_MANUAL_FIXTURE_OFFLINE_WIRED"
+  "status": "PASS_MANUAL_FIXTURE_OFFLINE_WIRED",
+  "temporary_sqlite_file_commit_reopen_exact": "PASS"
 }

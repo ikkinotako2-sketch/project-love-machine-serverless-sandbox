@@ -6,6 +6,7 @@ import hashlib
 import json
 import sqlite3
 import types
+import tempfile
 import unittest
 from pathlib import Path
 from manual_fixture_boundary import (IDENTITY,ROOT,CONTRACT,SAFE_FLAGS,canonical,digest,
@@ -171,6 +172,16 @@ class ManualCheckpointTests(unittest.TestCase):
         with self.assertRaises(ValueError):complete(db,RAW,FIXED['script_sha256'],FIXED['input_request_contract_sha256'])
         with self.assertRaises(sqlite3.IntegrityError):db.execute("UPDATE offline_manual_checkpoint SET script_json='{}'")
         self.assertEqual(read_checkpoint(db),cp)
+    def test_sqlite_commit_survives_connection_close_and_reopen(self):
+        with tempfile.TemporaryDirectory(prefix='plm-manual-checkpoint-') as directory:
+            path=str(Path(directory)/'manual-checkpoint.sqlite')
+            db=sqlite3.connect(path);db.row_factory=sqlite3.Row;db.executescript(CHECKPOINT_SQL)
+            _,saved,payload=wired(db);db.close()
+            reopened=sqlite3.connect(path);reopened.row_factory=sqlite3.Row
+            restored=read_checkpoint(reopened);self.assertEqual(restored,saved)
+            self.assertEqual(checkpoint_to_render(restored,FIXED['script_sha256'],FIXED['input_request_contract_sha256']),payload)
+            with self.assertRaises(ValueError):complete(reopened,RAW,FIXED['script_sha256'],FIXED['input_request_contract_sha256'])
+            self.assertEqual(read_checkpoint(reopened),saved);reopened.close()
     def test_checkpoint_reload_is_exact_without_new_generation(self):
         db,cp,payload=wired();saved=json.loads(canonical(cp))
         self.assertEqual(checkpoint_to_render(saved,FIXED['script_sha256'],FIXED['input_request_contract_sha256']),payload)
