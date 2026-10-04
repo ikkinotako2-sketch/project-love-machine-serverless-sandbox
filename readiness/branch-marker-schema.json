@@ -70,6 +70,16 @@
           "const": "actual-render"
         }
       }
+    },
+    {
+      "properties": {
+        "identity": {
+          "const": "manual-fixture-runtime-preflight-20261004-002"
+        },
+        "kind": {
+          "const": "runtime-preflight"
+        }
+      }
     }
   ]
 }

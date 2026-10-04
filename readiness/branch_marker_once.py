@@ -22,6 +22,8 @@ SPEC = {
     PREFLIGHT_ID: ('runtime-preflight', PREFLIGHT_WORKFLOW, 'readiness/cloud-runtime-preflight-policy.json'),
     RENDER_ID: ('actual-render', RENDER_WORKFLOW, 'readiness/one-shot-render-plan.json'),
 }
+PREFLIGHT_V2_ID = 'manual-fixture-runtime-preflight-20261004-002'
+SPEC[PREFLIGHT_V2_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v2-once.yml', 'readiness/cloud-runtime-preflight-v2-policy.json')
 FIELDS = {'identity','kind','approved_parent_sha','workflow_sha256','plan_sha256',
           'fixture_sha256','created_for_once_only','no_retry','no_resume'}
 API = 'https://api.github.com/repos/' + REPO
@@ -98,6 +100,7 @@ def continuity(records, parent):
 
 def launch_gate(context, commit, marker, parent_marker, history_page, marker_history_page,
                 workflow, plan, fixture, branch_tip, *, identity=PREFLIGHT_ID):
+    need(identity != PREFLIGHT_ID, 'IDENTITY_CONSUMED_001')
     need(context.get('repository') == REPO and context.get('event') == 'push' and
          context.get('branch') == BRANCH, 'UNEXPECTED_BRANCH_OR_EVENT')
     need(type(context.get('run_attempt')) is int and context['run_attempt'] == 1, 'RERUN_REJECTED')
@@ -154,6 +157,7 @@ def read_api(route, *, absent_ok=False):
 
 
 def cloud_launch_guard(env, identity=PREFLIGHT_ID, read=read_api):
+    need(identity != PREFLIGHT_ID, 'IDENTITY_CONSUMED_001')
     need(env.get('GITHUB_ACTIONS') == 'true' and env.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
          env.get('RUNNER_OS') == 'Linux' and env.get('RUNNER_ARCH') == 'X64', 'CLOUD_RUNNER_REQUIRED')
     try:

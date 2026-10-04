@@ -1,0 +1,43 @@
+{
+  "status": "OFFLINE_DESIGN_ONLY_SEPARATE_OWNER_APPROVAL_REQUIRED",
+  "enabled": false,
+  "install_approved": false,
+  "current_002_mode": "OBSERVE_ONLY_NO_INSTALL",
+  "runner": "github-hosted ubuntu-24.04 amd64",
+  "official_repository": "https://archive.ubuntu.com/ubuntu",
+  "suite": "noble",
+  "components": [
+    "main",
+    "universe"
+  ],
+  "exact_packages": {
+    "ffmpeg": "7:6.1.1-3ubuntu5",
+    "fonts-noto-cjk": "1:20230817+repack1-3",
+    "libx264-164": "2:0.164.3108+git31e19f9-1",
+    "libass9": "1:0.17.1-2build1",
+    "libavcodec60": "7:6.1.1-3ubuntu5",
+    "libavfilter9": "7:6.1.1-3ubuntu5",
+    "libavformat60": "7:6.1.1-3ubuntu5",
+    "libavutil58": "7:6.1.1-3ubuntu5",
+    "libswresample4": "7:6.1.1-3ubuntu5",
+    "libswscale7": "7:6.1.1-3ubuntu5"
+  },
+  "repository_version_evidence": [
+    "https://packages.ubuntu.com/noble/amd64/ffmpeg",
+    "https://packages.ubuntu.com/noble/fonts-noto-cjk",
+    "https://packages.ubuntu.com/da/noble/libx264-164",
+    "https://packages.ubuntu.com/en/noble/amd64/libass9"
+  ],
+  "package_sha256_status": "NOT_DOWNLOADED_NOT_YET_LOCKED",
+  "future_install_design": [
+    "Owner approves explicit install plan and a new prepared code head BEFORE launch; never change code/policy in launch commit",
+    "Verify Ubuntu signed InRelease and immutable Packages indices; lock candidate versions, architectures, dependency closure, filenames and SHA256 into reviewable manifest",
+    "Resolve exact name=version only; no latest fallback, downgrade, remove, insecure repository, PPA, Ubuntu Pro, paid service or extra architecture",
+    "Download verified exact packages only on GitHub-hosted runner after distinct approval, verify SHA256 then install locked dependency closure; no user PC",
+    "Run complete runtime readiness and font/filter/encoder checks after installation BEFORE Docker pull",
+    "Unavailable candidate/signature/hash/quota/version mismatch or extra dependency requires STOP and reviewed new plan; no automatic fallback or retry"
+  ],
+  "paid_service_required": false,
+  "user_pc_required": false,
+  "install_commands_in_002_workflow": 0
+}

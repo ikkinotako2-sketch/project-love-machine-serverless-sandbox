@@ -6,7 +6,8 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 import branch_marker_once as b
-from one_shot_executor import PREFLIGHT_ID, RENDER_ID, Stop
+from one_shot_executor import RENDER_ID, Stop
+PREFLIGHT_ID = b.PREFLIGHT_V2_ID
 
 ROOT = Path(__file__).resolve().parents[1]
 PARENT, LAUNCH = 'a'*40, 'b'*40
@@ -100,7 +101,8 @@ class MarkerGateTests(unittest.TestCase):
         for identity in (PREFLIGHT_ID,RENDER_ID):self.assertEqual(b.launch_gate(**setup(identity))['identity'],identity)
         self.assertNotEqual(b.marker_path(PREFLIGHT_ID),b.marker_path(RENDER_ID))
     def test_no_marker_files_created(self):
-        for identity in b.SPEC:self.assertFalse((ROOT/b.marker_path(identity)).exists())
+        for identity in (PREFLIGHT_ID,RENDER_ID):self.assertFalse((ROOT/b.marker_path(identity)).exists())
+        self.assertTrue((ROOT/b.marker_path(b.PREFLIGHT_ID)).is_file())
     def test_force_push_stop(self):
         k=setup();k['context']['forced']=True;self.reject(k,'BLOCKED_HISTORY_CONTINUITY_LOST')
     def test_changed_branch_tip_stop(self):
@@ -177,18 +179,18 @@ class AdapterTests(unittest.TestCase):
     def test_full_adapter_accepts_without_marker_write(self):
         k,event,env,calls,read,text,exists=self.fake()
         with patch.object(Path,'read_text',text),patch.object(Path,'is_file',exists):
-            self.assertTrue(b.cloud_launch_guard(env,read=read)['consumed'])
+            self.assertTrue(b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=read)['consumed'])
         self.assertTrue(all(r.startswith(('/commits','/contents/','/git/ref/','/actions/runs/')) for r in calls))
     def test_full_adapter_rejects_secondary_run_unknown(self):
         k,event,env,calls,read,text,exists=self.fake()
         def changed(route,**kw):return {} if route.startswith('/actions/runs/') else read(route,**kw)
         with patch.object(Path,'read_text',text),patch.object(Path,'is_file',exists):
-            with self.assertRaisesRegex(Stop,'SECONDARY_RUN'):b.cloud_launch_guard(env,read=changed)
+            with self.assertRaisesRegex(Stop,'SECONDARY_RUN'):b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=changed)
     def test_full_adapter_rejects_extra_diff_page(self):
         k,event,env,calls,read,text,exists=self.fake()
         def changed(route,**kw):return {'files':[{'filename':'extra'}]} if route.startswith('/commits/'+LAUNCH) and route.endswith('page=2') else read(route,**kw)
         with patch.object(Path,'read_text',text),patch.object(Path,'is_file',exists):
-            with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.cloud_launch_guard(env,read=changed)
+            with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=changed)
     def test_full_adapter_rechecks_branch_tip(self):
         k,event,env,calls,read,text,exists=self.fake();tips=[]
         def changed(route,**kw):
@@ -197,15 +199,15 @@ class AdapterTests(unittest.TestCase):
                 return {'object':{'sha':LAUNCH if len(tips)==1 else 'c'*40}}
             return read(route,**kw)
         with patch.object(Path,'read_text',text),patch.object(Path,'is_file',exists):
-            with self.assertRaisesRegex(Stop,'CONTINUITY_LOST'):b.cloud_launch_guard(env,read=changed)
+            with self.assertRaisesRegex(Stop,'CONTINUITY_LOST'):b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=changed)
     def test_wrong_event_before_api(self):
         k,event,env,calls,read,text,exists=self.fake();env['GITHUB_EVENT_NAME']='workflow_dispatch'
         with patch.object(Path,'read_text',text),patch.object(Path,'is_file',exists):
-            with self.assertRaises(Stop):b.cloud_launch_guard(env,read=read)
+            with self.assertRaises(Stop):b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=read)
         self.assertEqual(calls,[])
     def test_no_local_runner_before_api(self):
         k,event,env,calls,read,text,exists=self.fake();env['GITHUB_ACTIONS']='false'
-        with self.assertRaisesRegex(Stop,'CLOUD_RUNNER_REQUIRED'):b.cloud_launch_guard(env,read=read)
+        with self.assertRaisesRegex(Stop,'CLOUD_RUNNER_REQUIRED'):b.cloud_launch_guard(env,identity=PREFLIGHT_ID,read=read)
         self.assertEqual(calls,[])
     def test_marker_render_oracle_uses_primary_guard(self):
         from test_one_shot_executor import FakeEffects,context

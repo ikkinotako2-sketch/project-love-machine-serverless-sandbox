@@ -1,0 +1,18 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261004-002",
+  "runner": "ubuntu-24.04",
+  "image": "voicevox/voicevox_engine@sha256:ab700b3768d0a2e9230d53e054b321f60409fda34fe794a333ae7202ab1c87f4",
+  "allow": false,
+  "execution_approved": false,
+  "hard_disabled": true,
+  "approval_source": "SEPARATELY_OWNER_APPROVED_MARKER_ONLY_COMMIT",
+  "package_install_approved": false,
+  "dependency_policy": "OBSERVE_ONLY_STOP_ON_MISSING_OR_DRIFT_NO_INSTALL_NO_FALLBACK",
+  "synthesis_max": 0,
+  "encode_max": 0,
+  "artifact_upload_max": 0,
+  "automatic_retry": 0,
+  "no_resume": true,
+  "consumed_001_marker_sha": "840339c827253d8d9a15efb53983e358c4bb4ed6",
+  "consumed_001_run": 37207981665
+}
