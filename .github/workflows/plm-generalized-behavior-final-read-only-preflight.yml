@@ -8,7 +8,12 @@ permissions:
   actions: read
 jobs:
   preflight:
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
+      github.run_attempt == 1 &&
+      github.event.before == 'df716cbcf3901100965e265ce3e3f3c392496dcb' &&
+      github.event.head_commit.message == 'PLM generalized behavior token verify final read-only once 20261004-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -21,13 +26,13 @@ jobs:
       EMERGENCY_STOP: 'true'
       PLM_RT_BEHAVIOR_ALLOW: 'false'
       PLM_RT_BEHAVIOR_OWNER_APPROVAL: UNAPPROVED
-      PLM_RT_BEHAVIOR_FINAL_PIN: PREPARE_PIN
+      PLM_RT_BEHAVIOR_FINAL_PIN: df716cbcf3901100965e265ce3e3f3c392496dcb
       PLM_RT_BEHAVIOR_FINAL_BEFORE: ${{ github.event.before }}
       PLM_RT_BEHAVIOR_FINAL_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: PREPARE_PIN
+          ref: df716cbcf3901100965e265ce3e3f3c392496dcb
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
