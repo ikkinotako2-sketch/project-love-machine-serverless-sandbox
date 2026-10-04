@@ -1,0 +1,93 @@
+{
+  "kind": "GENERALIZED_BEHAVIOR_V3_FINAL_CI_AND_DISABLED_READBACK",
+  "execution_run_id": 37173135193,
+  "execution_status": "SUCCESS",
+  "ci_run_id": 37173308751,
+  "ci_job_id": 111350583676,
+  "ci_code_commit": "390213bc2f36636fd4a64e6af533165741f75841",
+  "ci_conclusion": "success",
+  "python_pass": 488,
+  "node_pass": 939,
+  "total_pass": 1427,
+  "total_fail": 0,
+  "offline_exact_sql_negative_oracles": 17,
+  "workflow_readback": [
+    {
+      "path": ".github/workflows/plm-generalized-behavior-v3-approved-once.yml",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_approved_false": true,
+      "four_safety_flags_true": true,
+      "exact_disabled_readback": true
+    },
+    {
+      "path": ".github/workflows/plm-generalized-behavior-v3-test-once.yml",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_approved_false": true,
+      "four_safety_flags_true": true,
+      "exact_disabled_readback": true
+    },
+    {
+      "path": ".github/workflows/plm-generalized-behavior-v3-credential-read-only-preflight.yml",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_approved_false": true,
+      "four_safety_flags_true": true,
+      "exact_disabled_readback": true
+    }
+  ],
+  "readback_commit": "862ae54cbe2f1ccbfcffe64b7c80008276a7c8df",
+  "changed_files": [
+    {
+      "filename": ".github/workflows/plm-generalized-behavior-v3-approved-once.yml",
+      "status": "added"
+    },
+    {
+      "filename": ".github/workflows/plm-offline-readiness.yml",
+      "status": "modified"
+    },
+    {
+      "filename": "audit-evidence/generalized-behavior-v3-approved-result-37173135193.json",
+      "status": "added"
+    },
+    {
+      "filename": "readiness/GENERALIZED_BEHAVIOR_V3_EXECUTION_JA.md",
+      "status": "added"
+    },
+    {
+      "filename": "serverless/generalized-behavior-v3-execution-entry.mjs",
+      "status": "added"
+    },
+    {
+      "filename": "serverless/generalized-behavior-v3-runner.mjs",
+      "status": "added"
+    },
+    {
+      "filename": "serverless/test-generalized-behavior-v3-execution.mjs",
+      "status": "added"
+    }
+  ],
+  "fixed_plan_sha256": "ecfa8fc1590f3cc705a4b87bc8f935d9a21f7b592e8474eab2128ec1e79117e2",
+  "final_rows_sha256": "ffefa49a6ec79ba36cfed92963f566b0b2a65fdb53800788f2bd8e634f8dd86c",
+  "bookmark": "00000026-00000020-000050fa-014af190ea61f59d525727e0a9339b41",
+  "old_two_active_jobs_exact_unchanged": true,
+  "old_run_resume_retry_resend_delete_reset": 0,
+  "permanently_consumed": true,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety_flags": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "worker": 0,
+  "ai": 0,
+  "render_execution": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "automatic_rollback": 0,
+  "cleanup_required": true
+}
