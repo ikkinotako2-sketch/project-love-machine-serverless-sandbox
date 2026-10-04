@@ -9,7 +9,12 @@ permissions:
 jobs:
   audit:
     # Prepare only. No execution approval or Write Token.
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
+      github.run_attempt == 1 &&
+      github.event.before == 'e3b0688fd18af15e9c9df5c4ae0fb63a32aa5a78' &&
+      github.event.head_commit.message == 'PLM v3 fixed final read-only preflight once 20261004-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -22,13 +27,13 @@ jobs:
       EMERGENCY_STOP: 'true'
       PLM_RT_V3_ALLOW: 'false'
       PLM_RT_V3_OWNER_APPROVAL: UNAPPROVED
-      PLM_RT_V3_FINAL_PIN: PREPARE_PIN
+      PLM_RT_V3_FINAL_PIN: e3b0688fd18af15e9c9df5c4ae0fb63a32aa5a78
       PLM_RT_V3_FINAL_BEFORE: ${{ github.event.before }}
       PLM_RT_V3_FINAL_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: PREPARE_PIN
+          ref: e3b0688fd18af15e9c9df5c4ae0fb63a32aa5a78
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
