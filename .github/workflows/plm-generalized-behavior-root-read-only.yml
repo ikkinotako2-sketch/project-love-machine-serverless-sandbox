@@ -7,12 +7,7 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: >-
-      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
-      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
-      github.run_attempt == 1 &&
-      github.event.before == '6b9988a3a16f26b2eaee58c8df647a6c785e97eb' &&
-      github.event.head_commit.message == 'PLM behavior step3 root cause read-only audit once 20261004-r1'
+    if: false
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
