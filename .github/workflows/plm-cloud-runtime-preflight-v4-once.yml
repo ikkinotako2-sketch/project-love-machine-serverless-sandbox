@@ -1,4 +1,4 @@
-name: PLM Cloud Runtime Resolver-only Preflight 004 Disabled Candidate
+name: PLM Cloud Runtime Resolver-only Preflight 004 Marker-Gated Candidate
 run-name: manual-fixture-runtime-preflight-20261005-004
 on:
   push:
@@ -12,13 +12,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   preflight:
-    if: false # OFFLINE PREPARATION ONLY; separate activation review required
-    # original-scope: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002'
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002'
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     env:
-      allow: 'false'
-      execution_approved: 'false'
       TEST_ONLY: 'true'
       DRY_RUN: 'true'
       NO_PUBLISH: 'true'

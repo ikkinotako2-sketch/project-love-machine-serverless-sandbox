@@ -135,21 +135,21 @@ class TransactionV4Tests(unittest.TestCase):
     def test_no_exact_root_rejected(self):
         plan=json.loads(v.PLAN.read_text());plan['root_constraints']['ffmpeg']='latest'
         with self.assertRaisesRegex(Stop,'INDEX_FAILED'):v.validate_source(plan)
-    def test_preparation_cannot_execute(self):
-        with patch.object(v,'cloud_launch_guard',side_effect=AssertionError('guard must not run')):
-            with self.assertRaisesRegex(Stop,'BLOCKED_OFFLINE_PREPARATION_ONLY'):v.execute(json.loads(v.PLAN.read_text()),{})
+    def test_marker_guard_failure_cannot_execute(self):
+        with patch.object(v,'cloud_launch_guard',side_effect=Stop('MARKER_MISSING')):
+            with self.assertRaisesRegex(Stop,'MARKER_MISSING'):v.execute(json.loads(v.PLAN.read_text()),{})
     def test_non_simulation_command_forbidden(self):
         with self.assertRaisesRegex(Stop,'SOURCE_FAILED'):v.command('simulation',['/usr/bin/apt-get','install','ffmpeg'])
     def test_safe_command_failure_drops_secret(self):
-        with patch.object(v.subprocess,'run',side_effect=RuntimeError(SECRET)),patch.object(v,'safe_stage'):
+        with patch.object(v,'bounded_process',side_effect=RuntimeError(SECRET)),patch.object(v,'safe_stage'),patch.dict(v.os.environ,{'RUNNER_TEMP':'/tmp'}):
             with self.assertRaises(Stop) as caught:
                 v.command('simulation',['/usr/bin/apt-get','--simulate','--no-download','--no-install-recommends','install']+[n+'='+version for n,version in sorted(json.loads(v.PLAN.read_text())['root_constraints'].items())])
         self.assertEqual(str(caught.exception),'RUNTIME_APT_SIMULATION_FAILED')
     def test_subprocess_environment_no_token(self):
         class R:returncode=0;stdout=b''
-        with patch.object(v.subprocess,'run',return_value=R()) as mocked,patch.object(v,'safe_stage'):
+        with patch.object(v,'bounded_process',return_value=(0,b'')) as mocked,patch.object(v,'safe_stage'),patch.dict(v.os.environ,{'RUNNER_TEMP':'/tmp'}):
             v.command('signature',['/usr/bin/gpgv','--status-fd=1','--keyring','/tmp/plm-resolver-004-test/ubuntu-archive-keyring.gpg','/tmp/plm-resolver-004-test/InRelease'])
-        env=mocked.call_args.kwargs['env'];self.assertNotIn('GH_TOKEN',env);self.assertEqual(env['LC_ALL'],'C')
+        env=mocked.call_args.args[1];self.assertNotIn('GH_TOKEN',env);self.assertEqual(env['LC_ALL'],'C')
     def test_no_redirect(self):
         with self.assertRaisesRegex(Stop,'SOURCE_FAILED'):v.NoRedirect().redirect_request(None,None,None,None,None,None)
     def test_binary_download_forbidden(self):
@@ -161,9 +161,9 @@ class TransactionV4Tests(unittest.TestCase):
             self.assertTrue((b.ROOT/b.marker_path(n)).is_file())
             with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED'):b.cloud_launch_guard({},n)
         for n in (b.PREFLIGHT_V3_ID,v.IDENTITY,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(n)).exists())
-    def test_workflow_hard_disabled_read_only(self):
+    def test_workflow_marker_gated_read_only(self):
         text=(b.ROOT/b.SPEC[v.IDENTITY][1]).read_text()
-        self.assertIn('if: false',text);self.assertIn('contents: read',text);self.assertIn('actions: read',text)
+        self.assertIn("github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'",text);self.assertIn('contents: read',text);self.assertIn('actions: read',text)
         self.assertNotIn('contents: write',text);self.assertNotIn('workflow_dispatch',text.split('#')[0])
     def test_003_evidence_unmodified(self):
         for path,sha in [('readiness/cloud-runtime-preflight-v3-package-plan.json','93d7b33e187fda831ac1e8c60ec80a62741659f64c1c760e37ab3a4c31f03a12'),
@@ -176,12 +176,12 @@ class TransactionV4Tests(unittest.TestCase):
             def __enter__(self):return self
             def __exit__(self,*args):return False
             def read(self,n):return b'wrong'
-        with patch.object(v.urllib.request,'build_opener') as mocked,patch.object(v,'safe_stage'):
+        with patch.object(v.urllib.request,'build_opener') as mocked,patch.object(v,'safe_stage'),patch.dict(v.os.environ,{'RUNNER_TEMP':'/tmp'}):
             mocked.return_value.open.return_value=Response()
             with self.assertRaisesRegex(Stop,'RUNTIME_APT_INDEX_FAILED'):
                 v.metadata_get(t.REPO+'/dists/noble/InRelease',100,'a'*64,'index')
     def test_signature_command_failure_safe(self):
-        with patch.object(v.subprocess,'run',side_effect=RuntimeError(SECRET)),patch.object(v,'safe_stage'):
+        with patch.object(v,'bounded_process',side_effect=RuntimeError(SECRET)),patch.object(v,'safe_stage'),patch.dict(v.os.environ,{'RUNNER_TEMP':'/tmp'}):
             with self.assertRaisesRegex(Stop,'RUNTIME_APT_SIGNATURE_FAILED'):
                 v.command('signature',['/usr/bin/gpgv','--status-fd=1','--keyring',
                     '/tmp/plm-resolver-004-test/ubuntu-archive-keyring.gpg','/tmp/plm-resolver-004-test/InRelease'])
@@ -192,7 +192,7 @@ class TransactionV4Tests(unittest.TestCase):
         with self.assertRaisesRegex(Stop,'SOURCE_FAILED'):v.command('simulation',args)
     def test_private_sources_and_no_hooks(self):
         with tempfile.TemporaryDirectory(prefix='plm-resolver-004-',dir='/tmp') as directory:
-            p=v.source_config(directory,b'private inventory',Path(directory)/'ubuntu-archive-keyring.gpg')
+            p=v.source_config(directory,b'private inventory',Path(directory)/'ubuntu-archive-keyring.gpg',runner_temp='/tmp')
             text=p.read_text();self.assertIn('Dir::Etc::parts',text);self.assertIn('Dir::Etc::sourceparts',text)
             self.assertIn('Dir::Bin::dpkg "/bin/false"',text)
             self.assertNotIn('/etc/apt/sources.list',text);self.assertNotIn('/var/lib/dpkg/status',text)

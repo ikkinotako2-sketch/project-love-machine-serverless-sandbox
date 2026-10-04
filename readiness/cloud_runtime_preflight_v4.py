@@ -1,6 +1,6 @@
 """Fixed 004 resolver-only adapter. Metadata GET + gpgv + apt --simulate only.
 
-Preparation is hard-disabled. No install, dpkg, apt update/download, media or Docker.
+Authorization is exclusively the rechecked marker/history guard. No install, dpkg, apt update/download, media or Docker.
 Never pass credentials to subprocesses; never emit raw stdout/stderr/provider bodies.
 """
 import hashlib
@@ -10,6 +10,9 @@ import lzma
 import os
 import re
 import subprocess
+import selectors
+import signal
+import time
 import sys
 import tempfile
 import urllib.request
@@ -64,25 +67,61 @@ def command(stage,args,config=None):
         need(args==expected,'RUNTIME_APT_SOURCE_FAILED')
     elif stage=='signature':
         need(len(args)==5 and args[:3]==['/usr/bin/gpgv','--status-fd=1','--keyring'] and
-             re.fullmatch(r'/tmp/plm-resolver-004-[A-Za-z0-9_-]+/ubuntu-archive-keyring.gpg',args[3]) and
+             Path(args[3]).name=='ubuntu-archive-keyring.gpg' and
              args[4]==str(Path(args[3]).parent/'InRelease'),'RUNTIME_APT_SOURCE_FAILED')
+        private_directory(Path(args[3]).parent)
     else:raise Stop('RUNTIME_APT_SOURCE_FAILED')
     safe_stage(stage)
     env={'PATH':'/usr/bin:/bin','LC_ALL':'C','LANG':'C','HOME':'/nonexistent'}
     if config:env['APT_CONFIG']=str(config)
     try:
-        proc=subprocess.run(args,env=env,capture_output=True,timeout=120,check=False)
-        safe_stage(stage,proc.returncode)
-        need(proc.returncode==0,STAGES[stage]);need(len(proc.stdout)<=2_000_000,STAGES[stage])
-        return proc.stdout.decode('utf-8')
-    except Stop:raise
+        returncode,stdout=bounded_process(args,env)
+        safe_stage(stage,returncode)
+        need(returncode==0,STAGES[stage])
+        return stdout.decode('utf-8')
     except Exception:raise Stop(STAGES[stage]) from None
 
 
-def source_config(directory,status,keyring):
-    """Fresh private dirs; no inherited apt.conf, hooks, preferences or host sources."""
+def bounded_process(args,env):
+    """Drain anonymous pipes with fixed memory/time limits; never write raw output."""
+    proc=subprocess.Popen(args,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                          start_new_session=True)
+    stdout=bytearray();stderr_size=0;deadline=time.monotonic()+120
+    try:
+        with selectors.DefaultSelector() as selector:
+            for pipe,label in ((proc.stdout,'stdout'),(proc.stderr,'stderr')):
+                os.set_blocking(pipe.fileno(),False);selector.register(pipe,selectors.EVENT_READ,label)
+            while selector.get_map():
+                need(time.monotonic()<deadline,'RUNTIME_APT_SIMULATION_FAILED')
+                for key,events in selector.select(timeout=min(0.5,max(0,deadline-time.monotonic()))):
+                    data=os.read(key.fileobj.fileno(),65536)
+                    if not data:selector.unregister(key.fileobj);continue
+                    if key.data=='stdout':
+                        need(len(stdout)+len(data)<=2_000_000,'RUNTIME_APT_SIMULATION_FAILED');stdout.extend(data)
+                    else:
+                        stderr_size+=len(data)
+                        need(stderr_size<=65536,'RUNTIME_APT_SIMULATION_FAILED')
+        return proc.wait(timeout=max(0.01,deadline-time.monotonic())),bytes(stdout)
+    except BaseException:
+        if proc.poll() is None:
+            os.killpg(proc.pid,signal.SIGKILL);proc.wait(timeout=5)
+        raise
+    finally:
+        proc.stdout.close();proc.stderr.close()
+
+
+def private_directory(directory,runner_temp=None):
+    base=Path(runner_temp or os.environ.get('RUNNER_TEMP','/tmp')).resolve()
     d=Path(directory)
-    need(re.fullmatch(r'/tmp/plm-resolver-004-[A-Za-z0-9_-]+',str(d)) is not None,'RUNTIME_APT_SOURCE_FAILED')
+    need(d.is_absolute() and d.resolve().parent==base and
+         re.fullmatch(r'plm-resolver-004-[A-Za-z0-9_-]+',d.name) is not None,
+         'RUNTIME_APT_SOURCE_FAILED')
+    return d
+
+
+def source_config(directory,status,keyring,runner_temp=None):
+    """Fresh private dirs; no inherited apt.conf, hooks, preferences or host sources."""
+    d=private_directory(directory,runner_temp)
     for name in ('lists','lists/partial','cache','cache/archives','cache/archives/partial','logs','empty'):
         (d/name).mkdir(exist_ok=True)
     (d/'status').write_bytes(status);(d/'status').chmod(0o400)
@@ -117,11 +156,12 @@ def validate_source(plan):
 
 
 def execute(plan,env):
-    need(plan.get('hard_disabled') is False and plan.get('execution_approved') is True,
-         'BLOCKED_OFFLINE_PREPARATION_ONLY')
     # Independent primary marker recheck immediately before metadata effects.
     receipt=cloud_launch_guard(env,IDENTITY)
-    need(receipt.get('consumed') is True,'RUNTIME_APT_SOURCE_FAILED')
+    need(receipt.get('identity')==IDENTITY and receipt.get('consumed') is True and
+         receipt.get('allow') is True and receipt.get('execution_approved') is True and
+         receipt.get('no_retry') is True and receipt.get('no_resume') is True,
+         'RUNTIME_APT_SOURCE_FAILED')
     need(env.get('RUNNER_ENVIRONMENT')=='github-hosted' and env.get('RUNNER_OS')=='Linux' and
          env.get('RUNNER_ARCH')=='X64' and env.get('ImageOS')=='ubuntu24','RUNTIME_APT_SOURCE_FAILED')
     os_release=Path('/etc/os-release').read_text()
@@ -130,7 +170,11 @@ def execute(plan,env):
     safe_stage('source');old=validate_source(plan);signed=plan['signed_index']
     safe_stage('inventory');status_path=Path('/var/lib/dpkg/status');status=status_path.read_bytes()
     installed=t.inventory(status.decode());inventory_hash=hashlib.sha256(status).hexdigest()
-    with tempfile.TemporaryDirectory(prefix='plm-resolver-004-',dir='/tmp') as directory:
+    runner_temp=env.get('RUNNER_TEMP')
+    need(isinstance(runner_temp,str) and Path(runner_temp).is_absolute() and
+         Path(runner_temp).is_dir() and runner_temp==os.environ.get('RUNNER_TEMP'),
+         'RUNTIME_APT_SOURCE_FAILED')
+    with tempfile.TemporaryDirectory(prefix='plm-resolver-004-',dir=runner_temp) as directory:
         d=Path(directory)
         release=metadata_get(BASE+'/dists/noble/InRelease',1_000_000,signed['inrelease_sha256'],'index')
         key=metadata_get(signed['keyring_source'],100_000,signed['keyring_sha256'],'signature')
@@ -138,7 +182,7 @@ def execute(plan,env):
         sig=command('signature',['/usr/bin/gpgv','--status-fd=1','--keyring',str(key_path),str(d/'InRelease')])
         need(any(line.startswith('[GNUPG:] VALIDSIG '+signed['signing_key_fingerprint']+' ') for line in sig.splitlines()),
              'RUNTIME_APT_SIGNATURE_FAILED')
-        config=source_config(d,status,key_path);index={}
+        config=source_config(d,status,key_path,runner_temp);index={}
         (d/'lists/archive.ubuntu.com_ubuntu_dists_noble_InRelease').write_bytes(release)
         for item in signed['package_indices']:
             need(re.search(r'^ '+item['sha256']+r'\s+'+str(item['size'])+r'\s+'+re.escape(item['path'])+r'$',
@@ -163,11 +207,18 @@ def execute(plan,env):
             runner='github-hosted ubuntu-24.04',package_binary_downloads=0,package_install=0,dpkg=0,
             docker=0,voicevox=0,ffmpeg=0,synthesis=0,encode=0,mp4=0,artifact=0)
         # Only validated names/versions/hashes/source and fixed reason strings are emitted.
-        summary=json.dumps(report,sort_keys=True,ensure_ascii=True)
+        report['proof_kind']='SIGNED_SOLVER_TRANSACTION_PROOF'
+        summary=json.dumps(public_evidence(report),sort_keys=True,ensure_ascii=True)
         print(summary,flush=True)
         if env.get('GITHUB_STEP_SUMMARY'):
             with open(env['GITHUB_STEP_SUMMARY'],'a') as f:f.write('```json\n'+summary+'\n```\n')
         return report
+
+
+def public_evidence(report):
+    if report['status']=='PASS':return report
+    return {'status':'BLOCKED','failure_code':report['failure_code'],
+            'counts':report['transaction']['counts'],'upgrade_reasons':report['upgrade_reasons']}
 
 
 def main():

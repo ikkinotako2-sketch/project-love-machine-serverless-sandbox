@@ -1,8 +1,6 @@
 {
   "identity": "manual-fixture-runtime-preflight-20261005-004",
   "kind": "resolver-only",
-  "hard_disabled": true,
-  "execution_approved": false,
   "runner": "ubuntu-24.04",
   "architecture": "amd64",
   "source": {
@@ -82,5 +80,15 @@
     "RUNTIME_APT_ALTERNATIVE_AMBIGUOUS",
     "RUNTIME_APT_TRANSACTION_INCOMPLETE",
     "RUNTIME_APT_TRANSACTION_SOURCE_MISMATCH"
-  ]
+  ],
+  "activation": "MARKER_HISTORY_GUARD_ONLY",
+  "authorization_source": "Approved preparation parent + single-parent marker-only launch + primary marker/history guard; static plan/env is never authorization",
+  "isolated_directory": "$RUNNER_TEMP/plm-resolver-004-*",
+  "proof_kind": "SIGNED_SOLVER_TRANSACTION_PROOF",
+  "transaction_evidence_policy": "Canonical transaction JSON and fingerprint are emitted only on PASS; BLOCKED emits safe code/counts/upgrade reasons only",
+  "output_limits": {
+    "stdout_bytes": 2000000,
+    "stderr_bytes": 65536,
+    "timeout_seconds": 120
+  }
 }
