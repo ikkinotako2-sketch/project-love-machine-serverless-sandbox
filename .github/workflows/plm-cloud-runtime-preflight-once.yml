@@ -1,0 +1,41 @@
+name: PLM Cloud Runtime Metadata Preflight Candidate
+run-name: manual-fixture-runtime-preflight-20261004-001
+on: workflow_dispatch
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: manual-fixture-runtime-preflight-20261004-001
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      allow: 'false'
+      execution_approved: 'false'
+      PLM_ALLOW: 'false'
+      PLM_EXECUTION_APPROVED: 'false'
+      PLM_APPROVED_HEAD_SHA: ${{ vars.PLM_RUNTIME_PREFLIGHT_APPROVED_HEAD_SHA }}
+      PLM_ORIGINAL_WORKFLOW_ID: ${{ vars.PLM_RUNTIME_PREFLIGHT_ORIGINAL_WORKFLOW_ID }}
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - name: Checkout cloud metadata candidate only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: First run and complete history gate before runtime setup
+        run: python readiness/cloud_runtime_preflight.py --history-only
+      - name: Exact Python candidate, never latest fallback
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.15'
+      - name: Cloud-only runtime metadata, no synthesis or encode
+        run: python readiness/cloud_runtime_preflight.py
+# No apt install/latest fallback, generation endpoints, encode or artifact upload.
+# This is a candidate only; enabling and dispatching require separate approval.

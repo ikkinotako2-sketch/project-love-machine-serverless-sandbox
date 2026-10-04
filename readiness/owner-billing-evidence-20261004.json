@@ -1,0 +1,30 @@
+{
+  "provenance": "OWNER_REPORTED_SCREENSHOTS_2026_10_04",
+  "source": "User supplied transcription in this task; not connector billing telemetry",
+  "owner": "ikkinotako2-sketch",
+  "observed_date": "2026-10-04",
+  "current_month_metered_usage_present": true,
+  "daily_billed_usd": {"2026-10-01": 0, "2026-10-02": 0, "2026-10-03": 0, "2026-10-04": 0},
+  "payment_method_visible_in_displayed_region": false,
+  "billing_information_fields_filled": false,
+  "card_addition_permitted": false,
+  "billing_changes_permitted": false,
+  "budgets": {
+    "Actions": {"usd": 0, "stop_usage": true},
+    "Packages": {"usd": 0, "stop_usage": true},
+    "Codespaces": {"usd": 0, "stop_usage": true},
+    "Git LFS": {"usd": 0, "stop_usage": true},
+    "All AI Credit SKUs": {"usd": 0, "stop_usage": true}
+  },
+  "evaluation": "OWNER_EVIDENCED_FAIL_CLOSED_ZERO_DOLLAR_BOUNDARY_NOT_RESERVED_STORAGE_CAPACITY",
+  "artifact": {
+    "files": ["short.mp4", "payload_snapshot.json", "render-result.json"],
+    "max_total_bytes": 12582912,
+    "retention_days": 1,
+    "upload_max": 1,
+    "retry": 0,
+    "failure_policy": "STOP_IF_QUOTA_BILLABLE_UPLOAD_FAILURE_OR_UNKNOWN_NO_SETTINGS_CHANGE"
+  },
+  "actual_billing_settings_changes": 0,
+  "actual_artifact_upload": 0
+}

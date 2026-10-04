@@ -1,0 +1,31 @@
+name: PLM Fixed One Shot Executor Offline Candidate
+run-name: manual-fixture-render-20261004-001
+on: workflow_dispatch
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: manual-fixture-render-20261004-001
+  cancel-in-progress: false
+jobs:
+  candidate:
+    if: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      allow: 'false'
+      execution_approved: 'false'
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - name: Checkout offline candidate only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Unconditional STOP before production checkout or runtime
+        run: python readiness/one_shot_executor.py
+# No runtime adapter, renderer import, synthesis, encode or upload step.
+# run history is mutable; this workflow cannot be approved for live render.
