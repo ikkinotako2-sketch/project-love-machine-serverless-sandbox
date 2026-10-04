@@ -1,0 +1,23 @@
+{
+  "production_sha": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
+  "actions": {
+    "checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "setup-python": "5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "upload-artifact": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+  },
+  "repository_public": true,
+  "engine_release": {
+    "version": "0.25.2",
+    "published_at": "2026-04-30T07:27:00Z",
+    "official_url": "https://github.com/VOICEVOX/voicevox_engine/releases/tag/0.25.2"
+  },
+  "voicevox_image_digest": null,
+  "image_digest_verified": false,
+  "resource_sha": "a831d3834f517a9093ccb34e96527801708068bb",
+  "vvm_commit": "a557dd4661103f206f7cd7d81e0c9a9b26253372",
+  "style1_official_table": [
+    "| 0.vvm | ずんだもん | あまあま | 1 |"
+  ],
+  "registry_metadata_available": false,
+  "billing_aggregate_verified": false
+}

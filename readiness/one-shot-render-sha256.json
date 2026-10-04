@@ -1,0 +1,6 @@
+{
+  ".github/workflows/plm-manual-fixture-render-prepared-once.yml": "a093eea66c2c9cfa58291b773cf79df0b1f1f3a2f6963dbbc08eccb4723abd5e",
+  "readiness/one-shot-render-env.json": "2f539f2d5fa45df3f9db68353283307948b42dc86fa481a8b887133568ab8934",
+  "readiness/one-shot-render-plan.json": "3a39c4a15ebf9868d7d49a6f34e412c07827aaac22f12814a4f3b6d0fecfe246",
+  "readiness/one-shot-render-sources.json": "2cd7e472023dbcb240afd9b5ca9fd8be88eddde399c4a9e48f95f919443fb66e"
+}

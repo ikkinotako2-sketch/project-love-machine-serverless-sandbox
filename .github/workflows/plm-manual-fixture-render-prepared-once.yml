@@ -1,0 +1,43 @@
+name: PLM Fixed Manual Fixture Render Candidate Blocked
+on: workflow_dispatch
+permissions:
+  contents: read
+concurrency:
+  group: manual-fixture-render-20261004-001
+  cancel-in-progress: false
+jobs:
+  candidate:
+    if: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      allow: 'false'
+      execution_approved: 'false'
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - name: Checkout sandbox preparation only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ikkinotako2-sketch/project-love-machine-serverless-sandbox
+          ref: ${{ github.sha }}
+          path: .preparation/sandbox
+          persist-credentials: false
+      - name: Explicit exact production source checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: ikkinotako2-sketch/project-love-machine
+          ref: 25f24bc4e6a20164c5549f746fc0eefcedf5d178
+          path: .preparation/production-render
+          persist-credentials: false
+      - name: Python candidate pin - binary availability is an unresolved gate
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.15'
+      - name: Fail closed before runtime or render
+        working-directory: .preparation/sandbox
+        run: python readiness/one_shot_render_preflight.py
+# No Docker/start/synthesis/encode/upload step while runtime or terms are unresolved.
+# Future execution history must be checked before consuming this identity once.
