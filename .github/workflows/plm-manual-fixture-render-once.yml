@@ -1,0 +1,17 @@
+name: PLM Manual Fixture Render Next Gate Only
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  next_gate_only:
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      allow: 'false'
+      execution_approved: 'false'
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - run: echo 'OFFLINE_WIRED_RENDER_EXECUTION_NOT_PREPARED_OR_APPROVED'

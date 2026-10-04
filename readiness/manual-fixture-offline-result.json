@@ -1,0 +1,70 @@
+{
+  "boundaries": {
+    "checkpoint_to_render_payload": "PASS",
+    "manual_to_normalized": "PASS",
+    "normalized_to_temporary_manual_checkpoint": "PASS",
+    "payload_to_exact_production_loader": "PASS"
+  },
+  "candidate_four_raw_sha256": {
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+    "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+    "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a"
+  },
+  "credential_requested": false,
+  "execution_approved": false,
+  "fixture_identity": "manual-japanese-script-fixture-v1",
+  "hashes": {
+    "canonical_representation": "UTF-8 / sorted keys / compact separators / no newline / finite normalized numbers / preserve Unicode codepoints",
+    "checkpoint_sha256": "c15e07c6533c95d061808696d5f1962c7d9ae9f4dade0e69abe126a2d1f86333",
+    "fixture_identity": "manual-japanese-script-fixture-v1",
+    "input_request_contract_sha256": "81ff6c8abd18453677635df65308ef6059e9c4e1af870bc501510f5262d4d337",
+    "manual_request_sha256": "8c68e99291646a7599fc017456341497e29138e86b90c28ac3c0ccd729cd1971",
+    "normalized_contract_sha256": "dbcc62dfe12ef550bb37987839c6cd3e30743ca9bc307d6f8131d42e7e0f555e",
+    "normalized_output_sha256": "06b35f1c9a2983c2f5be05bf0f0f3062a84fcf96e2775610a947ee67ecbe450f",
+    "raw_fixture_sha256": "abfe32ed5d515f7e4672c52c05340507d0de296eeadbc2366c53e45f0a3f34f4",
+    "raw_is_distinct_from_semantic_hash": true,
+    "render_payload_sha256": "2b92b1b2266da9be38e0cebdd061add724734049f08afc0bbffbe06b7aa53c40",
+    "script_sha256": "9077ccd4b61ff3bcdadcccaaea90219377acfd4abf19ebd414af36f7eb7c0b8b"
+  },
+  "live_ready": false,
+  "manual_model_identity": null,
+  "manual_provider_identity": null,
+  "manual_reference_is_not_remote_backend_manual_support": true,
+  "new_node_tests": 5,
+  "new_python_tests": 75,
+  "next_owner_operation": "固定fixtureを使った実renderを1回だけ準備するか",
+  "posting_permitted": false,
+  "production_code_pin": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
+  "provider_fallback": null,
+  "provider_neutral_candidate": "EXACT_SQL_OFFLINE_ONLY_NO_CHANGE_NO_REMOTE_APPLY",
+  "provider_primary": null,
+  "real_mp4_render_ready": "NO",
+  "remaining_render_preparation": [
+    "sandbox code placement and immutable checkout/source pin",
+    "reuse existing render workflow without production change",
+    "runtime/voice usage eligibility and zero-cost budget"
+  ],
+  "remote_operations": {
+    "ai_inference": 0,
+    "ai_provider_api": 0,
+    "credential_create": 0,
+    "credential_register": 0,
+    "d1_migration_apply": 0,
+    "d1_remote_read": 0,
+    "d1_remote_write": 0,
+    "external_provider_communication": 0,
+    "render_execution": 0,
+    "sns": 0,
+    "worker_deploy": 0,
+    "worker_invocation": 0,
+    "youtube_upload": 0
+  },
+  "safety_flags": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "status": "PASS_MANUAL_FIXTURE_OFFLINE_WIRED"
+}

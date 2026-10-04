@@ -1,0 +1,25 @@
+{
+  "archived_n8n_assignment_code_only": true,
+  "current_production_generation_inference_implementation_present": false,
+  "generation_source": {
+    "path": "readiness/generation_contract.py",
+    "raw_sha256": "58a708f8e28b214a9c820f17a219a1e262a0bbdb35aca1e1c3cf75d8b87f312c"
+  },
+  "n8n_live_audited": false,
+  "parity_source": {
+    "path": "readiness/parity_sources.json",
+    "raw_sha256": "76f9175588363f6d766a2faec2adcc5187a4946b054587ee2110d9996be62afe"
+  },
+  "paths": {
+    ".github/workflows/render-short.yml": "d2a02202245c222a4b9a0622ba3c2f17c174e0ea478cf84b2180bb72b4e6a573",
+    ".github/workflows/youtube-pipeline.yml": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928",
+    "render-worker/ffmpeg_builder.py": "8f542b06c2b98a7beb09a2798969fb4def8673efd73e673db6ebce176aedbccc",
+    "render-worker/quality_gate.py": "f3cbc58d62d0cfda41997fe8d420a3a630173effcbbfcbc397b0063cf14400ec",
+    "render-worker/render.py": "993a89b8117b2cbb12be3409891a95beea22d9a64c56d93fe710f97ecd62640b",
+    "render-worker/voicevox.py": "d9811c6d49fdd312fd6a8f6d51514a8e0accfb46cc1cf2e07988d9c43cbfd858",
+    "tests/test_render.py": "a027730d9402939987f36b2f4e608653f06f5f5cb8b7e880017583ddc5585bf3"
+  },
+  "production_sha": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
+  "read_only": true,
+  "retrieved_on": "2026-10-04"
+}

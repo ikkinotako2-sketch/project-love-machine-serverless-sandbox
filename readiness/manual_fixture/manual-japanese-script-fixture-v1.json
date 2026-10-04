@@ -1,0 +1,13 @@
+{
+  "output": {
+    "title": "机の上に、小さな余白を",
+    "hook": "机の上の余白を、一つだけ増やしてみませんか。",
+    "narration": "机の上を整えるなら、まず使っていない物を一つ見つけます。次に、その物をいつもの置き場所へ戻します。最後に空いた場所を眺めて、今日使う道具を一つ置きます。全部を片づけなくても、小さな余白から始められます。",
+    "scenes": [
+      {"start": 0, "end": 6, "caption": "使っていない物を、一つ見つける", "visual_keyword": "study desk", "motion": "none", "sfx": "none", "emphasis_words": ["一つ"]},
+      {"start": 6, "end": 12, "caption": "その物を、いつもの置き場所へ", "visual_keyword": "book desk", "motion": "none", "sfx": "none", "emphasis_words": ["置き場所"]},
+      {"start": 12, "end": 18, "caption": "小さな余白から、始めてみる", "visual_keyword": "study note", "motion": "none", "sfx": "none", "emphasis_words": ["余白"]}
+    ],
+    "bgm": {"mood": "calm", "volume": 0}
+  }
+}
