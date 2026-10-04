@@ -1,0 +1,44 @@
+name: PLM Approved Generalized Backend Import Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-backend-approved-once.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  import:
+    if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_GENERALIZED_ALLOW: 'false'
+      PLM_GENERALIZED_OWNER_APPROVAL: UNAPPROVED
+      PLM_GENERALIZED_EXEC_PIN: UNAPPROVED
+      PLM_GENERALIZED_EXEC_BEFORE: ${{ github.event.before }}
+      PLM_GENERALIZED_EXEC_MESSAGE: ${{ github.event.head_commit.message }}
+      PLM_GENERALIZED_APPROVED_HASHES: '{"migrations/0007_generalized_roundtrip_backend.sql":"45f042a1342676ceeeed587490d80eb132e31a2c3d9b33cceeab3045ffdf37b5","generalized-backend-plan.json":"59cb7545f1d54976e19d74a2dd08c38987698d0271e1aa1ac6d79b72cc25b9cb","generalized-backend-before.json":"64f4b23b9265bb2f4576b9670241d7afab5f003a5375fca8e8a598aa1a39a468","generalized-backend-after.json":"d77d27b2e14ec333ca5ee4b8aad49c3b99e372e9004acbff3c6425979cb4049d"}'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: UNAPPROVED
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fresh gate fixed file import once and Read Token reconciliation
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN: ${{ secrets.PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: node serverless/generalized-backend-execution-entry.mjs
+
