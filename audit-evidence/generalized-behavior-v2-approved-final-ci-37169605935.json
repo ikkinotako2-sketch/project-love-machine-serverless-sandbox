@@ -1,0 +1,122 @@
+{
+  "kind": "CONSUMED_V2_PARTIAL_APPLIED_FINAL_CI_AND_DISABLED_READBACK",
+  "execution_run": 37169509729,
+  "execution_attempt": 1,
+  "execution_status": "STOP",
+  "result_classification": "PARTIAL_APPLIED",
+  "ci_run": 37169605935,
+  "ci_job": 111339685236,
+  "code_sha": "fa130fd98540c53d46fddc96a562578bd9f13450",
+  "ci_pass": true,
+  "python_tests": 488,
+  "node_tests": 806,
+  "total_tests": 1294,
+  "failures": 0,
+  "workflow_readback": [
+    {
+      "workflow": "v2-approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "v2-test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "v2-final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "approved-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "test-once",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "final-read-only-preflight",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": true
+    },
+    {
+      "workflow": "root-read-only",
+      "hard_disabled": true,
+      "allow_false": true,
+      "execution_unapproved": false
+    }
+  ],
+  "allow": false,
+  "execution_approved": false,
+  "mutation_sends": 3,
+  "confirmed_logical_changes": 1,
+  "matched_steps": 2,
+  "stopped_at_step": 3,
+  "step4_plus_sends": 0,
+  "reconciliation_sets": 1,
+  "post_sets": 1,
+  "step3_before_equals_reconciliation": true,
+  "old_active_job_exact_unchanged": true,
+  "stage2_rows_unchanged": true,
+  "old_schema_unchanged": true,
+  "atomicity_row_unchanged": true,
+  "test_jobs_unchanged": true,
+  "kv_schema_unchanged": true,
+  "migration_schema_full_applied": true,
+  "old_run_permanently_consumed": 37167246069,
+  "v2_run_permanently_consumed": true,
+  "identities_no_reuse": [
+    "rt-behavior-20261004-001",
+    "rt-behavior-20261004-002"
+  ],
+  "retry": 0,
+  "resend": 0,
+  "delete": 0,
+  "drop": 0,
+  "reset": 0,
+  "rollback": 0,
+  "fallback": 0,
+  "worker": 0,
+  "ai": 0,
+  "render_execution": 0,
+  "youtube": 0,
+  "sns": 0,
+  "external_provider": 0,
+  "live_ready": false,
+  "posting_permitted": false,
+  "safety": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "plan_sha256": "9d1fa88573219b5f90bdd50a90045b9b73229fd7041a79c48ddb09b38c120a1d",
+  "plan_unchanged": true,
+  "parser_unchanged": true,
+  "old_receipt_unchanged": true,
+  "changed_paths": [
+    ".github/workflows/plm-generalized-behavior-v2-approved-once.yml",
+    ".github/workflows/plm-offline-readiness.yml",
+    "audit-evidence/generalized-behavior-v2-approved-result-37169509729.json",
+    "audit-evidence/generalized-behavior-v2-owner-approval-20261004.json",
+    "readiness/GENERALIZED_BEHAVIOR_V2_APPROVED_RESULT_JA.md",
+    "serverless/generalized-behavior-v2-execution-entry.mjs",
+    "serverless/generalized-behavior-v2-runner.mjs",
+    "serverless/test-generalized-behavior-v2-execution.mjs"
+  ],
+  "owner_cleanup_required": [
+    "Cloudflare plm-sandbox-d1-roundtrip-behavior-v2-once revoke/delete",
+    "GitHub PLM_CF_D1_ROUNDTRIP_BEHAVIOR_V2_TOKEN delete"
+  ],
+  "read_token_keep": true
+}
