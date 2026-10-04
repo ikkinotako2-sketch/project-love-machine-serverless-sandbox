@@ -1,0 +1,15 @@
+{
+  "kind": "CONSUMED_RUN_PINNED_SOURCE_RAW_HASH_PROOF",
+  "run_id": 37167246069,
+  "code_pin": "3c7171d8469b0cd91b1f5c32e37cf1c221d7aff1",
+  "runner_and_entry_match_github_pinned_code": true,
+  "raw_sha256": {
+    "serverless/generalized-behavior-runner.mjs": "617a036ce256c1e1803e3b1d2f8491cc1c5185b40123ebaff25635e7eab9f1a1",
+    "serverless/generalized-behavior-execution-entry.mjs": "f321fbd4700e4dd1f2737ea1bbf7d740d8f4f893ad785dd42140357b629c5929",
+    "serverless/generalized-behavior-test-plan.json": "452fd980ba62164f71cfe3841ea7d399ef988c6e259945d5c67487a44eaf52c7",
+    "serverless/migrations/0007_generalized_roundtrip_backend.sql": "45f042a1342676ceeeed587490d80eb132e31a2c3d9b33cceeab3045ffdf37b5",
+    "audit-evidence/generalized-behavior-approved-result-37167246069.json": "3ca60a6834b4bbbe3f53e9eeed63a060771fea5958c56f6d3937ea2b1709ebdd"
+  },
+  "raw_provider_body_saved": false,
+  "old_receipt_changed": false
+}

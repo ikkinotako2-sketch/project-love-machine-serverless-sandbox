@@ -1,0 +1,20 @@
+name: PLM Generalized Behavior V2 Candidate Disabled
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-behavior-v2-test-once.yml']
+permissions:
+  contents: read
+jobs:
+  behavior:
+    if: false
+    runs-on: ubuntu-latest
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_RT_V2_ALLOW: 'false'
+      PLM_RT_V2_OWNER_APPROVAL: UNAPPROVED
+    steps:
+      - run: echo 'Offline candidate only. New credential registration is not execution approval.'

@@ -1,0 +1,12 @@
+import {readFileSync} from 'node:fs';import {pathToFileURL} from 'node:url';
+import {baseContext,canonical} from './atomicity-schema-audit.mjs';import {oldReceipt,analyze} from './generalized-behavior-root-cause.mjs';
+import {postCheck} from './generalized-behavior-runner.mjs';import {localChecks} from './generalized-behavior-execution-entry.mjs';import {v2Plan,V2_PLAN_SHA} from './generalized-behavior-v2-contract.mjs';
+export const MESSAGE='PLM behavior step3 root cause read-only audit once 20261004-r1';
+export async function audit(e,f=fetch,{checkout,post=postCheck}={}){const out={pass:false,purpose:'OWNER_REQUESTED_ROOT_CAUSE_FRESH_READ_AUDIT_NOT_OLD_RUN_RECONCILIATION_OR_RESUME',d1_mutation:0,d1_write:0,worker:0,ai:0,render_execution:0,youtube:0,sns:0,retry:0,resend:0,reset:0,delete:0,live_ready:false,posting_permitted:false,allow:false,execution_approved:false,read_only_calls:0};try{
+ if(!baseContext(e)||e.GITHUB_EVENT_NAME!=='push'||!/^[a-f0-9]{40}$/.test(checkout||'')||checkout!==e.PLM_RT_ROOT_PIN||e.PLM_RT_ROOT_BEFORE!==checkout||e.PLM_RT_ROOT_MESSAGE!==MESSAGE||e.PLM_RT_ROOT_ALLOW!=='false'||!e.PLM_CF_D1_READ_TOKEN||Object.keys(e).some(k=>/^PLM_CF_.*TOKEN$/.test(k)&&k!=='PLM_CF_D1_READ_TOKEN'&&e[k]))throw Error('RT_ROOT_READ_CONTEXT_REJECTED');
+ const p=v2Plan();out.offline=analyze();out.v2_plan_sha256=V2_PLAN_SHA;try{localChecks();throw Error('RT_ROOT_OLD_RUN_NOT_CONSUMED');}catch(err){if(err.message!=='RT_EXEC_PRIOR_RESULT_NO_RESUME')throw err;}out.old_run_permanently_consumed=true;
+ out.post=await post({PLM_CF_D1_READ_TOKEN:e.PLM_CF_D1_READ_TOKEN},async(u,o)=>{out.read_only_calls++;return f(u,o);});const a=out.post;
+ if(!a.preserved||a.schema_classification!=='FULL_APPLIED'||canonical(a.rows)!==canonical(oldReceipt().result.post.rows)||canonical(a.rows)!==canonical(p.before_rows)||!a.bookmark||a.audit.database_size_bytes!==196608)throw Error('RT_ROOT_FRESH_PRESERVATION_UNKNOWN');
+ out.exact_partial_baseline_unchanged=true;out.new_identity_absent=true;out.pass=true;out.completed_at=new Date().toISOString();
+ }catch(err){out.failure_code=/^[A-Z_]+$/.test(err.message)?err.message:'RT_ROOT_READ_UNKNOWN_NO_RETRY';}return out;}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const r=await audit(process.env,fetch,{checkout:readFileSync('.git/HEAD','utf8').trim()});console.log('GENERALIZED_BEHAVIOR_ROOT_READ_ONLY '+JSON.stringify(r));if(!r.pass)process.exitCode=1;}

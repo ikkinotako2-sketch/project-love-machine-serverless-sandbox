@@ -1,0 +1,14 @@
+{
+  "kind": "OWNER_CONFIRMED_BEHAVIOR_TOKEN_CLEANUP_AND_PERMANENT_CONSUMPTION",
+  "source": "Owner confirmation in conversation 2026-10-04",
+  "cloudflare_behavior_token_revoked_deleted": true,
+  "github_behavior_secret_deleted": true,
+  "read_token_retained": true,
+  "independent_secret_management_audit": false,
+  "old_run": 37167246069,
+  "old_run_status": "PARTIAL_APPLIED_PERMANENTLY_CONSUMED",
+  "resume_retry_resend_reset_delete_permitted": false,
+  "retained_old_identity": "rt-behavior-20261004-001",
+  "old_receipt_modified": false,
+  "remote_mutation": 0
+}

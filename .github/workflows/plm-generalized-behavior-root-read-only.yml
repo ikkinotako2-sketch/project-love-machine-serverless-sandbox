@@ -1,0 +1,38 @@
+name: PLM Behavior Step3 Root Cause Read Only Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-generalized-behavior-root-read-only.yml']
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: false
+    concurrency:
+      group: plm-cloudflare-sandbox-setup
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_RT_ROOT_ALLOW: 'false'
+      PLM_RT_ROOT_PIN: PREPARE_PIN
+      PLM_RT_ROOT_BEFORE: ${{ github.event.before }}
+      PLM_RT_ROOT_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: PREPARE_PIN
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read Token only residual evidence and migrated schema audit
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          PLM_D1_DATABASE_ID: ${{ vars.PLM_D1_DATABASE_ID }}
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+        run: node serverless/generalized-behavior-root-read-only.mjs
