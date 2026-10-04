@@ -1,0 +1,82 @@
+{
+  "status": "BLOCKED_ONE_SHOT_EXECUTOR",
+  "branch": "plm-offline-readiness-v1-20261002",
+  "baseline_head": "aa3f224319f7686842ac7b681ed16c24cf27f958",
+  "baseline_ci": 37201445190,
+  "baseline_status": "BLOCKED_RENDER_PREPARATION",
+  "baseline_pass": 1572,
+  "code_head": "c87e9caf32aac403622ecd785de64848ab7c0919",
+  "ci_run_id": 37205369028,
+  "ci_job_id": 111445337813,
+  "ci_conclusion": "success",
+  "ci_attempt": 1,
+  "python_pass": 702,
+  "node_pass": 947,
+  "total_pass": 1649,
+  "fail": 0,
+  "new_python_tests": 77,
+  "render_identity": "manual-fixture-render-20261004-001",
+  "preflight_identity": "manual-fixture-runtime-preflight-20261004-001",
+  "fixture": "manual-japanese-script-fixture-v1",
+  "production_sha": "25f24bc4e6a20164c5549f746fc0eefcedf5d178",
+  "voicevox_manifest": "sha256:ab700b3768d0a2e9230d53e054b321f60409fda34fe794a333ae7202ab1c87f4",
+  "history_candidate": {
+    "run_attempt": 1,
+    "run_number": 1,
+    "complete_pagination": true,
+    "any_prior_conclusion_consumes": true,
+    "permanent_ledger_proven": false,
+    "live_cli_unconditionally_stops": true
+  },
+  "blockers": [
+    "PERMANENT_CONSUMPTION_HISTORY_MUTABLE",
+    "NEW_PREFLIGHT_WORKFLOW_ABSENT_FROM_DEFAULT_BRANCH_MAIN_CHANGE_PROHIBITED"
+  ],
+  "billing_evidence": "readiness/owner-billing-evidence-20261004.json",
+  "billing_evaluation": "OWNER_EVIDENCED_FAIL_CLOSED_ZERO_DOLLAR_BOUNDARY_NOT_RESERVED_STORAGE_CAPACITY",
+  "workflow_readback": {
+    "code_head": true,
+    "render_hard_disabled": true,
+    "render_allow": false,
+    "render_execution_approved": false,
+    "preflight_hard_disabled": true,
+    "preflight_allow": false,
+    "preflight_execution_approved": false
+  },
+  "operations": {
+    "runtime_preflight_dispatch": 0,
+    "docker_pull": 0,
+    "container_start": 0,
+    "voicevox_request": 0,
+    "synthesis": 0,
+    "ffmpeg_encode": 0,
+    "mp4_generation": 0,
+    "artifact_upload": 0,
+    "d1_remote": 0,
+    "worker": 0,
+    "ai_inference": 0,
+    "youtube": 0,
+    "sns": 0,
+    "user_pc_execution": 0,
+    "billing_settings_changes": 0,
+    "card_addition": 0
+  },
+  "native_guard": {
+    "socket_denied": true,
+    "exec_denied": true,
+    "external_api_calls": 0,
+    "render_executions": 0
+  },
+  "source_snapshot_role": "OFFLINE_ORACLE_NOT_EXECUTABLE_RENDERER_FORK",
+  "execution_approval_requested": false,
+  "file_sha256": {
+    "readiness/one_shot_executor.py": "107cdfe80f809c64d67ec7a73c933a2842d31fd5b5cfb2cb22cd15e42be2c579",
+    "readiness/cloud_runtime_preflight.py": "9150fd23e8c11c603f41830b8b7e11bbd8007775765855ce6fc4d65b834978f0",
+    "readiness/test_one_shot_executor.py": "065f88e9299774c37f782e14ea61bc033accdfad54b001a6c5db39c2728778e7",
+    "readiness/cloud-runtime-preflight-policy.json": "8a8c749c1fbf74ebc3d9f39c3b4380108f955a51051c068a8ebab2d51354a440",
+    "readiness/owner-billing-evidence-20261004.json": "cb810f52c14d5b035b346a3d0b7254a678d29c4d85a07c178131fb8e1dc1765d",
+    "readiness/ONE_SHOT_EXECUTOR_OFFLINE_JA.md": "849872429db29eb5a396a17ac857bcaa339c15ff8e5333d38aefd4eff08060f3",
+    ".github/workflows/plm-manual-fixture-executor-candidate.yml": "5b41f1233a03f64142e64e01d61ec95356ed39cf722dcd4da14c1f7fae704410",
+    ".github/workflows/plm-cloud-runtime-preflight-once.yml": "b8f1a8ddb54b398e98d6a2575306d345ebc2c71605ccc974bb6bdab5ea1f1f2e"
+  }
+}
