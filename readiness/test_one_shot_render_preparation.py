@@ -110,7 +110,7 @@ class RenderPreparationTests(unittest.TestCase):
     def test_failures_consume_identity_with_no_retry_or_resend(self):
         for k in ('retry','resend','fallback','second_render','automatic_rollback'):self.assertEqual(PLAN[k],0)
         self.assertEqual(PLAN['run_attempt_max'],1);self.assertEqual(PLAN['prior_execution_required'],0);self.assertEqual(PLAN['reconciliation_max_sets'],1)
-        self.assertIn('CONSUMED_ON_FIRST',PLAN['consumption'])
+        self.assertIn('AUTOMATION_MONOTONIC_CONSUMPTION',PLAN['consumption'])
     def test_quality_exact_code_accepts_fixture_metadata(self):
         report,calls=quality_fixture();self.assertTrue(report['ok']);self.assertEqual(len(calls),3)
         self.assertEqual((report['width'],report['height'],report['fps']),(1080,1920,30))

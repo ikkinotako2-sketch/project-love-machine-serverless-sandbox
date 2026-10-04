@@ -1,7 +1,7 @@
-"""Hard-disabled GitHub-hosted metadata preflight candidate. NO generation.
+"""Marker-authorized GitHub-hosted metadata preflight candidate. NO generation.
 
 All network/process effects are in explicit functions, never at import time.
-The future approval must enable BOTH policy and environment. This module does
+The CLI requires the separately owner-approved marker-only launch. This module does
 not install packages, synthesize audio, encode, upload, or change budgets.
 """
 import json
@@ -147,8 +147,16 @@ def runtime_observation(env, run=process):
     return obs
 
 
-def runtime_preflight(policy, env, run=process, read=get_json, observe=runtime_observation):
-    history = history_preflight(policy, env, read)
+def runtime_preflight(policy, env, run=process, read=get_json, observe=runtime_observation, ledger_guard=None):
+    history = ledger_guard() if ledger_guard is not None else history_preflight(policy, env, read)
+    if ledger_guard is not None:
+        need(history.get('identity') == PREFLIGHT_ID and history.get('scope') ==
+             'AUTOMATION_MONOTONIC_CONSUMPTION' and history.get('consumed') is True,
+             'PRIMARY_MARKER_RECEIPT_REQUIRED')
+        need(policy.get('identity') == PREFLIGHT_ID and policy.get('image') == IMAGE and
+             policy.get('runner') == 'ubuntu-24.04' and policy.get('synthesis_max') == 0 and
+             policy.get('encode_max') == 0 and policy.get('artifact_upload_max') == 0 and
+             policy.get('automatic_retry') == 0, 'PREFLIGHT_POLICY_DRIFT')
     metadata = registry_metadata(read(REGISTRY_URL))
     runtime = observe(env, run)  # version/availability checks only; NO install/encode
     verify_runtime(runtime, require_codec_lock=False)
@@ -188,7 +196,10 @@ def main():
     args = parser.parse_args()
     try:
         policy = json.loads(POLICY_PATH.read_text())
-        report = history_preflight(policy, os.environ) if args.history_only else runtime_preflight(policy, os.environ)
+        from branch_marker_once import cloud_launch_guard
+        # CLI always uses primary marker guard. Legacy run-history path is offline-test-only.
+        report = cloud_launch_guard(os.environ) if args.history_only else runtime_preflight(
+            policy, os.environ, ledger_guard=lambda: cloud_launch_guard(os.environ))
         text = json.dumps(report, ensure_ascii=False, sort_keys=True)
         print(text)
         if os.environ.get('GITHUB_STEP_SUMMARY'):

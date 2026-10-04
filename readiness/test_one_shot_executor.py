@@ -138,7 +138,7 @@ class HistoryTests(unittest.TestCase):
         self.assertEqual(len(calls), 20)
 
     def test_mutable_history_never_proves_permanent_consumption(self):
-        with self.assertRaisesRegex(executor.Stop, 'PERMANENT_CONSUMPTION_HISTORY_MUTABLE'):
+        with self.assertRaisesRegex(executor.Stop, 'RENDER_NOT_APPROVED_RUNTIME_METADATA_REQUIRED'):
             executor.live_render_gate()
 
     def test_history_total_changes_between_pages_stop(self):
@@ -425,17 +425,20 @@ class CloudTests(unittest.TestCase):
             obs=observed(); obs[key]=value
             with self.assertRaises(executor.Stop): executor.verify_runtime(obs)
 
-    def test_both_workflows_hard_disabled_no_inputs_and_no_upload(self):
+    def test_both_workflows_marker_scoped_no_inputs_and_no_upload(self):
         for filename, identity in [(executor.RENDER_WORKFLOW,executor.RENDER_ID),
                                    (executor.PREFLIGHT_WORKFLOW,executor.PREFLIGHT_ID)]:
             text=(ROOT/filename).read_text()
-            self.assertIn('if: false',text)
+            if identity == executor.RENDER_ID: self.assertIn('if: false',text)
+            else: self.assertIn('steps.marker.outputs.allow',text)
             self.assertIn("allow: 'false'",text)
             self.assertIn("execution_approved: 'false'",text)
             self.assertIn('runs-on: ubuntu-24.04',text)
             self.assertIn('group: '+identity,text)
             self.assertIn('cancel-in-progress: false',text)
-            self.assertIn('on: workflow_dispatch',text)
+            self.assertNotIn('on: workflow_dispatch',text)
+            self.assertIn('audit-evidence/consumed/'+identity+'.json',text)
+            self.assertIn("branches: ['plm-offline-readiness-v1-20261002']",text)
             self.assertNotIn('inputs:',text)
             self.assertNotIn('upload-artifact@',text)
             self.assertNotIn('self-hosted',text)

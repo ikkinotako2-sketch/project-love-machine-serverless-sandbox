@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plm-branch-marker-once-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "kind",
+    "approved_parent_sha",
+    "workflow_sha256",
+    "plan_sha256",
+    "fixture_sha256",
+    "created_for_once_only",
+    "no_retry",
+    "no_resume"
+  ],
+  "properties": {
+    "identity": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "approved_parent_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "workflow_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fixture_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "created_for_once_only": {
+      "const": true,
+      "type": "boolean"
+    },
+    "no_retry": {
+      "const": true,
+      "type": "boolean"
+    },
+    "no_resume": {
+      "const": true,
+      "type": "boolean"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "identity": {
+          "const": "manual-fixture-runtime-preflight-20261004-001"
+        },
+        "kind": {
+          "const": "runtime-preflight"
+        }
+      }
+    },
+    {
+      "properties": {
+        "identity": {
+          "const": "manual-fixture-render-20261004-001"
+        },
+        "kind": {
+          "const": "actual-render"
+        }
+      }
+    }
+  ]
+}

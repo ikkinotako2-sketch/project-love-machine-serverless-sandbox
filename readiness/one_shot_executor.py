@@ -216,8 +216,9 @@ def billing_gate(evidence):
 
 class OfflineExecutor:
     """Single-use state machine over in-memory fake effects, never live-ready."""
-    def __init__(self, context, effects):
+    def __init__(self, context, effects, consumption_gate=None):
         self.context, self.effects = context, effects
+        self.consumption_gate = consumption_gate
         self.started = False
         self.stage = 'not_started'
         self.trace = []
@@ -235,7 +236,10 @@ class OfflineExecutor:
         need(not self.started, 'EXECUTOR_ALREADY_CONSUMED')
         self.started = True
         try:
-            history = history_gate(self.context, lambda page: self.call('history_page', page))
+            # Legacy oracle tests retain mutable history only as a historical model.
+            # New marker candidate supplies the read-only primary consumption gate.
+            history = self.consumption_gate() if self.consumption_gate is not None else history_gate(
+                self.context, lambda page: self.call('history_page', page))
             billing_gate(self.call('billing_evidence'))
             verify_fixture(self.call('fixture_bytes'))
             commit, source = self.call('production_checkout', PRODUCTION_REPO, PRODUCTION_SHA)
@@ -262,7 +266,7 @@ class OfflineExecutor:
 
 def live_render_gate():
     # Deliberately cannot be unlocked by plan flags or caller-supplied history.
-    raise Stop('BLOCKED_PERMANENT_CONSUMPTION_HISTORY_MUTABLE')
+    raise Stop('BLOCKED_RENDER_NOT_APPROVED_RUNTIME_METADATA_REQUIRED')
 
 
 if __name__ == '__main__':

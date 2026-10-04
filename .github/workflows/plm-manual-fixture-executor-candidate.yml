@@ -1,6 +1,9 @@
 name: PLM Fixed One Shot Executor Offline Candidate
 run-name: manual-fixture-render-20261004-001
-on: workflow_dispatch
+on:
+  push:
+    branches: ['plm-offline-readiness-v1-20261002']
+    paths: ['audit-evidence/consumed/manual-fixture-render-20261004-001.json']
 permissions:
   contents: read
   actions: read
@@ -25,7 +28,12 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Primary render marker guard, independent from preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python readiness/branch_marker_once.py --identity manual-fixture-render-20261004-001
       - name: Unconditional STOP before production checkout or runtime
         run: python readiness/one_shot_executor.py
 # No runtime adapter, renderer import, synthesis, encode or upload step.
-# run history is mutable; this workflow cannot be approved for live render.
+# Primary marker guard schema is shared with preflight, identity/path independent.
+# Render remains hard-disabled pending metadata evidence and final render approval.

@@ -1,0 +1,46 @@
+{
+  "status": "OFFLINE_GUARDED_LOCAL_CHECKS_PASS_AWAIT_REMOTE_CI",
+  "baseline": "5b16c7f826e4db29b9112cbf5849a2c51d0b3120",
+  "sandbox_main_sha": "8ac2337a37072ae23f7781e2f47e8dfc7016b30f",
+  "schema_sha256": "1d7db42c8e00a0c899d613f45b9d1c537f9fdbb8918d6879ce231f44bf64e7d0",
+  "raw_sha256": {
+    ".github/workflows/plm-cloud-runtime-preflight-once.yml": "fd7c5eec3a7ef024fb7259138da024125d96280b61c59d9fd700ba7dd0ebec8e",
+    ".github/workflows/plm-manual-fixture-executor-candidate.yml": "ef99c4039efd7828f9f450c5f2baa4b6fefffe512196a1fd49580e39e6ad5ef5",
+    "readiness/branch-marker-schema.json": "1d7db42c8e00a0c899d613f45b9d1c537f9fdbb8918d6879ce231f44bf64e7d0",
+    "readiness/branch_marker_once.py": "0bc5641461c77a9b89d5cf5490b7faeb7430b38ba5ff97e03ecd95921bab0123",
+    "readiness/cloud_runtime_preflight.py": "ec9958d3d612222261279021f55a3742f52096593bd05e58c88a9412f152e34e",
+    "readiness/cloud-runtime-preflight-policy.json": "35eea22389ff2531401de61cbc0668ca2cd29187d912d1dc159f29e624a4f22c",
+    "readiness/one_shot_executor.py": "a704b6176fe13a49344bb37967a1f11bb6bd190c3af92427d06218c067e33964",
+    "readiness/one-shot-render-plan.json": "0c452bc36092b6e87f49569eeee72f1f460654ba673cd6aa5c38c482ea2b7fc7",
+    "readiness/test_branch_marker_once.py": "b9c5f0462896ea359587c5d2d4bb264463dc30ed730ad03e11fee2a718376422"
+  },
+  "python_pass": 752,
+  "node_pass": 947,
+  "total_pass": 1699,
+  "new_tests": 50,
+  "fail": 0,
+  "marker_files_created": 0,
+  "primary_evidence": "AUTOMATION_MONOTONIC_CONSUMPTION",
+  "runtime_effects": {
+    "preflight_launch": 0,
+    "docker_pull": 0,
+    "container_start": 0,
+    "voicevox_request": 0,
+    "synthesis": 0,
+    "ffmpeg_encode": 0,
+    "mp4": 0,
+    "artifact_upload": 0,
+    "d1": 0,
+    "worker": 0,
+    "ai": 0,
+    "youtube": 0,
+    "sns": 0,
+    "user_pc_execution": 0
+  },
+  "runtime_workflow_permissions": {
+    "contents": "read",
+    "actions": "read"
+  },
+  "launch_authorization": "NOT_YET_GRANTED",
+  "approved_preparation_sha": "FINAL_REMOTE_CI_HEAD_REPORTED_AFTER_COMMIT"
+}
