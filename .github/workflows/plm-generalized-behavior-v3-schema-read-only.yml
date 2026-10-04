@@ -7,7 +7,12 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: false
+    if: >-
+      github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' &&
+      github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' &&
+      github.run_attempt == 1 &&
+      github.event.before == 'a8600ef0c62b02d7fddcf879901dcfc56036b6ad' &&
+      github.event.head_commit.message == 'PLM v3 exact migrated schema read only once 20261004-r1'
     concurrency:
       group: plm-cloudflare-sandbox-setup
       cancel-in-progress: false
@@ -19,13 +24,13 @@ jobs:
       NO_PUBLISH: 'true'
       EMERGENCY_STOP: 'true'
       PLM_RT_V3_ALLOW: 'false'
-      PLM_RT_V3_READ_PIN: PREPARE_PIN
+      PLM_RT_V3_READ_PIN: a8600ef0c62b02d7fddcf879901dcfc56036b6ad
       PLM_RT_V3_READ_BEFORE: ${{ github.event.before }}
       PLM_RT_V3_READ_MESSAGE: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: PREPARE_PIN
+          ref: a8600ef0c62b02d7fddcf879901dcfc56036b6ad
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
