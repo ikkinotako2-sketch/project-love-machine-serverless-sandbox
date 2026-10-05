@@ -157,10 +157,10 @@ class TransactionV4Tests(unittest.TestCase):
     def test_safe_stage_whitelist(self):
         with self.assertRaisesRegex(Stop,'TRANSACTION_INCOMPLETE'):v.safe_stage(SECRET)
     def test_consumed_and_unused_markers(self):
-        for n in (PREFLIGHT_ID,b.PREFLIGHT_V2_ID):
+        for n in (PREFLIGHT_ID,b.PREFLIGHT_V2_ID,b.PREFLIGHT_V4_ID):
             self.assertTrue((b.ROOT/b.marker_path(n)).is_file())
             with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED'):b.cloud_launch_guard({},n)
-        for n in (b.PREFLIGHT_V3_ID,v.IDENTITY,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(n)).exists())
+        for n in (b.PREFLIGHT_V3_ID,b.PREFLIGHT_V4B_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(n)).exists())
     def test_workflow_marker_gated_read_only(self):
         text=(b.ROOT/b.SPEC[v.IDENTITY][1]).read_text()
         self.assertIn("github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'",text);self.assertIn('contents: read',text);self.assertIn('actions: read',text)
@@ -199,18 +199,18 @@ class TransactionV4Tests(unittest.TestCase):
             self.assertEqual((Path(directory)/'sources.list').read_text().split()[-3:],['noble','main','universe'])
     def test_004_marker_history_and_rerun(self):
         from test_branch_marker_once import setup
-        k=setup(v.IDENTITY);self.assertTrue(b.launch_gate(**k)['consumed'])
+        k=setup(b.PREFLIGHT_V4B_ID);self.assertTrue(b.launch_gate(**k)['consumed'])
         k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
-        k=setup(v.IDENTITY);k['marker_history_page']=lambda page:[{'sha':b.BASELINE}] if page==1 else []
+        k=setup(b.PREFLIGHT_V4B_ID);k['marker_history_page']=lambda page:[{'sha':b.BASELINE}] if page==1 else []
         with self.assertRaisesRegex(Stop,'CONSUMED_HISTORY'):b.launch_gate(**k)
     def test_004_marker_diff_and_parent(self):
         from test_branch_marker_once import setup
-        k=setup(v.IDENTITY);k['commit']['files'].append({'filename':'readiness/other','status':'modified'})
+        k=setup(b.PREFLIGHT_V4B_ID);k['commit']['files'].append({'filename':'readiness/other','status':'modified'})
         with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.launch_gate(**k)
-        k=setup(v.IDENTITY);k['parent_marker']={}
+        k=setup(b.PREFLIGHT_V4B_ID);k['parent_marker']={}
         with self.assertRaisesRegex(Stop,'CONSUMED_PARENT'):b.launch_gate(**k)
     def test_004_history_gap(self):
         from test_branch_marker_once import setup
-        k=setup(v.IDENTITY);k['history_page']=lambda page:[]
+        k=setup(b.PREFLIGHT_V4B_ID);k['history_page']=lambda page:[]
         with self.assertRaisesRegex(Stop,'BLOCKED_HISTORY_CONTINUITY_LOST'):b.launch_gate(**k)
