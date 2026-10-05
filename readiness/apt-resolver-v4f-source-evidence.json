@@ -1,0 +1,33 @@
+{
+  "implementation": "Ubuntu Noble apt 2.8.3",
+  "stable_grammar_claim": false,
+  "retrieved_utc": "2026-10-05",
+  "source_ref": "ubuntu/noble-updates",
+  "version_basis": "debian/changelog first entry apt (2.8.3) noble",
+  "files": [
+    {
+      "path": "apt-pkg/algorithms.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/algorithms.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "6631395fa897fdb93783a00c3942b3a837a9e3a87c32a6a10d5230f53edfcf6e"
+    },
+    {
+      "path": "apt-pkg/prettyprinters.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/prettyprinters.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "77dcaeeb29e589ddb2c2d9502833c82c95645f9fb041f39cfa67e2c2882949be"
+    },
+    {
+      "path": "apt-pkg/depcache.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/depcache.cc?h=ubuntu/noble-updates",
+      "sha256": "803d9a72830198543e92c5597d7248120de73d4238f19aa00454110716cfda0a"
+    },
+    {
+      "path": "debian/changelog",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/debian/changelog?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "ad3fd8fea7cbb443a2d72b937f4630647705d4269b1878c79af4581b8bfcabef"
+    }
+  ],
+  "runtime_source_fetch": false,
+  "coverage": "Implementation-derived templates; no claim of exhaustive grammar; unsupported decisions stop with safe fingerprint.",
+  "source_commit": "c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+  "pinned_source_recheck": "algorithms.cc, prettyprinters.cc and changelog hashes match immutable commit retrieval"
+}

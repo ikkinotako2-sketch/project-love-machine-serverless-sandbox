@@ -1,0 +1,141 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004f",
+  "kind": "APT_283_RESOLVER_DEBUG_BOUNDARY_DIAGNOSTIC",
+  "runner": "ubuntu-24.04",
+  "python": "3.12.15",
+  "architecture": "amd64",
+  "authorization": "PRIMARY_MARKER_HISTORY_GUARD_ONLY",
+  "root_evidence_path": "readiness/cloud-runtime-preflight-v3-package-plan.json",
+  "root_evidence_sha256": "93d7b33e187fda831ac1e8c60ec80a62741659f64c1c760e37ab3a4c31f03a12",
+  "root_constraints": {
+    "ffmpeg": "7:6.1.1-3ubuntu5",
+    "libavcodec60": "7:6.1.1-3ubuntu5",
+    "libavfilter9": "7:6.1.1-3ubuntu5",
+    "libavformat60": "7:6.1.1-3ubuntu5",
+    "libavutil58": "7:6.1.1-3ubuntu5",
+    "libswresample4": "7:6.1.1-3ubuntu5",
+    "libswscale7": "7:6.1.1-3ubuntu5",
+    "fonts-noto-cjk": "1:20230817+repack1-3",
+    "libx264-164": "2:0.164.3108+git31e19f9-1",
+    "libass9": "1:0.17.1-2build1"
+  },
+  "signed_release_index": {
+    "verified": true,
+    "inrelease_sha256": "cdb2f31d809f589719a53c6ad15f255b27569c4059542ada282aaa21b8e164b0",
+    "package_indices": [
+      {
+        "component": "main",
+        "path": "main/binary-amd64/Packages.xz",
+        "sha256": "2a6a199e1031a5c279cb346646d594993f35b1c03dd4a82aaa0323980dd92451",
+        "size": 1401160
+      },
+      {
+        "component": "universe",
+        "path": "universe/binary-amd64/Packages.xz",
+        "sha256": "ba9057fa1b91438cc8a1d26808d00c85389fe101d0c1496254df97236405599a",
+        "size": 15037908
+      }
+    ],
+    "cohort": "Noble release 2024-04-25",
+    "signing_key_fingerprint": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+    "keyring_source": "https://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg",
+    "keyring_sha256": "80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31",
+    "verification": "gpgv good signature; index compressed SHA256 matches InRelease; package fields extracted from verified indices"
+  },
+  "repository": "https://archive.ubuntu.com/ubuntu",
+  "suites": [
+    "noble",
+    "noble-updates",
+    "noble-security"
+  ],
+  "components": [
+    "main",
+    "universe"
+  ],
+  "selected_source_case": "release_updates_security",
+  "source_choice_reason": "004B signed metadata coverage was highest here; this is not a claim that dependencies resolve",
+  "dpkg_executable": "/bin/false",
+  "fixed_stages": [
+    "apt_binary",
+    "apt_config",
+    "status_snapshot",
+    "lists_layout",
+    "index_visibility",
+    "root_policy",
+    "resolver_start",
+    "resolver_debug"
+  ],
+  "limits": {
+    "version_queries": 3,
+    "config_dumps": 1,
+    "policy_queries": 10,
+    "single_root_simulations": 10,
+    "combined_root_simulations": 1,
+    "total_simulations": 11,
+    "metadata_gets": 10,
+    "stdout_bytes": 2000000,
+    "stderr_bytes": 65536,
+    "process_seconds": 120,
+    "scalar_config_queries": 22,
+    "rootdir_queries": 1
+  },
+  "simulation_policy": "ffmpeg singleton first; only safely parsed diagnostics permit remaining nine distinct singletons then combined root10. Each input once, maximum 11, retry/fallback 0. rc100 diagnostic never authorizes install.",
+  "prior_004b_evidence": "readiness/runtime-preflight-v4b-frozen-evidence.json",
+  "prior_004b_evidence_sha256": "3fcc46b679c4a7856ec32a49550d11beded9bcc1c8f62f627bd3105f9ca23fab",
+  "proof_boundary": "No canonical transaction/fingerprint or install authorization in this diagnostic; no 005 workflow or installer",
+  "debug_options": [
+    "Debug::pkgProblemResolver=true"
+  ],
+  "forbidden_effects": {
+    "marker_creation": 0,
+    "package_binary_download": 0,
+    "package_install": 0,
+    "package_remove": 0,
+    "package_upgrade": 0,
+    "package_downgrade": 0,
+    "dpkg_mutation": 0,
+    "Docker": 0,
+    "VOICEVOX": 0,
+    "FFmpeg": 0,
+    "synthesis": 0,
+    "encode": 0,
+    "MP4": 0,
+    "artifact": 0,
+    "user_PC": 0
+  },
+  "prior_004c_evidence": "readiness/runtime-preflight-v4c-frozen-evidence.json",
+  "prior_004c_evidence_sha256": "6d81a089fa767e958f7e510f1d13e9c4517495f54bc6282ff74e693e974dbc0d",
+  "config_verification": {
+    "scalar_source": "apt-config shell PLM_VALUE fixed-key; never eval",
+    "scalar_queries": 22,
+    "list_and_safety_source": "filter-first key identification; strict parse relevant scopes only; ignore unrelated default values/grammar",
+    "inspection_queries": 1,
+    "public_evidence": "allowlisted field ID and fixed reason/match only; no observed values or paths",
+    "runtime_compatibility": "004E_SCALAR_22_AND_SCOPED_CONFIG_INDEX_POLICY_PASS_FROZEN",
+    "scalar_retries": 0,
+    "inspection_retries": 0,
+    "continue_after_all_config_checks_pass_only": true,
+    "rootdir_fixed_key_queries": 1,
+    "scope_public_evidence": [
+      "scope_id",
+      "syntax_kind",
+      "matched",
+      "fixed_reason"
+    ]
+  },
+  "prior_004d_evidence": "readiness/runtime-preflight-v4d-frozen-evidence.json",
+  "prior_004d_evidence_sha256": "ad66432d046b0bb6514fefa65e69d4feef89d7e720f52c8eee06be07e6e11231",
+  "prior_004e_evidence": "readiness/runtime-preflight-v4e-frozen-evidence.json",
+  "prior_004e_evidence_sha256": "db4fca73ddf874a864cab8371cc7bd0c2df2aac2980ef933d4d92e2a374c1adb",
+  "parser_source_evidence": "readiness/apt-resolver-v4f-source-evidence.json",
+  "parser_source_evidence_sha256": "3535cbc0de788781fd0f1cc282975ae615bc1724d1d144b4adde22055d81b6a5",
+  "debug_parser": {
+    "strategy": "FILTER_CLASSIFY_FIRST",
+    "stable_grammar": false,
+    "unknown_relevant": "STOP_SAFE_FINGERPRINT",
+    "unknown_ignore": false,
+    "public_tokens": "verified signed index or private status only; relations must match signed Depends/Pre-Depends/Conflicts/Breaks",
+    "raw_output_retention": false,
+    "runtime_source_fetch": false
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "basis": "2.8.3 implementation output templates, instantiated with fake verified package metadata. Not recorded runtime output or a stable grammar.",
+  "source_evidence": "readiness/apt-resolver-v4f-source-evidence.json",
+  "fixtures": [
+    {
+      "family": "RESOLVER_START",
+      "line": "Starting pkgProblemResolver with broken count: 1",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 797
+    },
+    {
+      "family": "RESOLVER_START",
+      "line": "Starting 2 pkgProblemResolver with broken count: 1",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 828
+    },
+    {
+      "family": "BENIGN_DIAGNOSTIC",
+      "line": "Show Scores",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 818
+    },
+    {
+      "family": "RESOLVER_END",
+      "line": "Done",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1183
+    },
+    {
+      "family": "INVESTIGATING",
+      "line": "Investigating (0) root:amd64 < none -> 1 @un uN Ib >",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 879
+    },
+    {
+      "family": "CONSIDERING",
+      "line": "  Considering dep:amd64 1 as a solution to root:amd64 -2",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 992
+    },
+    {
+      "family": "BROKEN_DEPENDENCY",
+      "line": "Broken root:amd64 Depends on dep:amd64 < none -> 2 @un uN Ib > (>= 2)",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 949
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": " Try to Re-Instate (1) root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 856
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "Re-Instated root:amd64 (1 vs 0)",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 872
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Re-Instated root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 736
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "    Reinst Failed because of protected root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 684
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "    Reinst Failed early because of root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 712
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "  Holding Back root:amd64 rather than change dep:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1029
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "  Removing root:amd64 because I can't find dep:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1128
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Try Installing dep:amd64 < none -> 2 @un uN Ib > before changing root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1056
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Upgrading dep:amd64 due to Breaks field in root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1085
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "  Added dep:amd64 to the remove list",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1096
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "  Or group remove for root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 904
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Or group keep for root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 912
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Fixing root:amd64 via keep of dep:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1163
+    },
+    {
+      "family": "PACKAGE_REJECTION",
+      "line": "  Fixing root:amd64 via remove of dep:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1156
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "Keeping package root:amd64",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1342
+    },
+    {
+      "family": "PACKAGE_SELECTION",
+      "line": "  Keeping Package dep:amd64 due to Depends",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1389
+    },
+    {
+      "family": "DEPENDENCY_SUMMARY",
+      "line": "  Dependencies are not satisfied for root:amd64 < none -> 1 @un uN Ib >",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1232
+    },
+    {
+      "family": "DEPENDENCY_SUMMARY",
+      "line": "  Policy breaks with upgrade of root:amd64 < none -> 1 @un uN Ib >",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1242
+    },
+    {
+      "family": "DEPENDENCY_SUMMARY",
+      "line": "  Conflicts//Breaks against version 2 for dep but that is not InstVer, ignoring",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 984
+    },
+    {
+      "family": "DEPENDENCY_SUMMARY",
+      "line": "Package root:amd64 root:amd64 Depends on dep:amd64 < none -> 2 @un uN Ib > (>= 2)",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1373
+    }
+  ]
+}

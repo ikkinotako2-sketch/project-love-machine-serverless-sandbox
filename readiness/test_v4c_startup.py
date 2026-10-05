@@ -138,9 +138,9 @@ class StartupTests(unittest.TestCase):
     def test_004b_consumed(self):
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004B'):b.cloud_launch_guard({},b.PREFLIGHT_V4B_ID)
     def test_next_identity_independent(self):
-        self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4E_ID))['allow'])
+        self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4F_ID))['allow'])
     def test_004c_rerun_rejected(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['context']['run_attempt']=2
+        k=setup(b.PREFLIGHT_V4F_ID);k['context']['run_attempt']=2
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_005_absent(self):self.assertFalse(list((v.ROOT/'.github/workflows').glob('*v5*')))
     def test_render_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(RENDER_ID)).exists())
@@ -151,22 +151,22 @@ class StartupTests(unittest.TestCase):
         self.assertTrue(all(x==100 for x in e['all_case_return_codes'].values()))
 
     def test_wrong_branch(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['context']['branch']='main'
+        k=setup(b.PREFLIGHT_V4F_ID);k['context']['branch']='main'
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_wrong_repository(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['context']['repository']='someone/else'
+        k=setup(b.PREFLIGHT_V4F_ID);k['context']['repository']='someone/else'
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_wrong_event(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['context']['event']='workflow_dispatch'
+        k=setup(b.PREFLIGHT_V4F_ID);k['context']['event']='workflow_dispatch'
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_marker_missing(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['marker']=None
+        k=setup(b.PREFLIGHT_V4F_ID);k['marker']=None
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_marker_modified(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['commit']['files'][0]['status']='modified'
+        k=setup(b.PREFLIGHT_V4F_ID);k['commit']['files'][0]['status']='modified'
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_marker_deleted(self):
-        k=setup(b.PREFLIGHT_V4E_ID);k['commit']['files'][0]['status']='removed'
+        k=setup(b.PREFLIGHT_V4F_ID);k['commit']['files'][0]['status']='removed'
         with self.assertRaises(Stop):b.launch_gate(**k)
     def test_workflow_readonly_trigger_gates(self):
         wf=(v.ROOT/b.SPEC[v.IDENTITY][1]).read_text()

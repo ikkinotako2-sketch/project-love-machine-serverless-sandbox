@@ -36,6 +36,8 @@ PREFLIGHT_V4D_ID = 'manual-fixture-runtime-preflight-20261005-004d'
 SPEC[PREFLIGHT_V4D_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4d-once.yml', 'readiness/cloud-runtime-preflight-v4d-config-plan.json')
 PREFLIGHT_V4E_ID = 'manual-fixture-runtime-preflight-20261005-004e'
 SPEC[PREFLIGHT_V4E_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4e-once.yml', 'readiness/cloud-runtime-preflight-v4e-scoped-plan.json')
+PREFLIGHT_V4F_ID = 'manual-fixture-runtime-preflight-20261005-004f'
+SPEC[PREFLIGHT_V4F_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4f-once.yml', 'readiness/cloud-runtime-preflight-v4f-debug-plan.json')
 FIELDS = {'identity','kind','approved_parent_sha','workflow_sha256','plan_sha256',
           'fixture_sha256','created_for_once_only','no_retry','no_resume'}
 API = 'https://api.github.com/repos/' + REPO
@@ -118,6 +120,7 @@ def launch_gate(context, commit, marker, parent_marker, history_page, marker_his
     need(identity != PREFLIGHT_V4B_ID, 'IDENTITY_CONSUMED_004B')
     need(identity != PREFLIGHT_V4C_ID, 'IDENTITY_CONSUMED_004C')
     need(identity != PREFLIGHT_V4D_ID, 'IDENTITY_CONSUMED_004D')
+    need(identity != PREFLIGHT_V4E_ID, 'IDENTITY_CONSUMED_004E')
     need(context.get('repository') == REPO and context.get('event') == 'push' and
          context.get('branch') == BRANCH, 'UNEXPECTED_BRANCH_OR_EVENT')
     need(type(context.get('run_attempt')) is int and context['run_attempt'] == 1, 'RERUN_REJECTED')
@@ -180,6 +183,7 @@ def cloud_launch_guard(env, identity=PREFLIGHT_ID, read=read_api):
     need(identity != PREFLIGHT_V4B_ID, 'IDENTITY_CONSUMED_004B')
     need(identity != PREFLIGHT_V4C_ID, 'IDENTITY_CONSUMED_004C')
     need(identity != PREFLIGHT_V4D_ID, 'IDENTITY_CONSUMED_004D')
+    need(identity != PREFLIGHT_V4E_ID, 'IDENTITY_CONSUMED_004E')
     need(env.get('GITHUB_ACTIONS') == 'true' and env.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
          env.get('RUNNER_OS') == 'Linux' and env.get('RUNNER_ARCH') == 'X64', 'CLOUD_RUNNER_REQUIRED')
     try:
