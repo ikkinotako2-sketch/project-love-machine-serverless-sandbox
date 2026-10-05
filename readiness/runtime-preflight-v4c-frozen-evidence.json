@@ -1,0 +1,33 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004c",
+  "launch_sha": "aca72b4ef40d644c180cf1f0885096903f5f3793",
+  "run_id": 37263821548,
+  "run_attempt": 1,
+  "apt_binaries": {
+    "apt-get": {
+      "version": "2.8.3",
+      "return_code": 0
+    },
+    "apt-cache": {
+      "version": "2.8.3",
+      "return_code": 0
+    },
+    "apt-config": {
+      "version": "2.8.3",
+      "return_code": 0
+    }
+  },
+  "apt_config_dump_return_code": 0,
+  "failure_stage": "apt_config",
+  "failure_code": "RUNTIME_APT_CONFIG_FAILED",
+  "failure_after_dump": "CONFIG_VERIFICATION_OR_PARSER",
+  "not_reached": [
+    "lists_layout",
+    "index_visibility",
+    "root_policy",
+    "resolver_start",
+    "resolver_debug"
+  ],
+  "status_snapshot": "INITIAL_READ_ONLY_NOT_VERIFIED",
+  "root_cause": "UNDETERMINED_NO_RAW_DUMP_RETAINED"
+}
