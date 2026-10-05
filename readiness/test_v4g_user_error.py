@@ -109,8 +109,8 @@ class UserErrorTests(unittest.TestCase):
     def test_004f_consumed_both_guards(self):
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004F'):b.cloud_launch_guard({},b.PREFLIGHT_V4F_ID)
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004F'):b.launch_gate(**setup(b.PREFLIGHT_V4F_ID))
-    def test_004g_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4G_ID))['allow'])
-    def test_004g_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(v.IDENTITY)).exists())
+    def test_current_unconsumed_identity_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4H_ID))['allow'])
+    def test_004g_consumed_marker_retained(self):self.assertTrue((v.ROOT/b.marker_path(v.IDENTITY)).exists())
     def test_render_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(RENDER_ID)).exists())
     def test_005_absent(self):self.assertFalse(list((v.ROOT/'.github/workflows').glob('*v5*')))
     def test_guard_failure_zero_adapters(self):

@@ -68,7 +68,7 @@ class ScopedTests(unittest.TestCase):
         self.assertEqual(evidence['run_id'],37265615646);self.assertEqual(evidence['simulation_count'],0)
     def test_004d_consumed(self):
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004D'):b.cloud_launch_guard({},b.PREFLIGHT_V4D_ID)
-    def test_current_unconsumed_identity_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4G_ID))['allow'])
+    def test_current_unconsumed_identity_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4H_ID))['allow'])
     def test_004e_consumed_marker_retained(self):self.assertTrue((v.ROOT/b.marker_path(v.IDENTITY)).exists())
     def test_render_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(RENDER_ID)).exists())
     def test_005_absent(self):self.assertFalse(list((v.ROOT/'.github/workflows').glob('*v5*')))

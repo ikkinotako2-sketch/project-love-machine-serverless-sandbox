@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plm-apt-safe-user-error-fingerprint-v4h",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stream",
+    "section",
+    "prefix_class",
+    "relation_token",
+    "version_operator",
+    "indent_bucket",
+    "suffix_family",
+    "fixed_reason",
+    "syntax_family",
+    "relevance",
+    "has_parent_package",
+    "has_dependency_package",
+    "has_version_token",
+    "known_package_tokens_count"
+  ],
+  "properties": {
+    "stream": {
+      "type": "string",
+      "enum": [
+        "STDOUT",
+        "STDERR"
+      ]
+    },
+    "section": {
+      "type": "string",
+      "enum": [
+        "PREAMBLE",
+        "SHOW_BROKEN",
+        "CONTINUATION",
+        "GLOBAL_ERROR",
+        "RESOLVER_DEBUG",
+        "UNKNOWN"
+      ]
+    },
+    "prefix_class": {
+      "type": "string",
+      "enum": [
+        "E_PREFIX",
+        "W_PREFIX",
+        "N_PREFIX",
+        "D_PREFIX",
+        "PACKAGE_HEADER",
+        "RELATION_CONTINUATION",
+        "OTHER"
+      ]
+    },
+    "relation_token": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "DEPENDS",
+        "PREDEPENDS",
+        "CONFLICTS",
+        "BREAKS"
+      ]
+    },
+    "version_operator": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "EQ",
+        "GE",
+        "LE",
+        "LT",
+        "GT"
+      ]
+    },
+    "indent_bucket": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "SMALL",
+        "LARGE"
+      ]
+    },
+    "suffix_family": {
+      "type": "string",
+      "enum": [
+        "SOURCE_CONFIRMED_NOT_INSTALLABLE",
+        "SOURCE_CONFIRMED_NOT_GOING_TO_BE_INSTALLED",
+        "SOURCE_CONFIRMED_NOT_INSTALLED",
+        "SOURCE_CONFIRMED_VERSION_TO_BE_INSTALLED",
+        "SOURCE_CONFIRMED_VERSION_INSTALLED",
+        "SOURCE_CONFIRMED_SUMMARY",
+        "SOURCE_CONFIRMED_PACKAGE_HEADER",
+        "SOURCE_CONFIRMED_WRAPPER",
+        "SOURCE_CONFIRMED_VERSION_LOOKUP",
+        "UNKNOWN"
+      ]
+    },
+    "fixed_reason": {
+      "type": "string",
+      "enum": [
+        "OUTPUT_BOUND_EXCEEDED",
+        "LINE_BOUND_EXCEEDED",
+        "MALFORMED_PACKAGE",
+        "UNKNOWN_PACKAGE_TOKEN",
+        "MALFORMED_VERSION",
+        "UNVERIFIED_VERSION",
+        "PRETTY_PACKAGE_SYNTAX_UNSUPPORTED",
+        "INSTALLED_VERSION_MISMATCH",
+        "EVIDENCE_BOUND_EXCEEDED",
+        "CONFLICT_BOUND_EXCEEDED",
+        "SIGNED_METADATA_MISMATCH",
+        "ALTERNATIVE_INCOMPLETE",
+        "MISSING_PARENT_PACKAGE",
+        "CONTINUATION_LAYOUT_UNSUPPORTED",
+        "MISSING_DEPENDENCY_TOKEN",
+        "MISSING_RELATION_TOKEN",
+        "UNSUPPORTED_DEPENDENCY_SYNTAX",
+        "SIGNED_ALTERNATIVE_MISMATCH",
+        "UNSUPPORTED_DEPENDENCY_SUFFIX",
+        "UNSUPPORTED_RELEVANT_USER_ERROR",
+        "UNSUPPORTED_USER_OUTPUT_PREAMBLE",
+        "UNSUPPORTED_RELEVANT_SYNTAX"
+      ]
+    },
+    "syntax_family": {
+      "type": "string",
+      "enum": [
+        "RESOLVER_START",
+        "RESOLVER_END",
+        "INVESTIGATING",
+        "CONSIDERING",
+        "BROKEN_DEPENDENCY",
+        "PACKAGE_SELECTION",
+        "PACKAGE_REJECTION",
+        "DEPENDENCY_SUMMARY",
+        "USER_FACING_DEPENDENCY_ERROR",
+        "BENIGN_DIAGNOSTIC",
+        "UNSUPPORTED_RELEVANT_SYNTAX",
+        "UNSUPPORTED_RELEVANT_USER_ERROR"
+      ]
+    },
+    "relevance": {
+      "type": "string",
+      "enum": [
+        "DEPENDENCY_DECISION_OR_UNKNOWN"
+      ]
+    },
+    "has_parent_package": {
+      "type": "boolean"
+    },
+    "has_dependency_package": {
+      "type": "boolean"
+    },
+    "has_version_token": {
+      "type": "boolean"
+    },
+    "known_package_tokens_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}
