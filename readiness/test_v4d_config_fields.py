@@ -97,8 +97,8 @@ class ConfigFieldTests(unittest.TestCase):
         process.assert_not_called()
     def test_consumed_004c(self):
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004C'):b.cloud_launch_guard({},b.PREFLIGHT_V4C_ID)
-    def test_004d_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4D_ID))['allow'])
-    def test_004d_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(v.IDENTITY)).exists())
+    def test_004d_independent(self):self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4E_ID))['allow'])
+    def test_004d_marker_retained(self):self.assertTrue((v.ROOT/b.marker_path(v.IDENTITY)).exists())
     def test_render_marker_absent(self):self.assertFalse((v.ROOT/b.marker_path(RENDER_ID)).exists())
     def test_005_absent(self):self.assertFalse(list((v.ROOT/'.github/workflows').glob('*v5*')))
     def test_004c_evidence_frozen(self):

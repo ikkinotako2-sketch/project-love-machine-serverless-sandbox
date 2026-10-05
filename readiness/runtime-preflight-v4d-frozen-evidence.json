@@ -1,0 +1,38 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004d",
+  "launch_sha": "49759c70f7d38f6ebc7efca44719c85a6c19da29",
+  "run_id": 37265615646,
+  "run_attempt": 1,
+  "apt_binaries": {
+    "apt-get": {
+      "version": "2.8.3",
+      "return_code": 0
+    },
+    "apt-cache": {
+      "version": "2.8.3",
+      "return_code": 0
+    },
+    "apt-config": {
+      "version": "2.8.3",
+      "return_code": 0
+    }
+  },
+  "scalar_pass_count": 22,
+  "scalar_total": 22,
+  "scalar_authority": "ACTUAL_RUN_FIXED_KEY_QUERIES_PASS",
+  "dump_return_code": 0,
+  "first_failure": {
+    "field_id": "CONFIG_INSPECTION",
+    "reason": "MALFORMED_CONFIG_OUTPUT"
+  },
+  "not_reached": [
+    "lists_layout",
+    "index_visibility",
+    "root_policy",
+    "resolver_start",
+    "resolver_debug"
+  ],
+  "simulation_count": 0,
+  "simulation_limit": 11,
+  "root_cause": "SUPPLEMENTARY_SYNTAX_UNDETERMINED_NO_RAW_DUMP"
+}

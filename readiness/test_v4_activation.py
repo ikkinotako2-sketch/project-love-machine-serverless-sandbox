@@ -30,20 +30,20 @@ class ActivationTests(unittest.TestCase):
             self.assertIn(expression,text)
         for flag in ('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'):self.assertIn(flag+": 'true'",text)
     def test_wrong_repository(self):
-        k=setup(b.PREFLIGHT_V4D_ID);k['context']['repository']='other/repo'
+        k=setup(b.PREFLIGHT_V4E_ID);k['context']['repository']='other/repo'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_wrong_branch(self):
-        k=setup(b.PREFLIGHT_V4D_ID);k['context']['branch']='main'
+        k=setup(b.PREFLIGHT_V4E_ID);k['context']['branch']='main'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_wrong_event(self):
-        k=setup(b.PREFLIGHT_V4D_ID);k['context']['event']='workflow_dispatch'
+        k=setup(b.PREFLIGHT_V4E_ID);k['context']['event']='workflow_dispatch'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_marker_modified_deleted(self):
         for status in ('modified','removed'):
-            k=setup(b.PREFLIGHT_V4D_ID);k['commit']['files'][0]['status']=status
+            k=setup(b.PREFLIGHT_V4E_ID);k['commit']['files'][0]['status']=status
             with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.launch_gate(**k)
     def test_rerun(self):
-        k=setup(b.PREFLIGHT_V4D_ID);k['context']['run_attempt']=2
+        k=setup(b.PREFLIGHT_V4E_ID);k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
     def test_guard_failure_zero_process_and_network(self):
         for code in ('MARKER_MISSING','RERUN_REJECTED','BLOCKED_HISTORY_CONTINUITY_LOST'):
@@ -96,7 +96,7 @@ class ActivationTests(unittest.TestCase):
         source=Path(v.__file__).read_text();self.assertNotIn('capture_output=True',source)
         for text in ('2_000_000','stderr_size<=65536','time.monotonic()+120','os.killpg'):self.assertIn(text,source)
     def test_absent_marker_actual_cloud_guard(self):
-        k=setup(b.PREFLIGHT_V4D_ID)
+        k=setup(b.PREFLIGHT_V4E_ID)
         event={'before':k['context']['approved_parent_sha'],'after':k['context']['sha'],
                'ref':'refs/heads/'+b.BRANCH,'forced':False,'deleted':False,'created':False}
         with tempfile.TemporaryDirectory() as directory:
@@ -109,7 +109,7 @@ class ActivationTests(unittest.TestCase):
                     return {'files':[]} if 'page=2' in route else k['commit']
                 if route.startswith('/contents/'):return None
                 raise AssertionError('Unexpected read before absent-marker STOP')
-            with self.assertRaisesRegex(Stop,'MARKER_MISSING'):b.cloud_launch_guard(env,b.PREFLIGHT_V4D_ID,read=read)
+            with self.assertRaisesRegex(Stop,'MARKER_MISSING'):b.cloud_launch_guard(env,b.PREFLIGHT_V4E_ID,read=read)
     def test_bounded_output_limit_stops_and_no_raw_exception(self):
         class Pipe:
             def fileno(self):return 1

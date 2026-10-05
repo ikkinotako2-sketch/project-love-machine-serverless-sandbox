@@ -1,0 +1,46 @@
+name: PLM Cloud Runtime Resolver-only Preflight 004E APT Scoped Config Diagnostic Candidate
+run-name: manual-fixture-runtime-preflight-20261005-004e
+on:
+  push:
+    branches: ['plm-offline-readiness-v1-20261002']
+    paths: ['audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004e.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: manual-fixture-runtime-preflight-20261005-004e
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - name: Checkout exact launch tree with read-only credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Marker-only consumption and complete history guard before runtime setup
+        id: marker
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python readiness/branch_marker_once.py --identity manual-fixture-runtime-preflight-20261005-004e
+      - name: Exact Python candidate, no latest fallback
+        if: steps.marker.outputs.allow == 'true' && steps.marker.outputs.execution_approved == 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.15'
+      - name: Recheck primary marker then fixed startup/config/policy/solver diagnostics
+        if: steps.marker.outputs.allow == 'true' && steps.marker.outputs.execution_approved == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python readiness/cloud_runtime_preflight_v4e.py
+# Marker absent during preparation. Only the separately owner-approved marker-only
+# launch commit can pass guard. No workflow_dispatch or workflow ledger writes.
+# Metadata retrieval and resolver simulation only. No package binary download/install, dpkg, Docker, VOICEVOX, FFmpeg, artifact/cache or publishing.
