@@ -1,0 +1,11 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004d",
+  "kind": "runtime-preflight",
+  "approved_parent_sha": "15eb93c2a4edae1967f54cad307e49876a3d7fa6",
+  "workflow_sha256": "2b1fc3fb5137ac718bec199053447f4495d699c573216b7c1bbf4e0b31e8f9c3",
+  "plan_sha256": "f4180f7a3dd0552d11d7044d4f61b0592319dee10a7dc60b3ee1738596c915b2",
+  "fixture_sha256": "2b92b1b2266da9be38e0cebdd061add724734049f08afc0bbffbe06b7aa53c40",
+  "created_for_once_only": true,
+  "no_retry": true,
+  "no_resume": true
+}
