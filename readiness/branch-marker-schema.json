@@ -110,6 +110,16 @@
           "const": "runtime-preflight"
         }
       }
+    },
+    {
+      "properties": {
+        "identity": {
+          "const": "manual-fixture-runtime-preflight-20261005-004c"
+        },
+        "kind": {
+          "const": "runtime-preflight"
+        }
+      }
     }
   ]
 }

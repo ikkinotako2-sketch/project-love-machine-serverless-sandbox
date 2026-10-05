@@ -1,0 +1,24 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004b",
+  "launch_sha": "710cf2057914f2c3972c8631ff85010476baccfb",
+  "run_id": 37260939639,
+  "run_attempt": 1,
+  "marker_blob": "7bf8de2ea807e993e5d30dddf0d4440e5a7929ad",
+  "all_case_return_codes": {
+    "release_only": 100,
+    "release_updates": 100,
+    "release_security": 100,
+    "release_updates_security": 100
+  },
+  "all_case_classification": "RUNTIME_APT_UNKNOWN_SOLVER_FAILURE",
+  "root_exact_available_count": 10,
+  "root_candidate_difference_count": 0,
+  "installed_signed_index_exact_coverage": {
+    "release_only": 578,
+    "release_updates": 1157,
+    "release_security": 946,
+    "release_updates_security": 1162
+  },
+  "root_cause": "UNDETERMINED",
+  "source_of_truth": "GitHub run safe structured report; no raw apt streams saved"
+}

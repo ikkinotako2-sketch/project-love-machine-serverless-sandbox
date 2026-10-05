@@ -115,10 +115,10 @@ class V4BDiagnosticTests(unittest.TestCase):
     def test_consumed_004_never_reusable(self):
         self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4_ID)).is_file())
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004'):b.cloud_launch_guard({},b.PREFLIGHT_V4_ID)
-    def test_004b_and_render_unused(self):
-        for identity in (v.IDENTITY,b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(identity)).exists())
+    def test_004c_and_render_unused(self):
+        for identity in (b.PREFLIGHT_V4C_ID,b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(identity)).exists())
     def test_new_marker_first_addition_and_rerun(self):
-        k=setup(v.IDENTITY);self.assertTrue(b.launch_gate(**k)['consumed']);k['context']['run_attempt']=2
+        k=setup(b.PREFLIGHT_V4C_ID);self.assertTrue(b.launch_gate(**k)['consumed']);k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
     def test_metadata_binary_url_refused(self):
         with self.assertRaisesRegex(Stop,'SOURCE_INDEX_MISMATCH'):v.metadata_get(d.REPO+'/pool/main/a/a.deb',100)

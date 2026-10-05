@@ -30,6 +30,8 @@ PREFLIGHT_V4_ID = 'manual-fixture-runtime-preflight-20261005-004'
 SPEC[PREFLIGHT_V4_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4-once.yml', 'readiness/cloud-runtime-preflight-v4-resolver-plan.json')
 PREFLIGHT_V4B_ID = 'manual-fixture-runtime-preflight-20261005-004b'
 SPEC[PREFLIGHT_V4B_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4b-once.yml', 'readiness/cloud-runtime-preflight-v4b-diagnostic-plan.json')
+PREFLIGHT_V4C_ID = 'manual-fixture-runtime-preflight-20261005-004c'
+SPEC[PREFLIGHT_V4C_ID] = ('runtime-preflight', '.github/workflows/plm-cloud-runtime-preflight-v4c-once.yml', 'readiness/cloud-runtime-preflight-v4c-startup-plan.json')
 FIELDS = {'identity','kind','approved_parent_sha','workflow_sha256','plan_sha256',
           'fixture_sha256','created_for_once_only','no_retry','no_resume'}
 API = 'https://api.github.com/repos/' + REPO
@@ -109,6 +111,7 @@ def launch_gate(context, commit, marker, parent_marker, history_page, marker_his
     need(identity != PREFLIGHT_ID, 'IDENTITY_CONSUMED_001')
     need(identity != PREFLIGHT_V2_ID, 'IDENTITY_CONSUMED_002')
     need(identity != PREFLIGHT_V4_ID, 'IDENTITY_CONSUMED_004')
+    need(identity != PREFLIGHT_V4B_ID, 'IDENTITY_CONSUMED_004B')
     need(context.get('repository') == REPO and context.get('event') == 'push' and
          context.get('branch') == BRANCH, 'UNEXPECTED_BRANCH_OR_EVENT')
     need(type(context.get('run_attempt')) is int and context['run_attempt'] == 1, 'RERUN_REJECTED')
@@ -168,6 +171,7 @@ def cloud_launch_guard(env, identity=PREFLIGHT_ID, read=read_api):
     need(identity != PREFLIGHT_ID, 'IDENTITY_CONSUMED_001')
     need(identity != PREFLIGHT_V2_ID, 'IDENTITY_CONSUMED_002')
     need(identity != PREFLIGHT_V4_ID, 'IDENTITY_CONSUMED_004')
+    need(identity != PREFLIGHT_V4B_ID, 'IDENTITY_CONSUMED_004B')
     need(env.get('GITHUB_ACTIONS') == 'true' and env.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
          env.get('RUNNER_OS') == 'Linux' and env.get('RUNNER_ARCH') == 'X64', 'CLOUD_RUNNER_REQUIRED')
     try:
