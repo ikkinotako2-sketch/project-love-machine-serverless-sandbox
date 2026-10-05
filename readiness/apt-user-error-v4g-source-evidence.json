@@ -1,0 +1,83 @@
+{
+  "implementation": "Ubuntu Noble APT 2.8.3",
+  "source_commit": "c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+  "stable_public_grammar": false,
+  "source_fetch_in_runtime": false,
+  "source_fetch_in_offline_CI": false,
+  "prior_version_evidence": "readiness/apt-resolver-v4f-source-evidence.json",
+  "files": [
+    {
+      "path": "apt-private/private-output.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-private/private-output.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "2b79b40f56a588e67b0532be5541eac9e23ca7403f129f91e6ffb77ec0c32ccf"
+    },
+    {
+      "path": "apt-private/private-install.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-private/private-install.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "b62510951c4f0c0d05d0edbead1b795276e50185a4512bb830acba0365a9398c"
+    },
+    {
+      "path": "apt-private/private-cachefile.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-private/private-cachefile.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "aeacc9db277f46ed81f045d68091625c6c46894c1a0ef44ef9ee8354e66e47e4"
+    },
+    {
+      "path": "apt-pkg/contrib/error.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/contrib/error.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "c18fbe7dd0781a66a868836c61f03c7ddcf06d079e56b05495d629d587d4cc26"
+    },
+    {
+      "path": "cmdline/apt-get.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/cmdline/apt-get.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "7e106b0c45a10b7b940f3709c6307017279a0bfce3cf2b47db875754e774095c"
+    },
+    {
+      "path": "apt-pkg/cacheset.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/cacheset.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "42ca76479473f3afb4144e65ae16d18af259e2d982ca00e8b96f5b0a67884f23"
+    },
+    {
+      "path": "apt-private/private-cmndline.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-private/private-cmndline.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "32f6c3344ef3dcbf8d0c55d00dca19f534037b399ef8b51d703477172a110ef5"
+    },
+    {
+      "path": "apt-pkg/contrib/error.h",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/contrib/error.h?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "72b8cbaaf572dd51ff950f79c9c5863c4d7268281901afa1d5c33a1060902a56"
+    },
+    {
+      "path": "apt-pkg/pkgcachegen.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/pkgcachegen.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "618c302ea2679196f0a95ebb2825678a3ab0631be4d8d7273bb735a85737baa5"
+    },
+    {
+      "path": "apt-pkg/contrib/progress.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/contrib/progress.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "6252aa8cfe3dc79dc5dc68a45fc52e8f8b3dd8eac4d18be5172aa40a48174611"
+    },
+    {
+      "path": "apt-pkg/cachefile.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/cachefile.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "875bbcf1daff8832ac33a4242158de82f8d1ced900711ad37a146dd4ce64aebd"
+    },
+    {
+      "path": "apt-pkg/algorithms.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/algorithms.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "6631395fa897fdb93783a00c3942b3a837a9e3a87c32a6a10d5230f53edfcf6e"
+    },
+    {
+      "path": "apt-pkg/depcache.cc",
+      "url": "https://git.launchpad.net/ubuntu/+source/apt/plain/apt-pkg/depcache.cc?id=c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+      "sha256": "803d9a72830198543e92c5597d7248120de73d4238f19aa00454110716cfda0a"
+    }
+  ],
+  "render_path": [
+    "cmdline/apt-get.cc GetCommands install -> DoInstall; main -> DispatchCommandLine",
+    "apt-private/private-install.cc DoInstall -> DoCacheManipulationFromCommandLine -> Fix.Resolve -> CheckNothingBroken -> ShowBroken",
+    "apt-private/private-output.cc ShowBroken -> ShowBrokenPackage (c1out/stdout)",
+    "apt-private/private-cmndline.cc DispatchCommandLine -> GlobalError.DumpErrors -> return 100",
+    "apt-pkg/contrib/error.cc GlobalError operator<< prefixes E: and formats continuation lines"
+  ],
+  "scope_note": "Source-derived templates are not 004F raw text. No attempt to infer or reconstruct unavailable raw error."
+}

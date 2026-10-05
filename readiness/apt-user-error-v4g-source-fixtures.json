@@ -1,0 +1,125 @@
+{
+  "basis": "APT 2.8.3 source template instances with fake signed/status context; not raw runtime evidence",
+  "source_evidence": "readiness/apt-user-error-v4g-source-evidence.json",
+  "fixtures": [
+    {
+      "family": "DEPENDENCY_NOT_INSTALLABLE",
+      "template_instance": " root : Depends: dep (>= 2) but it is not installable",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 427,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_NOT_GOING_TO_BE_INSTALLED",
+      "template_instance": " root : Depends: dep (>= 2) but it is not going to be installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 432,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_VERSION_TO_BE_INSTALLED",
+      "template_instance": " root : Depends: dep (>= 2) but 2 is to be installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 420,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_VERSION_INSTALLED",
+      "template_instance": " root : Depends: dep (>= 2) but 2 is installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 418,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_NOT_INSTALLED",
+      "template_instance": " root : Depends: dep (>= 2) but it is not installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 432,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_NOT_GOING_TO_BE_INSTALLED",
+      "template_instance": " root : Depends: dep but it is not going to be installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 432,
+      "stream": "stdout"
+    },
+    {
+      "family": "CONFLICTS_WITH_INSTALLED_OR_CANDIDATE",
+      "template_instance": " root : Conflicts: dep (>= 2) but 2 is installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 402,
+      "stream": "stdout"
+    },
+    {
+      "family": "CONFLICTS_WITH_INSTALLED_OR_CANDIDATE",
+      "template_instance": " root : Breaks: dep (<< 3) but 2 is to be installed",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 420,
+      "stream": "stdout"
+    },
+    {
+      "family": "DEPENDENCY_VERSION_NOT_AVAILABLE",
+      "template_instance": "E: Version '2' for 'dep' was not found",
+      "source_file": "apt-pkg/cacheset.cc",
+      "source_line": 840,
+      "stream": "stderr"
+    },
+    {
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "template_instance": "E: Broken packages",
+      "source_file": "apt-private/private-install.cc",
+      "source_line": 77,
+      "stream": "stderr"
+    },
+    {
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "template_instance": " root :",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 357,
+      "stream": "stdout"
+    },
+    {
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "template_instance": "E: Internal Error, pkgProblemResolver::ResolveByKeep is looping on package root.",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1418,
+      "stream": "stderr"
+    },
+    {
+      "family": "HELD_PACKAGE_SUMMARY",
+      "template_instance": "E: Unable to correct problems, you have held broken packages.",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1196,
+      "stream": "stderr"
+    },
+    {
+      "family": "HELD_PACKAGE_SUMMARY",
+      "template_instance": "E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.",
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1194,
+      "stream": "stderr"
+    },
+    {
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "template_instance": "E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution).",
+      "source_file": "apt-private/private-cachefile.cc",
+      "source_line": 113,
+      "stream": "stderr"
+    },
+    {
+      "family": "GENERIC_APT_ERROR_BENIGN_WRAPPER",
+      "template_instance": "The following packages have unmet dependencies:",
+      "source_file": "apt-private/private-output.cc",
+      "source_line": 451,
+      "stream": "stdout"
+    },
+    {
+      "family": "GENERIC_APT_ERROR_BENIGN_WRAPPER",
+      "template_instance": "Some packages could not be installed. This may mean that you have\nrequested an impossible situation or if you are using the unstable\ndistribution that some required packages have not yet been created\nor been moved out of Incoming.\nThe following information may help to resolve the situation:",
+      "source_file": "apt-private/private-install.cc",
+      "source_line": 59,
+      "stream": "stdout"
+    }
+  ]
+}

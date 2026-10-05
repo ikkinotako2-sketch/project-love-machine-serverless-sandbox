@@ -1,0 +1,53 @@
+{
+  "identity": "manual-fixture-runtime-preflight-20261005-004f",
+  "consumed": true,
+  "run_id": 37301763286,
+  "run_attempt": 1,
+  "launch_sha": "8e3c5e2dd1fec5d0fc4e262b54d94d085e2878ac",
+  "scalar_pass_count": 22,
+  "scalar_count": 22,
+  "scopes": {
+    "ARCHITECTURES": "PASS",
+    "ROOT_DIR_QUERY": "PASS",
+    "ROOT_DIR_INSPECTION": "PASS",
+    "DPKG_HOOKS": "PASS",
+    "APT_UPDATE_HOOKS": "PASS",
+    "BINARY_OVERRIDES": "PASS"
+  },
+  "status_snapshot": "PASS",
+  "private_lists_verified": 9,
+  "root10_visibility": "PASS",
+  "root10_policy": "PASS",
+  "candidate_exact_matches": 10,
+  "ffmpeg_single_return_code": 100,
+  "solver_entry_confirmed": true,
+  "first_failure_stage": "resolver_debug",
+  "first_failure_code": "RUNTIME_APT_RESOLVER_DIAGNOSTIC_FAILED",
+  "unsupported_fingerprint": {
+    "syntax_family": "USER_FACING_DEPENDENCY_ERROR",
+    "relevance": "DEPENDENCY_DECISION_OR_UNKNOWN",
+    "known_package_tokens_count": 1,
+    "fixed_reason": "UNSUPPORTED_RELEVANT_SYNTAX"
+  },
+  "remaining_singletons_executed": 0,
+  "combined_executed": 0,
+  "simulation_count": 1,
+  "max_simulations": 11,
+  "raw_stderr_available": false,
+  "raw_line_available": false,
+  "dependency_conflict_observed": null,
+  "transaction_proof": false,
+  "install_authorized": false,
+  "root_constraints": {
+    "ffmpeg": "7:6.1.1-3ubuntu5",
+    "libavcodec60": "7:6.1.1-3ubuntu5",
+    "libavfilter9": "7:6.1.1-3ubuntu5",
+    "libavformat60": "7:6.1.1-3ubuntu5",
+    "libavutil58": "7:6.1.1-3ubuntu5",
+    "libswresample4": "7:6.1.1-3ubuntu5",
+    "libswscale7": "7:6.1.1-3ubuntu5",
+    "fonts-noto-cjk": "1:20230817+repack1-3",
+    "libx264-164": "2:0.164.3108+git31e19f9-1",
+    "libass9": "1:0.17.1-2build1"
+  }
+}
