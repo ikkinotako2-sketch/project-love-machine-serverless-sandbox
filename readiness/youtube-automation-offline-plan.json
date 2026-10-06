@@ -140,7 +140,8 @@
       "evidence": [
         "readiness/runtime-preflight-v4i-global-error-offline-audit.json"
       ],
-      "remaining": "Unknown STDERR GlobalError E fingerprint. Frozen source templates have zero exact matches. No root cause and no transaction/install authorization. No unknown acceptance or 004H replay."
+      "remaining": "Unknown STDERR GlobalError E fingerprint. Frozen source templates have zero exact matches. No root cause and no transaction/install authorization. No unknown acceptance or 004H replay.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 2,
@@ -151,7 +152,8 @@
         "readiness/one_shot_executor.py",
         ".github/workflows/plm-cloud-runtime-preflight-v4h-once.yml"
       ],
-      "remaining": "Existing exact 3.12.15 preflight pin preserved. Production render uses 3.12; safe renderer requires exact-version workflow proposal and separate runtime approval."
+      "remaining": "Existing exact 3.12.15 preflight pin preserved. Production render uses 3.12; safe renderer requires exact-version workflow proposal and separate runtime approval.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 3,
@@ -164,7 +166,8 @@
       "evidence": [
         "readiness/one_shot_executor.py"
       ],
-      "remaining": "Existing engine 0.25.2 amd64 manifest digest preserved; production cpu-latest is forbidden. Runtime digest/version confirmation and approved Docker execution still required."
+      "remaining": "Existing engine 0.25.2 amd64 manifest digest preserved; production cpu-latest is forbidden. Runtime digest/version confirmation and approved Docker execution still required.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 4,
@@ -176,7 +179,8 @@
       "evidence": [
         "readiness/one_shot_executor.py"
       ],
-      "remaining": "Require exact version + sole speaker style id=1, name/style match before synthesis. No runtime speaker observation yet."
+      "remaining": "Require exact version + sole speaker style id=1, name/style match before synthesis. No runtime speaker observation yet.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 5,
@@ -189,7 +193,8 @@
       "evidence": [
         "readiness/one_shot_executor.py"
       ],
-      "remaining": "Existing exact package pins, libav lock, required filters/encoders and Noto Sans CJK JP checks preserved. Install is unapproved and not proven."
+      "remaining": "Existing exact package pins, libav lock, required filters/encoders and Noto Sans CJK JP checks preserved. Install is unapproved and not proven.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 6,
@@ -204,7 +209,8 @@
         "readiness/branch_marker_once.py",
         "readiness/one_shot_executor.py"
       ],
-      "remaining": "Render marker absent. Existing marker-only launch guard is reused; no render authorization. APT rc100 is never install authorization."
+      "remaining": "Render marker absent. Existing marker-only launch guard is reused; no render authorization. APT rc100 is never install authorization.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 7,
@@ -217,7 +223,8 @@
         "readiness/one_shot_executor.py",
         "readiness/youtube_pipeline_offline.py"
       ],
-      "remaining": "Reuse dimensions/fps/duration/audio/luma/captions checks. Bind QG bytes and media digest to uploaded bytes. Tests use data only; no actual MP4 or trusted runtime attestation."
+      "remaining": "Reuse dimensions/fps/duration/audio/luma/captions checks. Bind QG bytes and media digest to uploaded bytes. Tests use data only; no actual MP4 or trusted runtime attestation.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 8,
@@ -229,7 +236,8 @@
       "evidence": [
         "readiness/one_shot_executor.py"
       ],
-      "remaining": "Reuse exact 3-file inventory <=12MiB, retention1day, max1upload/retry0. Production pipeline retention30days must be bounded before activation. Owner current aggregate free capacity is not verified; no price/billing or service changes."
+      "remaining": "Reuse exact 3-file inventory <=12MiB, retention1day, max1upload/retry0. Production pipeline retention30days must be bounded before activation. Owner current aggregate free capacity is not verified; no price/billing or service changes.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 9,
@@ -240,7 +248,8 @@
         "plm/social_adapters/youtube/oauth.py",
         "readiness/youtube_pipeline_offline.py"
       ],
-      "remaining": "OAuth values not fetched. Existence and least-privilege/account match require safe cloud preflight. Offline existence booleans are fixtures only."
+      "remaining": "Secret usable at historical successful upload run 36153932146. Current existence/account scopes remain unverified; no values fetched. This does not block independent offline work.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 10,
@@ -255,7 +264,8 @@
       "evidence": [
         "readiness/youtube_pipeline_offline.py"
       ],
-      "remaining": "Require exactly1 asset, private, notifyfalse, no schedule, explicit audience/synthetic disclosure. Real adapter integration and separate first-upload approval required. Do not invoke production workflow accepting public/unlisted/schedule."
+      "remaining": "Require exactly1 asset, private, notifyfalse, no schedule, explicit audience/synthetic disclosure. Real adapter integration and separate first-upload approval required. Do not invoke production workflow accepting public/unlisted/schedule.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 11,
@@ -265,7 +275,8 @@
       "evidence": [
         "readiness/youtube_pipeline_offline.py"
       ],
-      "remaining": "SQL unique key/job/media claim consumes before attempt, never resets UNKNOWN/failed. Reference memory DB tests persist across oracle objects only. Deploy durable ledger separately; existing production in-memory FAILED reclaim and resumable retries must be replaced before upload."
+      "remaining": "SQL unique key/job/media claim consumes before attempt, never resets UNKNOWN/failed. Reference memory DB tests persist across oracle objects only. Deploy durable ledger separately; existing production in-memory FAILED reclaim and resumable retries must be replaced before upload. Existing production workflow also persists a cross-run claim artifact before upload with concurrency and 30-day retention; this is historical duplicate protection, not a permanent ledger.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 12,
@@ -279,7 +290,8 @@
         "readiness/youtube_pipeline_production_result_snapshot.py",
         "readiness/youtube_pipeline_offline.py"
       ],
-      "remaining": "Reuse production build_pipeline_result shape behind strict confirmed private/processed/video-id projection. Persist/readback before next; UNKNOWN or save ambiguity stops. Existing builder accepts ok=true with failed/unknown/queued state, so cannot be sole success gate. No raw body/error stored."
+      "remaining": "Reuse production build_pipeline_result shape behind strict confirmed private/processed/video-id projection. Persist/readback before next; UNKNOWN or save ambiguity stops. Existing builder accepts ok=true with failed/unknown/queued state, so cannot be sole success gate. No raw body/error stored.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 13,
@@ -291,7 +303,8 @@
       "evidence": [
         "serverless/youtube-roundtrip-read-only.mjs"
       ],
-      "remaining": "Keep existing n8n producer/result consumer compatible; move one-job claim/stage/result gating into durable serverless ledger. Existing YouTube D1 checkpoint is proposed only; no deployment/schema mutations here."
+      "remaining": "Keep existing n8n producer/result consumer compatible; move one-job claim/stage/result gating into durable serverless ledger. Existing YouTube D1 checkpoint is proposed only; no deployment/schema mutations here.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     },
     {
       "id": 14,
@@ -306,7 +319,8 @@
         "readiness/youtube_pipeline_offline.py",
         "readiness/youtube_preparation_bridge.py"
       ],
-      "remaining": "Offline SQL blocks distinct next job until prior RESULT_SAVED. Full unattended generation is also gated on current $0 provider entitlement. No auto-dispatch/schedule/paid provider enabled; no live queue installed. Existing yt-number-timestamp job IDs, normalized render payload and pipeline inputs are now joined by a data-only bridge; no dispatch is wired."
+      "remaining": "Offline SQL blocks distinct next job until prior RESULT_SAVED. Full unattended generation is also gated on current $0 provider entitlement. No auto-dispatch/schedule/paid provider enabled; no live queue installed. Existing yt-number-timestamp job IDs, normalized render payload and pipeline inputs are now joined by a data-only bridge; no dispatch is wired.",
+      "applies_to": "NEW_HARDENED_SERVERLESS_ROUTE"
     }
   ],
   "approval_boundaries": {
@@ -337,13 +351,46 @@
   },
   "oauth_metadata_readiness": {
     "production": {
-      "status": "UNVERIFIED",
-      "reason": "METADATA_READ_UNAVAILABLE"
+      "status": "HISTORICALLY_CONFIRMED / CURRENTLY_UNVERIFIED",
+      "historical_run_id": 36153932146,
+      "current_exists": null,
+      "reason": "CURRENT_METADATA_READ_UNAVAILABLE",
+      "values_read": false
     },
     "sandbox": {
       "status": "UNVERIFIED",
       "reason": "METADATA_READ_UNAVAILABLE"
     },
     "values_read": false
+  },
+  "progress_baseline": {
+    "existing_youtube_automation_percent": 98,
+    "basis": "USER_PROJECT_ESTIMATE",
+    "production_e2e_run_id": 36153932146,
+    "new_hardened_live_e2e": "0/1",
+    "historical_evidence": "readiness/youtube-production-history-20261006.json",
+    "apt_004h_is_existing_production_completion_blocker": false
+  },
+  "axes": {
+    "A": {
+      "name": "existing production YouTube automation",
+      "progress_percent": 98,
+      "status": "HISTORICAL_E2E_PROVEN_CODE_UNCHANGED",
+      "blocker": "No newly demonstrated core pipeline implementation failure. Remaining acceptance is continued Queue/next-job operation and current readiness, not rewriting renderer/upload."
+    },
+    "B": {
+      "name": "serverless migration",
+      "status": "OFFLINE_QUEUE_CLAIM_RESULT_PREPARED_NOT_DEPLOYED",
+      "live_e2e": "0/1"
+    },
+    "C": {
+      "name": "runtime reproducibility / hardening",
+      "status": "BLOCKED_APT_UNKNOWN_DIAGNOSTIC_NEW_ROUTE_ONLY"
+    },
+    "D": {
+      "name": "fully unattended operation",
+      "status": "TRIGGER_DISPATCH_INTEGRATION_AND_24H_ACCEPTANCE_PENDING",
+      "automatic_enable": false
+    }
   }
 }

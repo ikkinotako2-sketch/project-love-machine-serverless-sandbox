@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "READ_ONLY_HISTORICAL_PRODUCTION_SUCCESS",
+  "repository": "ikkinotako2-sketch/project-love-machine",
+  "run_id": 36153932146,
+  "head_sha": "2fa012dd4f9630bf414533e4977b8390952a6794",
+  "run_attempt": 1,
+  "conclusion": "success",
+  "current_main_sha": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+  "code_changed": false,
+  "repository_diff_paths": [
+    "docs/COMMAND_CENTER.md"
+  ],
+  "major_file_comparison": [
+    {
+      "path": ".github/workflows/youtube-pipeline.yml",
+      "success_blob_sha": "bf4912b4fadf9954923074da1e5341bd7c686acc",
+      "current_blob_sha": "bf4912b4fadf9954923074da1e5341bd7c686acc",
+      "same": true
+    },
+    {
+      "path": ".github/workflows/render-short.yml",
+      "success_blob_sha": "72e9f17ede5c1b0ec811782c6057fa151f112404",
+      "current_blob_sha": "72e9f17ede5c1b0ec811782c6057fa151f112404",
+      "same": true
+    },
+    {
+      "path": ".github/workflows/youtube-adapter.yml",
+      "success_blob_sha": "3321dc6c72024df40a5658d40dc5b92cacdb1d3c",
+      "current_blob_sha": "3321dc6c72024df40a5658d40dc5b92cacdb1d3c",
+      "same": true
+    },
+    {
+      "path": "plm/entrypoints/youtube_job.py",
+      "success_blob_sha": "78479c142a9226b8bb67a2954a38e83a7429f159",
+      "current_blob_sha": "78479c142a9226b8bb67a2954a38e83a7429f159",
+      "same": true
+    }
+  ],
+  "same_implementation_blob_count": 53,
+  "jobs": [
+    {
+      "name": "initialize",
+      "conclusion": "success",
+      "steps": [
+        "Set up job",
+        "Checkout",
+        "Setup Python",
+        "Publish processing result",
+        "Post Setup Python",
+        "Post Checkout",
+        "Complete job"
+      ]
+    },
+    {
+      "name": "render / render",
+      "conclusion": "success",
+      "steps": [
+        "Set up job",
+        "Validate render ID",
+        "Checkout",
+        "Setup Python",
+        "Install FFmpeg and Japanese fonts",
+        "Start VOICEVOX Engine",
+        "Render Short",
+        "Upload render result",
+        "Export render result",
+        "Post Setup Python",
+        "Post Checkout",
+        "Complete job"
+      ]
+    },
+    {
+      "name": "youtube / execute",
+      "conclusion": "success",
+      "steps": [
+        "Set up job",
+        "Validate secret selector",
+        "Validate upload inputs",
+        "Checkout",
+        "Setup Python",
+        "Check cross-run duplicate claim",
+        "Persist upload claim",
+        "Download PLM Render Cloud output",
+        "Execute Social Hub and YouTube Adapter",
+        "Upload normalized result",
+        "Post Setup Python",
+        "Post Checkout",
+        "Complete job"
+      ]
+    },
+    {
+      "name": "result",
+      "conclusion": "success",
+      "steps": [
+        "Set up job",
+        "Checkout",
+        "Setup Python",
+        "Download YouTube Adapter result artifact",
+        "Build pipeline result",
+        "Upload pipeline result for n8n",
+        "Publish fetchable pipeline result",
+        "Write job summary",
+        "Post Setup Python",
+        "Post Checkout",
+        "Complete job"
+      ]
+    }
+  ],
+  "artifact": {
+    "artifact_id": 10872563241,
+    "name": "pipeline-result-yt-1243-1790349856887",
+    "zip_sha256": "4dbe89024fcc24d26827ead08407121081098cd548142743bdde60c0f89f00a8",
+    "json_sha256": "a6d6935ff7f09b3ba99eb995a0512f82edd32f26e29202086873f93aae34213c",
+    "status": "succeeded",
+    "video_id_present": true,
+    "voice": "succeeded",
+    "render": "succeeded",
+    "quality_gate": "succeeded",
+    "quality_gate_ok": true,
+    "youtube_adapter": "success",
+    "youtube_upload_accepted": true,
+    "youtube_status": "queued",
+    "youtube_processing_complete_proven": false
+  },
+  "historical_cross_run_claim": {
+    "present": true,
+    "artifact_id": 10872941262,
+    "retention_days": 30,
+    "permanent_durability_proven": false
+  },
+  "oauth": {
+    "name": "PLM_YOUTUBE_GAME_001",
+    "classification": "HISTORICALLY_CONFIRMED / CURRENTLY_UNVERIFIED",
+    "current_exists": null,
+    "values_read": false
+  },
+  "interpretation": {
+    "existing_youtube_automation_percent": 98,
+    "percentage_basis": "USER_PROJECT_ESTIMATE_NOT_MEASURED_WORK_UNITS",
+    "new_hardened_live_e2e_completed": 0,
+    "new_hardened_live_e2e_target": 1,
+    "apt_004h_applies_to": "C_RUNTIME_REPRODUCIBILITY_HARDENING_ONLY",
+    "existing_production_unfinished_from_004h": false
+  },
+  "operations_this_audit": {
+    "YouTube_upload": 0,
+    "004H_rerun": 0,
+    "production_changes": 0,
+    "Cloudflare_write": 0,
+    "secret_values_read": 0
+  }
+}

@@ -1,3 +1,13 @@
+# 進捗基準の訂正（2026-10-06追補）
+
+既存YouTube自動化はユーザー基準の約98%。production run 36153932146 の全job SUCCESS、保存artifactのstatus=succeeded/video_idあり/voice-render-quality_gate=succeededを再確認した。成功版2fa012dd4f9630bf414533e4977b8390952a6794と現在main b0c7f429a1f58726c4a75f4fb090928cf567b585の差はdocs/COMMAND_CENTER.mdだけで、実装コードは同一。新しいserverless hardened経路のlive E2E 0/1は独立指標である。004H BLOCKEDはCの固定runtime検証であり、既存本体が未完成だった証拠として扱わない。
+
+OAuthは HISTORICALLY_CONFIRMED / CURRENTLY_UNVERIFIED。現在secret不在と判定しない。secret metadata取得不能だけで他のoffline作業を止めない。既存productionにもconcurrency＋upload前のcross-run claim artifactがある。retention30日なので恒久ledgerとは別に評価する。保存成功artifactのyoutube_status=queuedはupload受付後の処理待ちであり、過去upload成功を否定しない。一方、新hardened候補のprocessed確認gateはより厳格な別の受入条件である。
+
+今回のQueue候補・A/B/C/D評価・残りの具体的作業は YOUTUBE_REMAINING_WORK_20261006.md を参照。以下の前回記録は新hardened準備の履歴であり、production全体の進捗指標には使わない。
+
+---
+
 # YouTube経路のoffline境界（2026-10-06）
 
 sandbox parent: d9bc6a7e51864d51a561808db26de813d7a14268

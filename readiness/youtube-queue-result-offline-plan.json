@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "identity": "youtube-queue-result-offline-preparation-20261006",
+  "parent_sha": "26030d9f439c967e8c4b888324064b21ae38cbe5",
+  "mode": "OFFLINE_ONLY",
+  "allow": false,
+  "execution_approved": false,
+  "live_ready": false,
+  "workflow_created": false,
+  "runtime_marker_created": false,
+  "Cloudflare_remote_applications": 0,
+  "YouTube_uploads": 0,
+  "production_changes": 0,
+  "004H_reruns": 0,
+  "automatic_trigger_enabled": false,
+  "no_retry": true,
+  "no_resume": true,
+  "scope": "one YouTube account; bounded candidate; no 100-account rollout",
+  "dependency": {
+    "path": "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql",
+    "sha256": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "live_application_authorized": false
+  },
+  "candidate_sha256": {
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+    "readiness/youtube_queue_candidate.py": "e2b9be46dcf084beb8aa03cd2eafd359de5063fb0e159559675331ceaeb704d2",
+    "readiness/test_youtube_queue_candidate.py": "d15d3c3a5dfb3a2dc782cc7bec85da7c2bf3d0c3e239294b7d1955458071d764",
+    "readiness/youtube-production-history-20261006.json": "43994ae0fdad803eb2ac0b866f696ac18a53bae6f3f2707ba16ac6f3cd1bfa22"
+  },
+  "safety_flags": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "budgets": {
+    "queue_lifetime_cap": 32,
+    "send_attempts_per_dispatch": 1,
+    "retry": 0,
+    "resume": 0,
+    "fake_sqlite_only": true,
+    "real_dispatch": 0,
+    "real_upload": 0,
+    "artifact_upload": 0,
+    "paid_services_enabled": 0
+  },
+  "required_before_any_live_connection": [
+    "fresh remote exact schema and protected-row read-only preflight",
+    "current free account-wide capacity and OAuth readiness; no values",
+    "reviewed deployed durable driver and callback authentication",
+    "exact-parent workflow/plan/query hashes and separate marker-only runtime approval if needed",
+    "QG PASS and exactly one new private asset/claim, notify=false, separate first-upload approval"
+  ],
+  "current_oauth_classification": "HISTORICALLY_CONFIRMED / CURRENTLY_UNVERIFIED",
+  "progress_axes": {
+    "A": {
+      "percent": 98,
+      "basis": "USER_PROJECT_ESTIMATE",
+      "historical_E2E_run": 36153932146,
+      "implementation_changed": false
+    },
+    "B": {
+      "gate": "OFFLINE_CANDIDATE_PREPARED_NOT_DEPLOYED",
+      "new_live_E2E": "0/1"
+    },
+    "C": {
+      "gate": "APT_UNKNOWN_DIAGNOSTIC_BLOCKED_NEW_ROUTE_ONLY"
+    },
+    "D": {
+      "gate": "TRIGGER_CONNECTION_AND_24H_ACCEPTANCE_PENDING"
+    }
+  }
+}
