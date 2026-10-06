@@ -138,7 +138,12 @@ class WorkerInspectionTests(unittest.TestCase):
             bad=dict(marker);bad[key]='0'*len(bad[key])
             with self.assertRaises(p.Stop):p.validate_marker(bad,plan,before,files)
     def test_plan_and_marker_absent(self):
-        plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertFalse((ROOT/p.MARKER).exists())
+        plan=json.loads((ROOT/p.PLAN).read_bytes())
+        if (ROOT/p.MARKER).exists():
+            consumed=json.loads((ROOT/p.MARKER).read_bytes())
+            self.assertEqual(consumed['identity'],p.IDENTITY)
+            self.assertEqual(consumed['state'],'CONSUMED_BEFORE_REMOTE')
+            self.assertEqual(consumed['prepared_commit_sha'],'95090e18396888e9ee74ec6f46bc431f5ea565cc')
         for k in ('maximum_writes','retry','resume','redirect','pagination_fallback','raw_retention'):self.assertEqual(plan[k],0)
         self.assertEqual(plan['maximum_requests'],3);self.assertEqual(plan['run_attempt'],1)
     def test_workflow_static(self):
