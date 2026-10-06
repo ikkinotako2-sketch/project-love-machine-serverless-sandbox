@@ -89,7 +89,10 @@ class PolicyProbeR2Tests(unittest.TestCase):
         with self.assertRaises(p.Stop):p.validate_marker(bad,plan,before,files)
         bad=dict(marker,helper_sha256='0'*64)
         with self.assertRaises(p.Stop):p.validate_marker(bad,plan,before,files)
-        self.assertFalse((root/p.MARKER).exists())
+        if (root/p.MARKER).exists():
+            consumed=json.loads((root/p.MARKER).read_bytes())
+            self.assertEqual(consumed['identity'],p.IDENTITY)
+            self.assertEqual(consumed['state'],'CONSUMED_BEFORE_REMOTE')
     def test_workflow_cannot_launch_on_preparation_push(self):
         root=Path(__file__).resolve().parents[1];text=(root/p.WORKFLOW).read_text()
         self.assertIn("paths: ['"+p.MARKER+"']",text);self.assertNotIn('workflow_dispatch:',text)

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["identity", "state", "prepared_commit_sha", "plan_sha256", "workflow_sha256", "helper_sha256"],
+  "properties": {
+    "identity": {"const": "youtube-worker-current-readonly-inspect-20261006-r1"},
+    "state": {"const": "CONSUMED_BEFORE_REMOTE"},
+    "prepared_commit_sha": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "workflow_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "helper_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

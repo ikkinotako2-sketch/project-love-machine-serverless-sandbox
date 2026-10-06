@@ -1,0 +1,118 @@
+{
+  "identity": "youtube-worker-current-readonly-inspect-20261006-r1",
+  "exact_parent_sha": "bb13c44361b927a67245a846bc38db00c578733f",
+  "execution_approved": false,
+  "prepared_not_executed": true,
+  "token_type": "ACCOUNT_OWNED",
+  "target_account": "6c8ccd6aface937ab5dabef61cb64534",
+  "target_worker": "plm-serverless-sandbox-control",
+  "credential_secret_name": "PLM_CF_WORKER_API_TOKEN",
+  "workflow_path": ".github/workflows/plm-youtube-worker-current-readonly-once.yml",
+  "helper_path": "readiness/youtube_worker_current_inspection.py",
+  "maximum_requests": 3,
+  "maximum_writes": 0,
+  "retry": 0,
+  "resume": 0,
+  "redirect": 0,
+  "pagination_fallback": 0,
+  "raw_retention": 0,
+  "no_retry": true,
+  "no_resume": true,
+  "run_attempt": 1,
+  "response_bytes_max_each": 262144,
+  "request_method": "GET",
+  "endpoints": [
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2",
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules",
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/queues"
+  ],
+  "routes": "ROUTES_DEFERRED_UNTIL_EXACT_ZONE_ID",
+  "routes_readiness": "UNVERIFIED_ZONE_ID_OR_PERMISSION",
+  "zone_id": null,
+  "migrations": {
+    "0008": "NOT_APPLIED",
+    "0009": "NOT_APPLIED",
+    "0010": "NOT_APPLIED"
+  },
+  "d1_evidence_separate": "readiness/youtube-remote-readonly-37409541462.json; no new D1 requests",
+  "credential_evidence": {
+    "identity": "youtube-cloudflare-credential-policy-readonly-20261006-r2",
+    "run_id": 37472019662,
+    "marker_commit": "bb13c44361b927a67245a846bc38db00c578733f",
+    "attempt": 1,
+    "token_status": "ACTIVE_AT_R2_OBSERVATION",
+    "policy_metadata": "READ_SUCCESS",
+    "queues": "CONFIRMED",
+    "worker_source": "READ_CANDIDATE_NOT_ENDPOINT_SUCCESS",
+    "worker_schedules": "READ_CANDIDATE_NOT_ENDPOINT_SUCCESS",
+    "worker_only_resource_restriction": "UNVERIFIED_FROM_ACCOUNT_RESOURCE_SELECTOR",
+    "current_endpoint_success": "UNVERIFIED"
+  },
+  "exact_permission_mapping": {
+    "name": "Workers Content Read-Only",
+    "observed_id": "3517fad527464d8bbba2c2a9a6eefaa9",
+    "observed_name_sha256": "5f5fa61c1fabd098b28886c17a312aea38d9fdb3a86dfad019700b474a6764dd",
+    "unknown_permission_fallback": false,
+    "legacy_equivalence": "Official Workers Scripts Read maps to Content Read-Only at Workers product scope. Scope is evaluated separately; no per-Worker scope is invented."
+  },
+  "marker": {
+    "path": "audit-evidence/consumed/youtube-worker-current-readonly-inspect-20261006-r1.json",
+    "schema_path": "readiness/youtube-worker-current-readonly-marker.schema.json",
+    "state_now": "NOT_CREATED_NOT_CONSUMED",
+    "future_state": "CONSUMED_BEFORE_REMOTE",
+    "future_commit_message": "PLM credential policy readonly once youtube-worker-current-readonly-inspect-20261006-r1",
+    "approval_must_bind_prepared_head": true,
+    "marker_commit_only_changed_file": true,
+    "marker_cannot_preexist": true,
+    "schema_sha256": "04b7f5fdf9ef62b44b1f5f7aa544380c3574d1c34beed1ad7385d5c46fd67cf0"
+  },
+  "source_hash_boundary": "SHA256 of exact bounded content/v2 HTTP response bytes, in memory only; not presumed identical to sandbox bundle or normalized logical script. MIME parameters discarded. No raw source, vars, headers, errors or response artifact retained.",
+  "pagination_proof": "Require result_info count=total_count=len(result), page=1, positive per_page>=count, total_pages=1 (0 only for empty result). Missing/contradictory/multiple-page metadata: UNVERIFIED_INCOMPLETE_PAGINATION; no second page.",
+  "consumer_boundary": "Sanitize ID/type/target-worker equality only. Incomplete embedded consumers => UNVERIFIED absence, never falsely absent. Queue names hashed; no settings, headers, URLs or producer data retained.",
+  "stop_conditions": [
+    "credential missing",
+    "exact parent/identity/files/marker mismatch",
+    "attempt not1",
+    "403 or404",
+    "redirect/non200",
+    "transport unknown no retry",
+    "response exceeds262144bytes",
+    "invalid duplicate JSON or shape",
+    "unexpected schedules pagination",
+    "incomplete queues pagination",
+    "unknown ambiguous response"
+  ],
+  "consumed_identities": [
+    "youtube-cloudflare-credential-policy-readonly-20261006-r1",
+    "youtube-cloudflare-credential-policy-readonly-20261006-r2",
+    "004H"
+  ],
+  "forbidden": [
+    "routes GET",
+    "D1 read/write",
+    "token probe GET",
+    "Worker deploy",
+    "migration",
+    "route/cron/Queue mutation",
+    "production access/change",
+    "YouTube dispatch/upload",
+    "secret changes",
+    "raw source retention",
+    "rerun/retry/resume"
+  ],
+  "expected_outputs": [
+    "sanitized request counts and terminal STOP or SUCCESS",
+    "source response SHA256/byte count/MIME/status and existence/read capability",
+    "cron count and sanitized cron expressions",
+    "complete Queue inventory count and bounded embedded consumer association",
+    "routes UNVERIFIED and D1 separate evidence"
+  ],
+  "official_sources": [
+    "https://developers.cloudflare.com/workers/authorization/workers/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/content/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/schedules/methods/get/",
+    "https://developers.cloudflare.com/api/resources/queues/methods/list/"
+  ],
+  "workflow_sha256": "9abe9df0c20854e5a515f12ca817314e8a9d4dca7004db73abfa8dbb33aeea58",
+  "helper_sha256": "1d5168b04f3754c43a7337128f7fe0494984bb9799b99c73dd8f0c927a3ca790"
+}
