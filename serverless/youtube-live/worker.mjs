@@ -73,12 +73,12 @@ export class Boundary{
  await this.a.batch([['reserve',[dispatch,job,payloadHash]],['dispatched',[now,job,version]]]);
  this.capabilities.set(dispatch,{payload,q});return dispatch;
  }
- async mockSend(dispatch,transport,now){
- need(!this.stopped&&transport?.offlineMock===true&&typeof transport.send==='function'&&integer(now),'OFFLINE_TRANSPORT_REQUIRED');
+ async mockSend(dispatch,transport,now,timeoutMs=30000){
+ need(!this.stopped&&transport?.offlineMock===true&&typeof transport.send==='function'&&integer(now)&&integer(timeoutMs)&&timeoutMs<=30000,'OFFLINE_TRANSPORT_REQUIRED');
  const cap=this.capabilities.get(dispatch);need(cap,'NO_RESUME');this.capabilities.delete(dispatch);
  await this.a.batch([['sent',[dispatch]]]);
- try{const status=await transport.send(TARGET,structuredClone(cap.payload));need(status===204,'NON204');return {accepted:true,uploadSucceeded:false,nextEligible:false};}
- catch{this.stopped=true;await this.a.batch([['unknownOut',[dispatch]],['unknownQueue',[now,cap.q.job_id]]]);throw new Error('UNKNOWN_PERMANENT_STOP');}
+ let timer;try{const status=await Promise.race([Promise.resolve().then(()=>transport.send(TARGET,structuredClone(cap.payload))),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('TIMEOUT')),timeoutMs);})]);clearTimeout(timer);need(status===204,'NON204');return {accepted:true,uploadSucceeded:false,nextEligible:false};}
+ catch{clearTimeout(timer);this.stopped=true;await this.a.batch([['unknownOut',[dispatch]],['unknownQueue',[now,cap.q.job_id]]]);throw new Error('UNKNOWN_PERMANENT_STOP');}
  }
  async callback(raw,signature,key,keyId,now){
  need(!this.stopped,'STOP');const b=await verifyCallback(raw,signature,key,keyId,now);const digest=await hash(raw);

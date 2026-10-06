@@ -46,3 +46,5 @@ test('successor manifest binds exact source/bundle/workflow, immutable old plan 
  assert.equal(await hash(readFileSync(new URL('../readiness/youtube-live-connection-plan.json',import.meta.url),'utf8')),evidence.plan_sha256);
  assert.equal(evidence.read_only_identity_consumed,true);
 });
+
+test('never-resolving mock transport times out and permanently stops',async()=>{const {c}=await fixture();const d=await c.reserve('job',2,inputs,1000);await assert.rejects(c.mockSend(d,{offlineMock:true,send:()=>new Promise(()=>{})},1000,1));assert.equal(c.stopped,true);});

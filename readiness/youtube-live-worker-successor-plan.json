@@ -30,19 +30,20 @@
     "unknown_path_logical_row_mutations_per_job": 7,
     "worker_call_sql_statements_per_successful_job": 7
   },
-  "bundle_sha256": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
-  "callback_implementation_sha256": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
+  "bundle_sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+  "callback_implementation_sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
   "callback_secret": "SECRET_REQUIRED_CURRENTLY_UNVERIFIED",
   "current_schema_evidence": "readiness/youtube-remote-readonly-37409541462.json",
-  "d1_query_sha256": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
+  "d1_query_sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
   "deploy_launchable": false,
-  "dispatch_implementation_sha256": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
+  "dispatch_implementation_sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
   "dispatch_transport": "OFFLINE_MOCK_ONLY_NO_AMBIENT_NETWORK",
   "exact_parent_sha": "33d2471f65c01fc9397c8d1d04e9299c2fb135a8",
   "execution_approved": false,
   "fixture_live_allowed": false,
   "kind": "POST_READONLY_OFFLINE_WORKER_SUCCESSOR_NOT_DEPLOY_APPROVAL",
   "live_e2e": "0/1",
+  "maximum_mock_send_timeout_ms": 30000,
   "migrations": {
     "0008": "NOT_APPLIED",
     "0009": "NOT_APPLIED",
@@ -71,15 +72,16 @@
   },
   "query_hash_scope": "Full single-module source containing exact SQL dictionary; no runtime query construction",
   "source_sha256": {
-    ".github/workflows/plm-offline-readiness.yml": "39f7c4c56942ca02d0b476415a4fac16ad033e53d6f8cd02bb60f552582577aa",
+    ".github/workflows/plm-offline-readiness.yml": "530484fb369e2e590fcd4142923e941132c5f72d9dcdcdf506b59093d506a34f",
+    ".github/workflows/plm-youtube-live-offline.yml": "ed9b668572c9691e206de8ddb95b1cdcfc9a6248ba9c09722803204d9efd3e20",
     "readiness/youtube-live-connection-plan.json": "1ba3c9b7a5bf8c0662b6fba98f31c553347cb80b751d03839dfe335b99e2affb",
     "readiness/youtube-remote-readonly-37409541462.json": "95aeaaa6ba9f4cba0e7e12946d475319997fe329c25b2d44d42a1dfff8c8a320",
     "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
     "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
     "serverless/test-youtube-live-sql.mjs": "d599b29d65de201490e3682dd445027bcab6976b2f975839d0818ae2d8887930",
-    "serverless/test-youtube-live.mjs": "15ea51625a14a8d04f2bfa802d8839537a1fb75028c74cbf0a7d2eb7a47f2ef0",
-    "serverless/youtube-live/bundle.mjs": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
-    "serverless/youtube-live/worker.mjs": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b",
+    "serverless/test-youtube-live.mjs": "32f6522f9a53273d0039a4be516baaede353ed8851c76ed74246d3943dbc4141",
+    "serverless/youtube-live/bundle.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+    "serverless/youtube-live/worker.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
     "serverless/youtube-live/wrangler.stopped.json": "646180b3d6adbe9a512875a9f0bab01e2f423691511db3b4dd537508c6acf17c"
   },
   "source_tree": "Git tree to be fixed by preparation commit; manifest covers new executable source and immutable inputs",
@@ -109,5 +111,5 @@
     "pipeline run versus render subworkflow run mapping"
   ],
   "upload_disabled_after_deploy": true,
-  "worker_source_sha256": "a78945a08b5b2d13295e850351a9725f892db853a14e24444a5315df0bf1f73b"
+  "worker_source_sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
 }
