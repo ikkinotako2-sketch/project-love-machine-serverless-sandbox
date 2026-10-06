@@ -39,3 +39,5 @@ n8nのテーマ/input producerと結果consumerは当面維持し、serverless�
 004Hはmarker/historyに依存する拒否に加え、両guard entryで明示的に `IDENTITY_CONSUMED_004H` として最初に拒否する。marker不存在を仮定したoffline oracleでも拒否し、runtime/metadata commandの前にSTOPする。既存marker・APT/runtime workflowは不変。旧004H parent guardテストは、より早い固定code拒否を確認するよう更新した。
 
 production/sandboxのActions secret一覧metadataのみ読み取りを試みたが、この接続ではUNVERIFIED。値は取得していない。secret不在とは判定せず、upload readinessは引き続きBLOCKEDとする。
+
+guard強化後に、旧testが004Hを未consumed oracleとして再利用していたことを検出した。markerの一般的なdiff/history/rerunテストは既存setup()の非consumed offline fixtureへ戻し、004H固有テストは明示拒否codeを確認する。実identityの再利用や新marker作成は行わない。

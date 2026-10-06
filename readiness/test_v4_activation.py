@@ -30,20 +30,20 @@ class ActivationTests(unittest.TestCase):
             self.assertIn(expression,text)
         for flag in ('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'):self.assertIn(flag+": 'true'",text)
     def test_wrong_repository(self):
-        k=setup(b.PREFLIGHT_V4H_ID);k['context']['repository']='other/repo'
+        k=setup();k['context']['repository']='other/repo'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_wrong_branch(self):
-        k=setup(b.PREFLIGHT_V4H_ID);k['context']['branch']='main'
+        k=setup();k['context']['branch']='main'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_wrong_event(self):
-        k=setup(b.PREFLIGHT_V4H_ID);k['context']['event']='workflow_dispatch'
+        k=setup();k['context']['event']='workflow_dispatch'
         with self.assertRaisesRegex(Stop,'UNEXPECTED_BRANCH_OR_EVENT'):b.launch_gate(**k)
     def test_marker_modified_deleted(self):
         for status in ('modified','removed'):
-            k=setup(b.PREFLIGHT_V4H_ID);k['commit']['files'][0]['status']=status
+            k=setup();k['commit']['files'][0]['status']=status
             with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.launch_gate(**k)
     def test_rerun(self):
-        k=setup(b.PREFLIGHT_V4H_ID);k['context']['run_attempt']=2
+        k=setup();k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
     def test_guard_failure_zero_process_and_network(self):
         for code in ('MARKER_MISSING','RERUN_REJECTED','BLOCKED_HISTORY_CONTINUITY_LOST'):
@@ -98,7 +98,7 @@ class ActivationTests(unittest.TestCase):
     def test_004h_consumed_marker_rejected_by_primary_history_guard(self):
         self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4H_ID)).is_file())
         k=setup(b.PREFLIGHT_V4H_ID);k['parent_marker']=k['marker']
-        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_PARENT'):b.launch_gate(**k)
+        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004H'):b.launch_gate(**k)
     def test_bounded_output_limit_stops_and_no_raw_exception(self):
         class Pipe:
             def fileno(self):return 1

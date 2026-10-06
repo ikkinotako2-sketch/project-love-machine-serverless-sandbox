@@ -1,3 +1,5 @@
+# Historical marker mechanics use setup()'s existing non-consumed offline fixture.
+# 004H is permanently rejected independently; this creates no marker or runtime.
 from oracle_bridge import require_guard
 require_guard()
 import copy
@@ -119,7 +121,7 @@ class V4BDiagnosticTests(unittest.TestCase):
         self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4H_ID)).is_file())
         for identity in (b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(identity)).exists())
     def test_new_marker_first_addition_and_rerun(self):
-        k=setup(b.PREFLIGHT_V4H_ID);self.assertTrue(b.launch_gate(**k)['consumed']);k['context']['run_attempt']=2
+        k=setup();self.assertTrue(b.launch_gate(**k)['consumed']);k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
     def test_metadata_binary_url_refused(self):
         with self.assertRaisesRegex(Stop,'SOURCE_INDEX_MISMATCH'):v.metadata_get(d.REPO+'/pool/main/a/a.deb',100)

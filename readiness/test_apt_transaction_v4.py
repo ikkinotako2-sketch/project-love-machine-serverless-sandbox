@@ -1,3 +1,5 @@
+# Historical marker mechanics use setup()'s existing non-consumed offline fixture.
+# 004H is permanently rejected independently; this creates no marker or runtime.
 from oracle_bridge import require_guard
 require_guard()
 import copy
@@ -200,18 +202,18 @@ class TransactionV4Tests(unittest.TestCase):
             self.assertEqual((Path(directory)/'sources.list').read_text().split()[-3:],['noble','main','universe'])
     def test_004_marker_history_and_rerun(self):
         from test_branch_marker_once import setup
-        k=setup(b.PREFLIGHT_V4H_ID);self.assertTrue(b.launch_gate(**k)['consumed'])
+        k=setup();self.assertTrue(b.launch_gate(**k)['consumed'])
         k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)
-        k=setup(b.PREFLIGHT_V4H_ID);k['marker_history_page']=lambda page:[{'sha':b.BASELINE}] if page==1 else []
+        k=setup();k['marker_history_page']=lambda page:[{'sha':b.BASELINE}] if page==1 else []
         with self.assertRaisesRegex(Stop,'CONSUMED_HISTORY'):b.launch_gate(**k)
     def test_004_marker_diff_and_parent(self):
         from test_branch_marker_once import setup
-        k=setup(b.PREFLIGHT_V4H_ID);k['commit']['files'].append({'filename':'readiness/other','status':'modified'})
+        k=setup();k['commit']['files'].append({'filename':'readiness/other','status':'modified'})
         with self.assertRaisesRegex(Stop,'ONLY_ADDITION'):b.launch_gate(**k)
-        k=setup(b.PREFLIGHT_V4H_ID);k['parent_marker']={}
+        k=setup();k['parent_marker']={}
         with self.assertRaisesRegex(Stop,'CONSUMED_PARENT'):b.launch_gate(**k)
     def test_004_history_gap(self):
         from test_branch_marker_once import setup
-        k=setup(b.PREFLIGHT_V4H_ID);k['history_page']=lambda page:[]
+        k=setup();k['history_page']=lambda page:[]
         with self.assertRaisesRegex(Stop,'BLOCKED_HISTORY_CONTINUITY_LOST'):b.launch_gate(**k)
