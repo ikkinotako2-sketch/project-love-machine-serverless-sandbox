@@ -29,3 +29,7 @@ n8nのテーマ/input producerと結果consumerは当面維持し、serverless�
 新runtimeはexact parent/workflow/plan/hash/独立identity/no_retry/no_resumeを準備し、marker作成直前で止める。今回004J runtime candidateもmarkerも作らない。未知E:のsource templateに証拠が得られるまで、新たな同条件runtimeを単に繰り返す価値はない。
 
 初回YouTube実uploadはQuality Gate PASS、1本、新規durable claim、secret存在のみ、private、notify=false、current無料容量を確認して、ownerの明示承認直前で止める。public/unlisted/SNSを許可しない。すべてcloud、PC/WSLなし。今回のruntime effectsは全て0。
+
+## 既存input経路との接続
+
+`youtube_preparation_bridge.py` は既存 `script_to_render`、`parity.normalize_script/render_payload/pipeline_inputs` を通してテーマ・固定台本から既存形式の入力を作る。job IDは既存yt-number-timestamp形式を維持し、account/job/contentで安定したidempotency keyを導出する。provider-neutral checkpointの再利用もテストする。fake QG/private response/result保存まで1つのoffline経路で確認するが、render/uploadの実行実績には数えない。QGはfield whitelistとsecret-like caption拒否を追加した。

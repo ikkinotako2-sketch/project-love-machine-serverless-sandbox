@@ -13,7 +13,7 @@ from youtube_pipeline_production_result_snapshot import build_pipeline_result
 ROOT = Path(__file__).resolve().parents[1]
 
 def request():
-    return {'job_id': 'job-' + '1'*32, 'account_id': 'youtube_game_001',
+    return {'job_id': 'yt-900001-1790942400000', 'account_id': 'youtube_game_001',
         'idempotency_key': '2'*64, 'media_sha256': '3'*64, 'video_count': 1,
         'privacy_status': 'private', 'notify_subscribers': False, 'scheduled_for': None,
         'made_for_kids': False, 'contains_synthetic_media': True,
@@ -77,7 +77,7 @@ class PipelineTests(unittest.TestCase):
         for same_job in (True, False):
             req=request();req['idempotency_key']='4'*64
             if same_job: req['media_sha256']='5'*64
-            else: req['job_id']='job-'+'6'*32
+            else: req['job_id']='yt-900002-1790942400001'
             q=quality();q['media_sha256']=req['media_sha256']
             with self.assertRaisesRegex(y.Stop,'DUPLICATE_OR_CONSUMED'):
                 self.run_fake(req,q)
@@ -167,6 +167,12 @@ class PipelineTests(unittest.TestCase):
     def test_extra_artifact_before_claim(self):
         f=files();f['oauth.json']=1;self.reject(inventory=f)
 
+    def test_quality_extra_raw_body_rejected_before_claim(self):
+        q=quality();q['raw_stdout']='FAKE_SECRET_BODY';self.reject(q=q)
+
+    def test_quality_secret_like_captions_rejected_before_claim(self):
+        q=quality();q['captions']='Dialogue: refresh_token=FAKE_SECRET';self.reject(q=q)
+
     def test_extra_request_secrets_before_claim(self):
         req=request();req['oauth_token']='FAKE_SECRET';self.reject(req=req)
 
@@ -181,7 +187,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_second_job_only_after_result_and_distinct_claim(self):
         self.run_fake()
-        req=request();req.update(job_id='job-'+'4'*32,idempotency_key='5'*64,media_sha256='6'*64)
+        req=request();req.update(job_id='yt-900002-1790942400001',idempotency_key='5'*64,media_sha256='6'*64)
         q=quality();q['media_sha256']=req['media_sha256']
         r=reply();r['media_sha256']=req['media_sha256'];r['post_id']='offline0002'
         self.run_fake(req,q,response=r)
@@ -191,7 +197,7 @@ class PipelineTests(unittest.TestCase):
         self.ledger.claim(request(),quality(),files())
         self.ledger.transition(request()['idempotency_key'],'CLAIMED','ATTEMPTED')
         self.ledger.transition(request()['idempotency_key'],'ATTEMPTED','UNKNOWN')
-        req=request();req.update(job_id='job-'+'4'*32,idempotency_key='5'*64,media_sha256='6'*64)
+        req=request();req.update(job_id='yt-900002-1790942400001',idempotency_key='5'*64,media_sha256='6'*64)
         q=quality();q['media_sha256']=req['media_sha256']
         with self.assertRaisesRegex(y.Stop,'PRIOR_JOB_UNRESOLVED'):
             self.run_fake(req,q)
@@ -251,3 +257,55 @@ class AuditTests(unittest.TestCase):
         for key in ('raw_stdout','raw_stderr','raw_line','oauth_token','exception','message'):
             self.assertNotIn(key,raw)
         self.assertFalse(payload['live_ready'])
+
+class ExistingRouteBridgeTests(unittest.TestCase):
+    def script(self):
+        payload=json.loads((ROOT/'readiness/manual_fixture/render-payload.canonical.json').read_text())
+        return {k:payload[k] for k in ('title','hook','narration','scenes','bgm')}
+
+    def prepare(self, runtime=True):
+        from youtube_preparation_bridge import prepare_fixture
+        return prepare_fixture('机の上に余白を作る',self.script(),request()['job_id'],
+            dict.fromkeys(y.FLAGS,True),quality(),files(),
+            {'oauth_secret_exists':True,'quota_verified':True,
+             'zero_cost_verified':True,'runtime_verified':runtime})
+
+    def test_theme_to_existing_inputs_quality_private_result_next_data_only(self):
+        prepared=self.prepare()
+        req=prepared['request']
+        self.assertEqual(prepared['pipeline_inputs']['job_id'],req['job_id'])
+        self.assertEqual(prepared['render_payload']['speaker'],1)
+        for field in ('privacy_status','notify_subscribers','made_for_kids','contains_synthetic_media'):
+            self.assertEqual(prepared['pipeline_inputs'][field],req[field])
+        self.assertFalse(prepared['render_executed'])
+        self.assertFalse(prepared['upload_executed'])
+        db=sqlite3.connect(':memory:')
+        try:
+            ledger=y.ReferenceLedger(db)
+            result=y.OfflinePrivatePipeline(ledger).execute(req,quality(),files(),reply)
+            self.assertEqual(result['job_id'],req['job_id'])
+            self.assertTrue(result['next_job_ready'])
+            self.assertEqual(ledger.result(req['idempotency_key']),result)
+            self.assertEqual(result['actual_operations'],0)
+        finally:db.close()
+
+    def test_existing_id_and_immutable_checkpoint_reuse_no_provider_call(self):
+        from provider_neutral_generation import checkpoint_fixture, render_input_fixture
+        raw=json.dumps(self.script(),ensure_ascii=False)
+        checkpoint=checkpoint_fixture('manual_fixture','fixed-script-v1','a'*64,raw,
+            '机の上に余白を作る',request()['job_id'],dict.fromkeys(y.FLAGS,True))
+        restored=render_input_fixture(checkpoint,'manual_fixture','fixed-script-v1','a'*64)
+        self.assertEqual(restored['script'],self.script())
+        self.assertFalse(restored['live_permitted'])
+        with self.assertRaisesRegex(ValueError,'immutable_checkpoint'):
+            checkpoint_fixture('manual_fixture','fixed-script-v1','a'*64,raw,
+                '机の上に余白を作る',request()['job_id'],dict.fromkeys(y.FLAGS,True),
+                existing=checkpoint)
+
+    def test_runtime_blocker_reaches_bridge_before_any_effect(self):
+        with self.assertRaisesRegex(y.Stop,'RUNTIME_NOT_VERIFIED'):
+            self.prepare(runtime=False)
+
+    def test_replay_stable_idempotency_and_content_change_binding(self):
+        self.assertEqual(self.prepare()['request']['idempotency_key'],
+                         self.prepare()['request']['idempotency_key'])

@@ -303,9 +303,10 @@
       ],
       "state": "OFFLINE_CONTRACT_ONLY",
       "evidence": [
-        "readiness/youtube_pipeline_offline.py"
+        "readiness/youtube_pipeline_offline.py",
+        "readiness/youtube_preparation_bridge.py"
       ],
-      "remaining": "Offline SQL blocks distinct next job until prior RESULT_SAVED. Full unattended generation is also gated on current $0 provider entitlement. No auto-dispatch/schedule/paid provider enabled; no live queue installed."
+      "remaining": "Offline SQL blocks distinct next job until prior RESULT_SAVED. Full unattended generation is also gated on current $0 provider entitlement. No auto-dispatch/schedule/paid provider enabled; no live queue installed. Existing yt-number-timestamp job IDs, normalized render payload and pipeline inputs are now joined by a data-only bridge; no dispatch is wired."
     }
   ],
   "approval_boundaries": {
@@ -326,5 +327,6 @@
     "YouTube/SNS upload",
     "user-PC execution",
     "005 installer"
-  ]
+  ],
+  "offline_entry": "readiness/youtube_preparation_bridge.py"
 }

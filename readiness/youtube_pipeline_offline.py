@@ -33,7 +33,7 @@ def validate_contract(request, quality, files):
          and all(request['flags'][k] is True for k in FLAGS), 'UNSAFE_FLAGS')
     need(request['account_id'] == 'youtube_game_001' and
          isinstance(request['job_id'], str) and
-         re.fullmatch(r'job-[0-9a-f]{32}', request['job_id']), 'UPLOAD_IDENTITY')
+         re.fullmatch(r'yt-[0-9]+-[0-9]{13}', request['job_id']), 'UPLOAD_IDENTITY')
     need(all(isinstance(request[k], str) and HEX.fullmatch(request[k])
              for k in ('idempotency_key', 'media_sha256')), 'UPLOAD_BINDING')
     need(type(request['video_count']) is int and request['video_count'] == 1, 'ONE_VIDEO_REQUIRED')
@@ -46,7 +46,14 @@ def validate_contract(request, quality, files):
                         ('zero_cost_verified', 'ZERO_COST_NOT_VERIFIED'),
                         ('runtime_verified', 'RUNTIME_NOT_VERIFIED')):
         need(request[field] is True, code)
-    need(type(quality) is dict and quality.get('media_sha256') == request['media_sha256'],
+    quality_fields = {'mp4_exists','bytes','video_stream','audio_stream','width','height',
+                      'fps','duration','captions_file_exists','captions','max_yavg',
+                      'mean_volume_db','media_sha256'}
+    need(type(quality) is dict and set(quality) == quality_fields, 'QUALITY_FIELDS')
+    from offline_readiness import SENSITIVE
+    need(isinstance(quality['captions'], str) and len(quality['captions']) <= 65536
+         and not SENSITIVE.search(quality['captions']), 'QUALITY_CAPTIONS_UNSAFE')
+    need(quality.get('media_sha256') == request['media_sha256'],
          'QUALITY_MEDIA_BINDING')
     quality_gate(quality)
     bounds = artifact_gate(files)
