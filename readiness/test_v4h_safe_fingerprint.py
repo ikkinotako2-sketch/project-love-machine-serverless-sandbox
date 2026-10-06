@@ -118,11 +118,18 @@ class PreparationTests(unittest.TestCase):
         from test_branch_marker_once import setup
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004G'):b.cloud_launch_guard({},b.PREFLIGHT_V4G_ID)
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004G'):b.launch_gate(**setup(b.PREFLIGHT_V4G_ID))
-    def test_004h_independent(self):
+    def test_004h_consumed_parent_guard(self):
         import branch_marker_once as b
+        from one_shot_executor import Stop
         from test_branch_marker_once import setup
-        self.assertTrue(b.launch_gate(**setup(b.PREFLIGHT_V4H_ID))['allow'])
-    def test_004h_marker_absent(self):self.assertFalse((ROOT/'audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004h.json').exists())
+        k=setup(b.PREFLIGHT_V4H_ID);k['parent_marker']=k['marker']
+        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_PARENT'):b.launch_gate(**k)
+    def test_004h_marker_present_exact(self):
+        path=ROOT/'audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004h.json'
+        self.assertTrue(path.is_file());m=json.loads(path.read_text())
+        self.assertEqual(m['identity'],'manual-fixture-runtime-preflight-20261005-004h')
+        self.assertEqual(m['approved_parent_sha'],'527a5ca49ebc4ee017f434a8a09d11e9125a75de')
+        self.assertTrue(all(m[k] is True for k in ('created_for_once_only','no_retry','no_resume')))
     def test_render_marker_absent(self):self.assertFalse((ROOT/'audit-evidence/consumed/manual-fixture-render-20261004-001.json').exists())
     def test_005_absent(self):self.assertFalse(list((ROOT/'.github/workflows').glob('*v5*')))
     def test_root_config_pockets_command_unchanged(self):

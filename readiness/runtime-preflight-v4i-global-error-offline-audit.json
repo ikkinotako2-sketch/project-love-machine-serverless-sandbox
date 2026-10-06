@@ -1,0 +1,107 @@
+{
+  "audit_id": "runtime-preflight-v4i-global-error-offline-audit",
+  "mode": "OFFLINE_ONLY",
+  "parent_sha": "450acb8dade21fa0f267217113dd35b888efaf77",
+  "implementation": "Ubuntu Noble APT 2.8.3",
+  "source_commit": "c9fece91ff1cf0ac4e0d272978d3bd8669161989",
+  "source_evidence": "readiness/apt-user-error-v4g-source-evidence.json",
+  "source_fixtures": "readiness/apt-user-error-v4g-source-fixtures.json",
+  "observed_safe_fingerprint": {
+    "stream": "STDERR",
+    "section": "GLOBAL_ERROR",
+    "prefix_class": "E_PREFIX",
+    "known_package_tokens_count": 1,
+    "relation_token": "NONE",
+    "version_operator": "NONE",
+    "has_parent_package": false,
+    "has_dependency_package": false,
+    "has_version_token": false,
+    "indent_bucket": "NONE",
+    "suffix_family": "UNKNOWN",
+    "fixed_reason": "UNSUPPORTED_RELEVANT_USER_ERROR",
+    "syntax_family": "UNSUPPORTED_RELEVANT_USER_ERROR",
+    "relevance": "DEPENDENCY_DECISION_OR_UNKNOWN"
+  },
+  "scope": {
+    "fixture_total": 17,
+    "global_error_e_stderr_candidates": 6,
+    "exact_source_template_matches": 0,
+    "inference_allowed": false,
+    "root_cause_proven": false,
+    "transaction_proof": false,
+    "install_authorized": false
+  },
+  "candidate_mismatches": [
+    {
+      "source_file": "apt-pkg/cacheset.cc",
+      "source_line": 840,
+      "family": "DEPENDENCY_VERSION_NOT_AVAILABLE",
+      "mismatch_fields": [
+        "has_version_token",
+        "suffix_family"
+      ]
+    },
+    {
+      "source_file": "apt-private/private-install.cc",
+      "source_line": 77,
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "mismatch_fields": [
+        "known_package_tokens_count",
+        "suffix_family"
+      ]
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1418,
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "mismatch_fields": [
+        "suffix_family"
+      ]
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1196,
+      "family": "HELD_PACKAGE_SUMMARY",
+      "mismatch_fields": [
+        "known_package_tokens_count",
+        "suffix_family"
+      ]
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1194,
+      "family": "HELD_PACKAGE_SUMMARY",
+      "mismatch_fields": [
+        "known_package_tokens_count",
+        "suffix_family"
+      ]
+    },
+    {
+      "source_file": "apt-private/private-cachefile.cc",
+      "source_line": 113,
+      "family": "BROKEN_PACKAGE_SUMMARY",
+      "mismatch_fields": [
+        "known_package_tokens_count",
+        "suffix_family"
+      ]
+    }
+  ],
+  "conclusion": "NO_EXACT_MATCH_IN_FROZEN_SOURCE_CONFIRMED_GLOBALERROR_E_TEMPLATES",
+  "next_boundary": "Any grammar expansion requires a separately reviewed offline preparation. No 004H rerun and no 004I runtime launch is authorized.",
+  "prohibited_operations_zero": [
+    "apt package mutation",
+    "dpkg mutation",
+    "package binary download",
+    "Docker",
+    "VOICEVOX",
+    "FFmpeg runtime",
+    "media synthesis/encode",
+    "artifact upload",
+    "cache upload",
+    "D1 write",
+    "Worker deploy",
+    "AI call",
+    "YouTube/SNS publish",
+    "user-PC execution"
+  ]
+}
