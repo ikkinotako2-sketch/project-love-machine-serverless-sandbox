@@ -33,6 +33,3 @@ jobs:
       - name: Check exact proposed production patch without applying it
         working-directory: readiness/production-candidate/base
         run: git apply --check ../production.patch
-      - name: Check revised production patch without applying it
-        working-directory: readiness/production-candidate/base
-        run: git apply --check ../production-revised.patch

@@ -37,5 +37,17 @@
   "merge_approved": false,
   "production_branch_created": false,
   "live_operations": 0,
-  "consumed_identity_reruns": 0
+  "consumed_identity_reruns": 0,
+  "ci_retry": {
+    "superseded_commit": "5e3b5c7757250828021800c0fad416dc13c535c1",
+    "failed_connection_run": 37416794349,
+    "failed_tests": 1,
+    "passed_tests": 86,
+    "cause": "adding a revised check to the frozen connection workflow changed its source hash",
+    "resolution": "restore original workflow byte-identically; add separate revised candidate offline workflow; new commit/push, no rerun"
+  },
+  "revised_ci_workflow": {
+    "path": ".github/workflows/plm-youtube-revised-candidate-offline.yml",
+    "sha256": "42cf14154225be778de8512d4ba5adc58726a0c7575bd32fa42b1842f5abc96f"
+  }
 }

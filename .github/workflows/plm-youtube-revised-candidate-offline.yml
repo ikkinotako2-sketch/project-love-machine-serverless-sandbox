@@ -1,0 +1,48 @@
+name: PLM YouTube Revised Candidate Offline
+on:
+  push:
+    paths: ['readiness/production-candidate/**', 'readiness/test_youtube_revised_scheduling.py', '.github/workflows/plm-youtube-revised-candidate-offline.yml']
+  pull_request:
+    paths: ['readiness/production-candidate/**', 'readiness/test_youtube_revised_scheduling.py', '.github/workflows/plm-youtube-revised-candidate-offline.yml']
+permissions:
+  contents: read
+jobs:
+  revised-candidate:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile trusted offline kernel guard
+        run: gcc -shared -fPIC -O2 -Wall -Werror readiness/guard/native_guard.c -o "$RUNNER_TEMP/plm-offline-guard.so"
+      - name: Guarded legacy cancellation and callback fixture oracle
+        env:
+          PLM_GUARD_LIBRARY: ${{ runner.temp }}/plm-offline-guard.so
+        run: |
+          python - <<'PY'
+          import ctypes,os,sys,unittest
+          sys.path.insert(0,'readiness')
+          import oracle_bridge,guarded_tests
+          assert all(os.environ.get(k)=='true' for k in ('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP'))
+          assert ctypes.CDLL(os.environ['PLM_GUARD_LIBRARY']).plm_guard_active()==1
+          sys.addaudithook(guarded_tests.audit)
+          sys.meta_path.insert(0,guarded_tests.BlockImports())
+          oracle_bridge._guard_active=True
+          suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name) for name in ['test_youtube_connection_candidate','test_youtube_revised_scheduling'])
+          result=unittest.TextTestRunner(verbosity=2).run(suite)
+          print('OFFLINE_GUARD_EVIDENCE native_seccomp_active=true external_api_calls=0 render_executions=0')
+          raise SystemExit(not result.wasSuccessful())
+          PY
+      - name: Check revised production patch without applying it
+        working-directory: readiness/production-candidate/base
+        run: git apply --check ../production-revised.patch
