@@ -1,0 +1,142 @@
+{
+  "artifact_sha256": {
+    "callback_sender": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+    "checkpoint_adapter": "812526012a8954282451d3331aade6e5aa28395efaf4bbb0bb90e5575e428a63",
+    "checkpoint_schema": "79a88960393ad7030b60e707c9de67cceccb16f02d41f7bcf99f41c1f11ea336",
+    "dispatch_adapter": "1000b43a875f56e777788d27a4522f6375e60a2fb6d189fee35b297553d13631",
+    "production_patch": "841bb6315b8b2a36e3a14e127bc082f8483f11461493b8f7092c44b83f40e0f4",
+    "worker_bundle": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f",
+    "worker_source": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5"
+  },
+  "budget": {
+    "A_logical_rows_from_completed_generation_checkpoint_per_job": 18,
+    "A_logical_rows_including_generation_metadata_per_job": 24,
+    "B_write_SQL_from_completed_generation_checkpoint_per_job": 14,
+    "B_write_SQL_including_generation_metadata_per_job": 20,
+    "C_billing_rows_written": "REMOTE_VERIFICATION_REQUIRED",
+    "D_DDL_index_meta_physical": "REMOTE_VERIFICATION_REQUIRED",
+    "candidate_0010_create_statements": 4,
+    "current_expected_remote_writes": 0,
+    "current_max_remote_writes": 0,
+    "max_batch_statements": 4,
+    "max_messages_per_batch": 1,
+    "max_sends_per_job": 1,
+    "max_this_plan_real_sends": 0,
+    "max_worker_deploy_proposed": 1,
+    "owner_video_status_GET_max": 1,
+    "queue_capacity": 32,
+    "scope": "A/B apply to one full success path, no retries, fresh job; operational read/trigger approval is separate; not a total account storage bound",
+    "stage_http_sends_per_successful_job": 3
+  },
+  "callback": {
+    "canonical": "sorted ASCII envelope fields; exact Unicode UTF-8; scalar integer envelope values; cross-language byte fixtures PASS",
+    "checkpoint_protocol": "plm-youtube-checkpoint-v1",
+    "key_reuse": false,
+    "protocol": "plm-youtube-result-v2",
+    "secret_readiness": "SECRET_REQUIRED_CURRENTLY_UNVERIFIED"
+  },
+  "current_execution_approved": false,
+  "dispatch": {
+    "late_success": "UNKNOWN_NO_PROMOTE",
+    "no_resume": true,
+    "no_retry": true,
+    "ref_mutable_fallback": false,
+    "reservation_commit_before_send": true,
+    "send_consumption_commit_before_network": true,
+    "timeout_abort": true
+  },
+  "existing_percent": 98,
+  "expected_candidate_workflow_sha256": "009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5",
+  "future_dispatch_ref": "APPROVED_IMMUTABLE_SUCCESSOR_SHA_REQUIRED",
+  "historical_e2e": 36153932146,
+  "kind": "FIXED_OFFLINE_CONNECTION_CANDIDATE_REMOTE_OR_APPROVAL_GATES_ONLY",
+  "live_e2e": "0/1",
+  "migrations": {
+    "0008": "NOT_APPLIED",
+    "0008_then": "POSTCHECK_STOP_SEPARATE_APPROVAL",
+    "0009": "NOT_APPLIED",
+    "0009_then": "POSTCHECK_STOP_SEPARATE_APPROVAL_0010",
+    "0010": "OFFLINE_CANDIDATE_NOT_APPLIED_THIS_TURN",
+    "partial_unknown": "STOP_NO_REAPPLY"
+  },
+  "parked": {
+    "fetch_status": 503,
+    "queue_consumer": false,
+    "routes": [],
+    "scheduled": false,
+    "upload": false
+  },
+  "preparation_parent_sha": "9ba32b2130f2f3a4826b96d4e23ef53195224f04",
+  "production_base_sha": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+  "proposed_production_files": [
+    ".github/workflows/youtube-pipeline.yml",
+    ".github/workflows/youtube-adapter.yml",
+    "plm/entrypoints/yt_serverless_candidate.py"
+  ],
+  "remaining_gates": {
+    "APPROVAL": [
+      "production patch and exact immutable successor SHA",
+      "separate 0008/0009/0010 approval",
+      "parked Worker deployment",
+      "route/trigger/upload activation"
+    ],
+    "LIVE": [
+      "immutable SHA workflow_dispatch acceptance",
+      "private one-video processed state",
+      "new live E2E 0/1",
+      "24h acceptance NOT_READY"
+    ],
+    "REMOTE": [
+      "Free plan and account-wide D1/Worker/Queue use",
+      "GitHub account artifact storage",
+      "current remote Worker/source/routes/cron/consumer",
+      "protected rows",
+      "billing rows written and DDL/index physical accounting",
+      "D1 live atomicity"
+    ],
+    "SECRET": [
+      "OAuth current validity",
+      "dedicated checkpoint key",
+      "dedicated callback key",
+      "repo-scoped dispatch credential"
+    ]
+  },
+  "remote_inspection": "PREPARED_ONLY_NO_NEW_IDENTITY_LAUNCH",
+  "safety_flags": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "source_sha256": {
+    ".github/workflows/plm-youtube-connection-offline.yml": "256abc7a1b55048dee54add0a5262934fdff4d78dfd01334954f90fc24ed629f",
+    "readiness/YOUTUBE_CONNECTION_CANDIDATE_JA.md": "1a457773ad7c91afdb659d1607a33fadea73a83d7640a9c863b29b8f859909b8",
+    "readiness/build_youtube_connection_bundle.py": "833b95c615a7abd172e52c2612a67a0290264067403e309444e85798b6b1d659",
+    "readiness/production-candidate/base/.github/workflows/render-short.yml": "d2a02202245c222a4b9a0622ba3c2f17c174e0ea478cf84b2180bb72b4e6a573",
+    "readiness/production-candidate/base/.github/workflows/youtube-adapter.yml": "388c3471323524152c227f4056aac9656fb95902362ad883a9258881296946c2",
+    "readiness/production-candidate/base/.github/workflows/youtube-pipeline.yml": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928",
+    "readiness/production-candidate/base/plm/entrypoints/youtube_job.py": "13fc9c182df04ad874499a1b6d169ebc111c535c4406614c82a6ec58cbb32259",
+    "readiness/production-candidate/base/plm/social_adapters/youtube/api.py": "e5919dcf30d01799b1121a49c689287440af4d5f67cc9e3175bb0c14f18ef5f0",
+    "readiness/production-candidate/production.patch": "841bb6315b8b2a36e3a14e127bc082f8483f11461493b8f7092c44b83f40e0f4",
+    "readiness/production-candidate/sender-cross-language-fixture.json": "2f72642cd55599eb2e58e51a3254837016d72e47d6e2f493ded411f77d2c4b36",
+    "readiness/production-candidate/source/.github/workflows/youtube-adapter.yml": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51",
+    "readiness/production-candidate/source/.github/workflows/youtube-pipeline.yml": "009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5",
+    "readiness/production-candidate/source/plm/entrypoints/yt_serverless_candidate.py": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+    "readiness/test_youtube_connection_candidate.py": "4b41ca77c2e8c40bd515e1eaaa15af1552b73a7248cdba8e8e96a4bc20eade48",
+    "readiness/youtube-worker-current-readonly-next-plan.json": "b79b18f630097597b7104c0774e85ae93f1e6f9f67345d62712b46933adbfa15",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+    "serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql": "79a88960393ad7030b60e707c9de67cceccb16f02d41f7bcf99f41c1f11ea336",
+    "serverless/test-youtube-connection.mjs": "0b1038ff422edfc8a30a98e994310c083a0161b4ce86d0311cc94a1c9f69e5e4",
+    "serverless/youtube-connection/bundle.mjs": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f",
+    "serverless/youtube-connection/checkpoint.mjs": "812526012a8954282451d3331aade6e5aa28395efaf4bbb0bb90e5575e428a63",
+    "serverless/youtube-connection/connection.mjs": "53524c17f8b72321c35b8466ce17d2ae5043d2811ab57dd1e9764e4d15e9a8fe",
+    "serverless/youtube-connection/dispatch.mjs": "1000b43a875f56e777788d27a4522f6375e60a2fb6d189fee35b297553d13631",
+    "serverless/youtube-connection/mapping.mjs": "c24a962bb69e5ae5badff8469b4c34a7359b594c5be167d3f470a2b724c35c54",
+    "serverless/youtube-connection/sender.mjs": "6e1a6058224190616f64000c7935bf34e23f0f22c6181169c216fe4c5605efda",
+    "serverless/youtube-connection/worker.mjs": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5",
+    "serverless/youtube-connection/wrangler.stopped.json": "a890d4c303ad3cefca2a85f8770cbf5279fea5968c91c11510744e8e400078a9",
+    "serverless/youtube-live/worker.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+  },
+  "status": "BLOCKED_ONLY_ON_REMOTE_OR_EXPLICIT_APPROVAL_GATES"
+}

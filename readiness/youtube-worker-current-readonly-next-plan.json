@@ -1,0 +1,36 @@
+{
+  "kind": "OFFLINE_READONLY_PREPARATION_NOT_LAUNCH_AUTHORIZATION",
+  "identity": "youtube-worker-current-inspect-20261006-r2-PROPOSAL",
+  "execution_approved": false,
+  "marker_created": false,
+  "launchable": false,
+  "no_retry": true,
+  "no_resume": true,
+  "maximum_requests": 4,
+  "maximum_writes": 0,
+  "current_connection": "NO_DIRECT_CLOUDFLARE_READ_CONNECTOR_AVAILABLE",
+  "credential_values_read": 0,
+  "credential_metadata": "UNVERIFIED; no new credential requested",
+  "target": {
+    "account": "6c8ccd6aface937ab5dabef61cb64534",
+    "worker": "plm-serverless-sandbox-control"
+  },
+  "proposed_GET_paths": [
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content",
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules",
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/routes",
+    "/accounts/6c8ccd6aface937ab5dabef61cb64534/queues"
+  ],
+  "maximum_response_bytes_each": 262144,
+  "pagination": "STOP_UNVERIFIED_IF_MORE_PAGES; no auto-pagination",
+  "source": "hash exact validated module bytes in memory only; never print/store raw code or variables",
+  "consumers": "inspect Worker matches from bounded Queue consumer metadata if response includes all consumers; otherwise UNVERIFIED; no extra request",
+  "current_worker_exists": "UNVERIFIED",
+  "current_source_identity": "UNVERIFIED",
+  "current_routes": "UNVERIFIED",
+  "current_crons": "UNVERIFIED",
+  "current_queue_consumer": "UNVERIFIED",
+  "raw_response_retention": 0,
+  "stop_before_execution": true,
+  "consumed_identities_never_reused": ["004H", "37409541462"]
+}

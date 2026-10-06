@@ -1,0 +1,180 @@
+name: Render YouTube Short
+run-name: Render ${{ inputs.render_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      render_id:
+        description: Unique render request ID
+        required: true
+        default: "manual-test"
+        type: string
+      title:
+        description: Video title
+        required: false
+        type: string
+      hook:
+        description: Opening hook
+        required: false
+        type: string
+      narration:
+        description: Japanese narration for VOICEVOX
+        required: true
+        type: string
+      speaker:
+        description: VOICEVOX speaker/style ID
+        required: true
+        default: "1"
+        type: string
+      scenes_json:
+        description: JSON array of V2 scenes
+        required: false
+        default: "[]"
+        type: string
+      captions_json:
+        description: JSON array of V2 captions
+        required: false
+        default: "[]"
+        type: string
+      bgm_json:
+        description: JSON object for V2 BGM settings
+        required: false
+        default: "{}"
+        type: string
+      output_json:
+        description: JSON output specification
+        required: false
+        default: '{"format":"mp4","width":1080,"height":1920,"fps":30}'
+        type: string
+  workflow_call:
+    inputs:
+      render_id:
+        required: true
+        type: string
+      title:
+        required: false
+        type: string
+      hook:
+        required: false
+        type: string
+      narration:
+        required: true
+        type: string
+      speaker:
+        required: true
+        type: string
+        default: "1"
+      scenes_json:
+        required: false
+        type: string
+        default: "[]"
+      captions_json:
+        required: false
+        type: string
+        default: "[]"
+      bgm_json:
+        required: false
+        type: string
+        default: "{}"
+      output_json:
+        required: false
+        type: string
+        default: '{"format":"mp4","width":1080,"height":1920,"fps":30}'
+    outputs:
+      artifact_name:
+        description: Deterministic Render Cloud artifact name
+        value: ${{ jobs.render.outputs.artifact_name }}
+      result_json:
+        description: Render and Quality Gate result JSON
+        value: ${{ jobs.render.outputs.result_json }}
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      artifact_name: ${{ steps.result.outputs.artifact_name }}
+      result_json: ${{ steps.result.outputs.result_json }}
+
+    env:
+      INPUT_TITLE: ${{ inputs.title }}
+      INPUT_HOOK: ${{ inputs.hook }}
+      INPUT_NARRATION: ${{ inputs.narration }}
+      INPUT_SPEAKER: ${{ inputs.speaker }}
+      INPUT_SCENES_JSON: ${{ inputs.scenes_json }}
+      INPUT_CAPTIONS_JSON: ${{ inputs.captions_json }}
+      INPUT_BGM_JSON: ${{ inputs.bgm_json }}
+      INPUT_OUTPUT_JSON: ${{ inputs.output_json }}
+
+    steps:
+      - name: Validate render ID
+        env:
+          RENDER_ID: ${{ inputs.render_id }}
+        run: |
+          if [[ ! "$RENDER_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$ ]]; then
+            echo "render_id must contain 1-64 safe identifier characters"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install FFmpeg and Japanese fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+
+      - name: Start VOICEVOX Engine
+        run: |
+          docker pull voicevox/voicevox_engine:cpu-latest
+          docker run -d --rm \
+            --name voicevox \
+            -e VV_DISABLE_MUTABLE_API=1 \
+            -p 127.0.0.1:50021:50021 \
+            voicevox/voicevox_engine:cpu-latest
+
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:50021/version >/dev/null; then
+              echo "VOICEVOX is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs voicevox
+          exit 1
+
+      - name: Render Short
+        run: |
+          python render-worker/render.py
+
+      - name: Upload render result
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rendered-short-${{ inputs.render_id }}
+          path: |
+            short.mp4
+            payload_snapshot.json
+            render-result.json
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Export render result
+        id: result
+        if: always()
+        env:
+          ARTIFACT_NAME: rendered-short-${{ inputs.render_id }}
+        run: |
+          echo "artifact_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+          if [[ -f render-result.json ]]; then
+            RESULT=$(python -c 'import json; print(json.dumps(json.load(open("render-result.json")), separators=(",", ":")))')
+          else
+            RESULT='{"ok":false,"error":{"stage":"render_cloud_setup","type":"WorkflowFailure","message":"Render Cloud stopped before render execution"}}'
+          fi
+          echo "result_json=$RESULT" >> "$GITHUB_OUTPUT"

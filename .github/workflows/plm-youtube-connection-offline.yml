@@ -1,0 +1,35 @@
+name: PLM YouTube Connection Offline
+on:
+  push:
+    paths: ['serverless/youtube-connection/**', 'serverless/test-youtube-connection.mjs', 'serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql', 'readiness/production-candidate/**', 'readiness/youtube-connection-candidate-plan.json', '.github/workflows/plm-youtube-connection-offline.yml']
+  pull_request:
+    paths: ['serverless/youtube-connection/**', 'serverless/test-youtube-connection.mjs', 'serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql', 'readiness/production-candidate/**', 'readiness/youtube-connection-candidate-plan.json', '.github/workflows/plm-youtube-connection-offline.yml']
+permissions:
+  contents: read
+jobs:
+  connection:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Compile trusted offline kernel guard
+        run: gcc -shared -fPIC -O2 -Wall -Werror readiness/guard/native_guard.c -o "$RUNNER_TEMP/plm-offline-guard.so"
+      - name: Guarded connection E2E and existing parked Worker regression
+        run: >-
+          env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so"
+          node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
+          serverless/test-youtube-live.mjs serverless/test-youtube-live-sql.mjs serverless/test-youtube-connection.mjs
+      - name: Check exact proposed production patch without applying it
+        working-directory: readiness/production-candidate/base
+        run: git apply --check ../production.patch

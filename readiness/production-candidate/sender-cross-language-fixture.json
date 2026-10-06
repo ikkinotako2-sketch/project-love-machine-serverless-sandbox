@@ -1,0 +1,103 @@
+{
+  "scope": "PUBLIC_OFFLINE_FIXTURE_NEVER_LIVE",
+  "dispatch_payload": {
+    "ref": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+    "inputs": {
+      "job_id": "job",
+      "account_id": "youtube_game_001",
+      "oauth_secret_name": "PLM_YOUTUBE_GAME_001",
+      "title": "ゲーム",
+      "hook": "冒頭",
+      "narration": "テスト台本",
+      "speaker": "1",
+      "scenes_json": "[{\"start\":0,\"end\":5,\"caption\":\"字幕\",\"visual_keyword\":\"game\",\"motion\":\"none\",\"sfx\":\"none\",\"emphasis_words\":[]}]",
+      "captions_json": "[{\"index\":1,\"start_seconds\":0,\"end_seconds\":5,\"text\":\"字幕\"}]",
+      "bgm_json": "{\"mood\":\"calm\",\"volume\":0.2}",
+      "output_json": "{\"format\":\"mp4\",\"width\":1080,\"height\":1920,\"fps\":30}",
+      "description": "",
+      "tags": "game,shorts",
+      "privacy_status": "private",
+      "scheduled_for": "",
+      "made_for_kids": false,
+      "contains_synthetic_media": true,
+      "notify_subscribers": false,
+      "serverless_context": "{\"account_id\":\"youtube_game_001\",\"dispatch_id\":\"6377f38907e35d866d965c1e79e7697ec3998d4bd850cfd0154489ff7bdfc2b7\",\"fencing_token\":1,\"intent_id\":\"intent-job\",\"job_id\":\"job\",\"owner\":\"owner\",\"owner_epoch\":1,\"production_ref\":\"b0c7f429a1f58726c4a75f4fb090928cf567b585\",\"script_sha256\":\"242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952\",\"workflow_sha256\":\"009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5\"}"
+    }
+  },
+  "stage_body": {
+    "protocol": "plm-youtube-checkpoint-v1",
+    "event": "bind",
+    "key_id": "checkpoint-fixture",
+    "account_id": "youtube_game_001",
+    "intent_id": "intent-job",
+    "job_id": "job",
+    "owner": "owner",
+    "owner_epoch": 1,
+    "fencing_token": 1,
+    "dispatch_id": "6377f38907e35d866d965c1e79e7697ec3998d4bd850cfd0154489ff7bdfc2b7",
+    "script_sha256": "242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952",
+    "workflow_sha256": "009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5",
+    "run_id": "123",
+    "render_run_id": "123",
+    "run_attempt": 1,
+    "dispatch_payload_sha256": "c717a05829c99a66db9b750012bfee5212ad58c0ba72eea87e93a385e5e334e8",
+    "media_sha256": null,
+    "artifact_ref": null,
+    "quality_gate": null,
+    "issued_at": 108
+  },
+  "stage_raw": "{\"account_id\":\"youtube_game_001\",\"artifact_ref\":null,\"dispatch_id\":\"6377f38907e35d866d965c1e79e7697ec3998d4bd850cfd0154489ff7bdfc2b7\",\"dispatch_payload_sha256\":\"c717a05829c99a66db9b750012bfee5212ad58c0ba72eea87e93a385e5e334e8\",\"event\":\"bind\",\"fencing_token\":1,\"intent_id\":\"intent-job\",\"issued_at\":108,\"job_id\":\"job\",\"key_id\":\"checkpoint-fixture\",\"media_sha256\":null,\"owner\":\"owner\",\"owner_epoch\":1,\"protocol\":\"plm-youtube-checkpoint-v1\",\"quality_gate\":null,\"render_run_id\":\"123\",\"run_attempt\":1,\"run_id\":\"123\",\"script_sha256\":\"242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952\",\"workflow_sha256\":\"009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5\"}",
+  "stage_signature": "587077e977afaea7dcca2491029a218ccb5582f051a140cc3fd684c15b4dbc54",
+  "stage_fixture_key": "PUBLIC_CHECKPOINT_FIXTURE_KEY_NEVER_LIVE_000",
+  "callback_body": {
+    "protocol": "plm-youtube-result-v2",
+    "key_id": "callback-fixture",
+    "account_id": "youtube_game_001",
+    "intent_id": "intent-job",
+    "job_id": "job",
+    "owner": "owner",
+    "owner_epoch": 1,
+    "fencing_token": 1,
+    "dispatch_id": "6377f38907e35d866d965c1e79e7697ec3998d4bd850cfd0154489ff7bdfc2b7",
+    "run_id": "123",
+    "run_attempt": 1,
+    "workflow_sha256": "009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5",
+    "script_sha256": "242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952",
+    "media_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "result_id": "6e51be1ad6009203853f1842885c52ac10fb6daa2be638b220ab519975776cbb",
+    "video_id": "offline0001",
+    "privacy_status": "private",
+    "notify_subscribers": false,
+    "processing_status": "processed",
+    "quality_gate": "PASS",
+    "issued_at": 114
+  },
+  "callback_raw": "{\"account_id\":\"youtube_game_001\",\"dispatch_id\":\"6377f38907e35d866d965c1e79e7697ec3998d4bd850cfd0154489ff7bdfc2b7\",\"fencing_token\":1,\"intent_id\":\"intent-job\",\"issued_at\":114,\"job_id\":\"job\",\"key_id\":\"callback-fixture\",\"media_sha256\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"notify_subscribers\":false,\"owner\":\"owner\",\"owner_epoch\":1,\"privacy_status\":\"private\",\"processing_status\":\"processed\",\"protocol\":\"plm-youtube-result-v2\",\"quality_gate\":\"PASS\",\"result_id\":\"6e51be1ad6009203853f1842885c52ac10fb6daa2be638b220ab519975776cbb\",\"run_attempt\":1,\"run_id\":\"123\",\"script_sha256\":\"242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952\",\"video_id\":\"offline0001\",\"workflow_sha256\":\"009773fa7b9b0ec64ffd59efb680c82700258e8c9e800fec959d6c2139b4cbd5\"}",
+  "callback_signature": "96adaf0db6444a87ceccf78e4002035448147a718888a86dc8b34748dad5916f",
+  "callback_fixture_key": "PUBLIC_RESULT_FIXTURE_KEY_NEVER_LIVE_0000000",
+  "render_checkpoint": {
+    "run_id": "123",
+    "render_run_id": "123",
+    "script_sha256": "242e64af6230a18ef340e76f1767cddbc83d926d59394702558f547f3f1dc952",
+    "media_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "quality_gate": "PASS"
+  },
+  "adapter_result": {
+    "ok": true,
+    "result": {
+      "account_id": "youtube_game_001",
+      "platform": "youtube",
+      "post_id": "offline0001"
+    }
+  },
+  "video_status": {
+    "id": "offline0001",
+    "status": {
+      "privacyStatus": "private",
+      "uploadStatus": "processed"
+    },
+    "processingDetails": {
+      "processingStatus": "succeeded"
+    }
+  }
+}
