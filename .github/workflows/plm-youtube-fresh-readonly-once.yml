@@ -1,0 +1,28 @@
+name: PLM YouTube Fresh Readonly Readiness Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['.github/workflows/plm-youtube-fresh-readonly-once.yml']
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.before == '28df45cdfcd34b5f57f9e34a334704b593a8264d' && github.event.head_commit.message == 'PLM YouTube fresh readonly readiness once 20261006-r1' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_READ_BEFORE: ${{ github.event.before }}
+      PLM_READ_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.sha }}
+      - name: Bounded current schema read only no retry
+        env:
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+        run: python3 readiness/youtube_remote_readiness.py

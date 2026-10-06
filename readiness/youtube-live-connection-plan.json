@@ -1,0 +1,270 @@
+{
+  "callback": {
+    "accepted_result": "private + notify=false + processed + Quality Gate PASS + exact durable render media; historical queued upload success remains evidence, not retroactively failed",
+    "auth": "HMAC-SHA256 over domain separator, canonical exact JSON bytes and issued_at; constant-time compare; verify before D1 write",
+    "failed_callback_send": "STOP_NO_RETRY_NO_NEXT_JOB",
+    "fixture_keys_live_allowed": false,
+    "implementation": "offline callback_boundary.py fixture verifier reused for design only; real ingress pending",
+    "key_requirements": "independent random 32-byte minimum key; matching non-secret key ID; no reuse of public fixtures/test callback key/OAuth/dispatch credential; no values retrieved",
+    "late_unknown": "no auto-promote, no reupload; read-only reconciliation under separate plan",
+    "maximum_body_bytes": 8192,
+    "maximum_future_skew_seconds": 30,
+    "maximum_past_skew_seconds": 300,
+    "protocol_candidate": "plm-youtube-result-v2",
+    "replay": "same authenticated result idempotent; changed identity or payload STOP; atomic save/outbox confirm/queue COMPLETE; no nonce pre-write",
+    "repository_scope": "exact production repo/workflow SHA/run ID/attempt1 plus durable outbox binding required",
+    "required_secrets": [
+      {
+        "current": "UNVERIFIED",
+        "location": "Worker",
+        "name": "PLM_YOUTUBE_RESULT_CALLBACK_KEY"
+      },
+      {
+        "current": "UNVERIFIED",
+        "location": "production Actions",
+        "name": "PLM_YOUTUBE_RESULT_CALLBACK_KEY"
+      }
+    ],
+    "signed_fields": [
+      "protocol",
+      "key_id",
+      "account_id",
+      "intent_id",
+      "job_id",
+      "owner",
+      "owner_epoch",
+      "fencing_token",
+      "dispatch_id",
+      "run_id",
+      "run_attempt",
+      "workflow_sha256",
+      "script_sha256",
+      "media_sha256",
+      "result_id",
+      "video_id",
+      "privacy_status",
+      "notify_subscribers",
+      "processing_status",
+      "quality_gate",
+      "issued_at"
+    ]
+  },
+  "current_remote_schema": "UNVERIFIED",
+  "dispatch": {
+    "204": "accepted only; not upload success",
+    "credential": "new repository-scoped Actions-write credential; current metadata UNVERIFIED; never reuse D1 read token",
+    "live_adapter_implemented": false,
+    "maximum_sends_per_job": 1,
+    "process_local_reservation_capability_required": true,
+    "production_workflow_changes": 0,
+    "real_dispatch_count": 0,
+    "ref_acceptance": "UNVERIFIED: verify workflow_dispatch accepts immutable ref; never fallback to mutable main",
+    "ref_sha": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+    "reopen_reserved": "STOP_NO_RESUME",
+    "reserve_before_send": true,
+    "target_repo": "ikkinotako2-sketch/project-love-machine",
+    "timeout_non204_unknown": "durable UNKNOWN; no next job/retry/fallback",
+    "upload_boundary": "separate explicit one-video private approval required after all gates; dispatch starts render/upload so requires approval too",
+    "workflow": ".github/workflows/youtube-pipeline.yml"
+  },
+  "execution_approved": false,
+  "historical_production_run": 36153932146,
+  "kind": "OFFLINE_FIXED_LIVE_CONNECTION_PREPARATION_NOT_DEPLOY_APPROVAL",
+  "live_ready": false,
+  "migration": {
+    "0008_tables": 5,
+    "0008_triggers": 11,
+    "0009_tables": 3,
+    "0009_triggers": 10,
+    "applied_this_turn": 0,
+    "business_rows_inserted": 0,
+    "fresh_preflight_required": [
+      "primary schema exact and bookmark",
+      "all protected rows exact in bounded read without row publication",
+      "current free plan and account-wide usage",
+      "candidate namespace NOT_APPLIED",
+      "all source hashes exact",
+      "finite-expiry least-privilege write credential separately approved"
+    ],
+    "maximum_sql_create_statements_total": 29,
+    "old_objects_modified": 0,
+    "order": [
+      "0008 provider neutral",
+      "fresh read-only postcheck and independent approval",
+      "0009 queue result"
+    ],
+    "partial_or_unknown": "STOP_NO_RETRY_NO_ROLLBACK",
+    "physical_rows_written_bound": "UNVERIFIED_DDL_AND_INDEX_ACCOUNTING_NOT_EQUAL_TO_STATEMENT_COUNT",
+    "route": "REUSE_EXISTING_PINNED_0008_IMPORT_PLAN; 0009 import adapter requires separate prepared approval"
+  },
+  "oauth": {
+    "absence_inferred": false,
+    "connector_secrets_metadata_supported": false,
+    "current": "CURRENTLY_UNVERIFIED",
+    "future_presence_check": "separate bounded runtime boolean only; metadata presence alone does not prove valid OAuth scope/refresh",
+    "historical": "HISTORICALLY_CONFIRMED",
+    "name": "PLM_YOUTUBE_GAME_001",
+    "value_retrieved": false
+  },
+  "one_shot_deployment": {
+    "approval": "not yet requestable; incomplete executable deployment bundle",
+    "blocked_on": [
+      "current read-only result",
+      "current free quotas and protected rows",
+      "real live Worker bundle/source",
+      "0009 import runner fixed hash and maximum writes",
+      "callback/dispatch secret metadata readiness"
+    ],
+    "current_expected_writes": 0,
+    "exact_launch_parent": null,
+    "identity": "youtube-serverless-connect-deploy-20261006-001-PROPOSAL",
+    "launchable": false,
+    "live_maximum_write_count": "UNVERIFIED; must bind exact import HTTP and DDL/meta budgets before approval",
+    "marker_created": false,
+    "migration_apply_max_per_separate_approval": 1,
+    "no_resume": true,
+    "no_retry": true,
+    "stop_plan": "leave all flags true, crons/consumers/routes disabled; never delete claims, reset UNKNOWN, roll back durable rows, auto retry or dispatch next; readonly reconciliation only",
+    "trigger_enable_max_this_plan": 0,
+    "worker_deploy_max_per_separate_approval": 1
+  },
+  "preparation_parent": "28df45cdfcd34b5f57f9e34a334704b593a8264d",
+  "production_changed_implementation": false,
+  "production_main": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+  "production_source_sha256": {
+    ".github/workflows/render-short.yml": "d2a02202245c222a4b9a0622ba3c2f17c174e0ea478cf84b2180bb72b4e6a573",
+    ".github/workflows/youtube-adapter.yml": "388c3471323524152c227f4056aac9656fb95902362ad883a9258881296946c2",
+    ".github/workflows/youtube-pipeline.yml": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928",
+    "plm/entrypoints/youtube_job.py": "13fc9c182df04ad874499a1b6d169ebc111c535c4406614c82a6ec58cbb32259"
+  },
+  "progress": {
+    "existing_youtube_percent": 98,
+    "hardened_live_e2e": "0/1"
+  },
+  "read_only": {
+    "artifact_uploads": 0,
+    "credentials": "existing PLM_CF_D1_READ_TOKEN runner-memory only; never retrieve value through connector",
+    "fixed_sql_sha256": "fe7d9ad8f03736a5733f2e4afc90d4b7511a701f783fac5797e53b0b1b360aed",
+    "history_scope": "2026-10-04 02:17:20 UTC; schema only, not current readiness",
+    "identity": "youtube-fresh-readonly-readiness-20261006-r1",
+    "job_row_reads": 0,
+    "logical_writes": 0,
+    "maximum_requests": 3,
+    "protected_rows_current": "UNVERIFIED",
+    "raw_response_retention": 0,
+    "routes": [
+      "GET /user/tokens/verify",
+      "GET exact D1 metadata",
+      "POST exact D1 query with fixed SELECT sqlite_master only"
+    ],
+    "schema_groups": {
+      "protected": 29,
+      "provider_neutral": 16,
+      "queue_result": 13
+    },
+    "unknown_policy": "STOP_NO_RETRY"
+  },
+  "runtime": {
+    "004h": "PERMANENTLY_CONSUMED",
+    "install_authorized": false,
+    "new_apt_runtime": 0,
+    "new_marker_created": false,
+    "same_conditions_retry": 0,
+    "transaction_proof": false
+  },
+  "safety_flags": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "source_sha256": {
+    ".github/workflows/plm-offline-readiness.yml": "530484fb369e2e590fcd4142923e941132c5f72d9dcdcdf506b59093d506a34f",
+    ".github/workflows/plm-youtube-fresh-readonly-once.yml": "7b8e31a8038d7fe511651e2af7c86727160731165de214832a92cab41114632c",
+    "audit-evidence/generalized-behavior-v3-schema-read-only-37170582256.json": "3bb6f0cb0e68a3f5539ac00e2c5d3fc5f3e60f1d217f05198c10d8c81b106a26",
+    "readiness/callback_boundary.py": "0a3cc29004a0b6e57f59681736ec760e2696fc4b1c3f6b569b47716106174366",
+    "readiness/test_youtube_remote_readiness.py": "0486acd676de4bc1cae385c579ff9c5ed2aec91a49f219cbcbf5ed1cc6649a17",
+    "readiness/youtube-readonly-schema-catalog.json": "7ebf45f2fbebc25bbc48f981ed171df530271a812b763b9997c1130ce67f8ea5",
+    "readiness/youtube_remote_readiness.py": "150d236141f8b97784ea822b8dd2042806d403e2eb9f1cce1f2e6c5c67adf3d2",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+    "serverless/worker.mjs": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef",
+    "serverless/wrangler.stopped.json": "3c73c70c4fcc73f96755661012bf23e273888583724c958994dc5e7ba008f08e"
+  },
+  "target": {
+    "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+    "binding": "DB",
+    "current_worker_verified": false,
+    "d1_database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "d1_database_name": "plm-serverless-sandbox-state",
+    "worker_name": "plm-serverless-sandbox-control"
+  },
+  "trigger": {
+    "24h_acceptance": "NOT_READY",
+    "cloud_queue_created": false,
+    "concurrency": 1,
+    "cron": [],
+    "d1_queue_is_not_cloudflare_queue": true,
+    "enabled": false,
+    "lifetime_jobs": 32,
+    "maximum_batch": 1,
+    "message_rules": "Queue redelivery never resends dispatched/reserved/unknown job; durable ledger authority; no ack as success before COMPLETE; stop consumer on ambiguity; exact Cloud Queue ack/fail-closed policy implementation pending",
+    "required_before_enable": [
+      "live Worker adapter and authenticated ingress offline tests PASS",
+      "current D1 schema exact and protected rows unchanged",
+      "live callback secret readiness",
+      "current OAuth readiness",
+      "account-wide free quotas and finite storage budget",
+      "independent deployment approval",
+      "one-video private upload approval",
+      "first live processed result atomically saved and COMPLETE"
+    ],
+    "unknown_policy": "STOP_NO_RETRY_NO_NEXT_JOB"
+  },
+  "worker": {
+    "automatic_replace_existing": false,
+    "bundle_sha256": null,
+    "current_remote_source_sha256": "UNVERIFIED",
+    "deploy_source_sha256": null,
+    "deployment_count": 0,
+    "existing_source": "serverless/worker.mjs",
+    "existing_source_scope": "TEST_ONLY_REFERENCE_NOT_YOUTUBE_LIVE_WORKER",
+    "youtube_live_implementation_ready": false
+  },
+  "zero_cost": {
+    "account_free_plan": "UNVERIFIED",
+    "d1_account_usage": "UNVERIFIED",
+    "d1_free": {
+      "rows_read_per_day": 5000000,
+      "rows_written_per_day": 100000,
+      "storage_bytes_total": 5000000000
+    },
+    "github": {
+      "account_accrued_storage_not_inferred_from_repo_artifact_listing": true,
+      "larger_runner_allowed": false,
+      "new_artifact_cache_uploads": 0,
+      "production_retention_days": {
+        "adapter": 7,
+        "claim": 30,
+        "render": 1,
+        "result": 30
+      },
+      "sandbox_public": true,
+      "standard_runner_minutes_free": true
+    },
+    "github_account_storage": "UNVERIFIED",
+    "published_checked_at": "2026-10-06",
+    "queue_account_usage": "UNVERIFIED",
+    "queues_free": {
+      "operations_per_day": 10000,
+      "retention_hours": 24
+    },
+    "sources": [
+      "https://developers.cloudflare.com/d1/platform/pricing/",
+      "https://developers.cloudflare.com/queues/platform/pricing/",
+      "https://docs.github.com/en/billing/concepts/product-billing/github-actions"
+    ],
+    "unknown_any_live_cost_gate": "STOP_NO_PAID_UPGRADE_OR_FALLBACK",
+    "worker_account_usage": "UNVERIFIED"
+  }
+}
