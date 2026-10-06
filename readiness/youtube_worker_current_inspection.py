@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 IDENTITY='youtube-worker-current-readonly-inspect-20261006-r1'
-PARENT='bb13c44361b927a67245a846bc38db00c578733f'
+PARENT='ff1b48c2b61f2150ebefc1e097a1f0393f93008e'
 ACCOUNT='6c8ccd6aface937ab5dabef61cb64534'
 WORKER='plm-serverless-sandbox-control'
 SECRET_NAME='PLM_CF_WORKER_API_TOKEN'
