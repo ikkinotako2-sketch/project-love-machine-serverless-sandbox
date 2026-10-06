@@ -1,0 +1,8 @@
+{
+  "identity": "youtube-worker-current-readonly-inspect-20261006-r1",
+  "state": "CONSUMED_BEFORE_REMOTE",
+  "prepared_commit_sha": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+  "plan_sha256": "bf694060d5e8a7ee595091dfcc800271df3b5e2c787ccaf4eb3d9ef4fddfcbef",
+  "workflow_sha256": "9abe9df0c20854e5a515f12ca817314e8a9d4dca7004db73abfa8dbb33aeea58",
+  "helper_sha256": "5072055548749faa3ef62590073c103ca01b3251f2fff6f626ed994af29af2f7"
+}
