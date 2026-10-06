@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-import cloudflare_credential_policy_probe as p
+import cloudflare_credential_policy_probe_r2 as p
 
 ID='a'*32
 FIXTURE='PUBLIC_FIXTURE_ONLY_NEVER_A_LIVE_CREDENTIAL'
@@ -17,13 +17,13 @@ def transport(responses,calls):
     def get(method,path):calls.append((method,path));return responses[len(calls)-1]
     return get
 
-class PolicyProbeTests(unittest.TestCase):
+class PolicyProbeR2Tests(unittest.TestCase):
     def test_account_two_get_exact_binding(self):
         calls=[];out=p.probe('ACCOUNT_OWNED',transport([(200,response({'id':ID,'status':'active','value':FIXTURE})),(200,response(details()))],calls))
         self.assertEqual(calls,[('GET','/accounts/'+p.ACCOUNT+'/tokens/verify'),('GET','/accounts/'+p.ACCOUNT+'/tokens/'+ID)])
         self.assertEqual(out['cloudflare_requests'],2);self.assertEqual(out['maximum_writes'],0)
     def test_user_root_only_no_account_fallback(self):
-        calls=[];p.probe('USER',transport([(404,b'')],calls));self.assertEqual(calls,[('GET','/user/tokens/verify')])
+        calls=[];out=p.probe('USER',transport([],calls));self.assertEqual(calls,[]);self.assertEqual(out['result'],'TOKEN_TYPE_UNVERIFIED')
     def test_type_ambiguity_zero_requests(self):
         calls=[];out=p.probe('UNVERIFIED',transport([],calls));self.assertEqual(out['result'],'TOKEN_TYPE_UNVERIFIED');self.assertEqual(calls,[])
     def test_details_403_safe_result(self):
@@ -81,21 +81,57 @@ class PolicyProbeTests(unittest.TestCase):
         with self.assertRaises(p.Stop):p.decode(b'{"id":1,"id":2}')
     def test_marker_hash_and_schema_fail_closed(self):
         root=Path(__file__).resolve().parents[1]
-        files={name:(root/name).read_bytes() for name in (p.PLAN,p.WORKFLOW,'readiness/cloudflare_credential_policy_probe.py')}
+        files={name:(root/name).read_bytes() for name in (p.PLAN,p.WORKFLOW,'readiness/cloudflare_credential_policy_probe_r2.py',p.SCHEMA)}
         plan=json.loads(files[p.PLAN]);before='d'*40
-        marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,**{k:p.digest(files[n]) for k,n in [('plan_sha256',p.PLAN),('workflow_sha256',p.WORKFLOW),('helper_sha256','readiness/cloudflare_credential_policy_probe.py')]}}
+        marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,**{k:p.digest(files[n]) for k,n in [('plan_sha256',p.PLAN),('workflow_sha256',p.WORKFLOW),('helper_sha256','readiness/cloudflare_credential_policy_probe_r2.py')]}}
         p.validate_marker(marker,plan,before,files)
         bad=dict(marker,extra=FIXTURE)
         with self.assertRaises(p.Stop):p.validate_marker(bad,plan,before,files)
         bad=dict(marker,helper_sha256='0'*64)
         with self.assertRaises(p.Stop):p.validate_marker(bad,plan,before,files)
-        if (root/p.MARKER).exists():
-            consumed=json.loads((root/p.MARKER).read_bytes())
-            self.assertEqual(consumed['identity'],p.IDENTITY)
-            self.assertEqual(consumed['state'],'CONSUMED_BEFORE_REMOTE')
+        self.assertFalse((root/p.MARKER).exists())
     def test_workflow_cannot_launch_on_preparation_push(self):
         root=Path(__file__).resolve().parents[1];text=(root/p.WORKFLOW).read_text()
         self.assertIn("paths: ['"+p.MARKER+"']",text);self.assertNotIn('workflow_dispatch:',text)
         self.assertIn('github.run_attempt == 1',text);self.assertIn("before+':'+MARKER",text)
+
+    def test_exact_r2_identity_and_parent(self):
+        self.assertEqual(p.IDENTITY,'youtube-cloudflare-credential-policy-readonly-20261006-r2')
+        self.assertEqual(p.PARENT,'a998f9e5bff137dfe2e3843ff081b862fd24e484')
+    def test_missing_credential_safe_reason_zero_network(self):
+        with self.assertRaisesRegex(p.Stop,'CREDENTIAL_MISSING_STOP'):p.live_transport(None)
+    def test_granular_scope_never_guessed(self):
+        d=details('Content Read-Only');d['policies'][0]['resources']={'unrecognized-worker-resource':'*'}
+        out=p.evaluate(p.sanitize_details(d,ID))
+        self.assertIn('UNVERIFIED',out['worker_source'])
+    def test_r1_marker_rejected_without_remote(self):
+        root=Path(__file__).resolve().parents[1]
+        files={n:(root/n).read_bytes() for n in (p.PLAN,p.WORKFLOW,'readiness/cloudflare_credential_policy_probe_r2.py',p.SCHEMA)}
+        plan=json.loads(files[p.PLAN]);before='d'*40
+        marker={'identity':'youtube-cloudflare-credential-policy-readonly-20261006-r1','state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,'plan_sha256':'0'*64,'workflow_sha256':'0'*64,'helper_sha256':'0'*64}
+        with self.assertRaisesRegex(p.Stop,'MARKER_BINDING_STOP'):p.validate_marker(marker,plan,before,files)
+    def test_schema_pin_rejected_if_modified(self):
+        root=Path(__file__).resolve().parents[1]
+        files={n:(root/n).read_bytes() for n in (p.PLAN,p.WORKFLOW,'readiness/cloudflare_credential_policy_probe_r2.py',p.SCHEMA)}
+        plan=json.loads(files[p.PLAN]);before='d'*40
+        marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,**{k:p.digest(files[n]) for k,n in [('plan_sha256',p.PLAN),('workflow_sha256',p.WORKFLOW),('helper_sha256','readiness/cloudflare_credential_policy_probe_r2.py')]}}
+        files[p.SCHEMA]+=b' '
+        with self.assertRaisesRegex(p.Stop,'MARKER_SCHEMA_HASH_STOP'):p.validate_marker(marker,plan,before,files)
+
+    def test_inactive_verify_stops_after_one(self):
+        calls=[];out=p.probe('ACCOUNT_OWNED',transport([(200,response({'id':ID,'status':'disabled'}))],calls))
+        self.assertEqual(out['result'],'TOKEN_NOT_ACTIVE_STOP');self.assertEqual(len(calls),1)
+    def test_inactive_details_stops_without_retry(self):
+        calls=[];d=details();d['status']='expired'
+        out=p.probe('ACCOUNT_OWNED',transport([(200,response({'id':ID,'status':'active'})),(200,response(d))],calls))
+        self.assertEqual(out['result'],'TOKEN_NOT_ACTIVE_STOP');self.assertEqual(len(calls),2)
+    def test_plan_limit_drift_stops(self):
+        root=Path(__file__).resolve().parents[1]
+        files={n:(root/n).read_bytes() for n in (p.PLAN,p.WORKFLOW,'readiness/cloudflare_credential_policy_probe_r2.py',p.SCHEMA)}
+        plan=json.loads(files[p.PLAN]);before='d'*40
+        marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,**{k:p.digest(files[n]) for k,n in [('plan_sha256',p.PLAN),('workflow_sha256',p.WORKFLOW),('helper_sha256','readiness/cloudflare_credential_policy_probe_r2.py')]}}
+        for key,value in [('maximum_requests',3),('maximum_writes',1),('retry',1),('resume',1),('redirect',1),('raw_retention',1),('pagination',True)]:
+            bad=dict(plan);bad[key]=value
+            with self.assertRaisesRegex(p.Stop,'PLAN_LIMITS_STOP'):p.validate_marker(marker,bad,before,files)
 
 if __name__=='__main__':unittest.main()
