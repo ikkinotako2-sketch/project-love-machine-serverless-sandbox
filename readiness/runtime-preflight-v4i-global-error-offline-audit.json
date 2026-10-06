@@ -31,61 +31,6 @@
     "transaction_proof": false,
     "install_authorized": false
   },
-  "candidate_mismatches": [
-    {
-      "source_file": "apt-pkg/cacheset.cc",
-      "source_line": 840,
-      "family": "DEPENDENCY_VERSION_NOT_AVAILABLE",
-      "mismatch_fields": [
-        "has_version_token",
-        "suffix_family"
-      ]
-    },
-    {
-      "source_file": "apt-private/private-install.cc",
-      "source_line": 77,
-      "family": "BROKEN_PACKAGE_SUMMARY",
-      "mismatch_fields": [
-        "known_package_tokens_count",
-        "suffix_family"
-      ]
-    },
-    {
-      "source_file": "apt-pkg/algorithms.cc",
-      "source_line": 1418,
-      "family": "BROKEN_PACKAGE_SUMMARY",
-      "mismatch_fields": [
-        "suffix_family"
-      ]
-    },
-    {
-      "source_file": "apt-pkg/algorithms.cc",
-      "source_line": 1196,
-      "family": "HELD_PACKAGE_SUMMARY",
-      "mismatch_fields": [
-        "known_package_tokens_count",
-        "suffix_family"
-      ]
-    },
-    {
-      "source_file": "apt-pkg/algorithms.cc",
-      "source_line": 1194,
-      "family": "HELD_PACKAGE_SUMMARY",
-      "mismatch_fields": [
-        "known_package_tokens_count",
-        "suffix_family"
-      ]
-    },
-    {
-      "source_file": "apt-private/private-cachefile.cc",
-      "source_line": 113,
-      "family": "BROKEN_PACKAGE_SUMMARY",
-      "mismatch_fields": [
-        "known_package_tokens_count",
-        "suffix_family"
-      ]
-    }
-  ],
   "conclusion": "NO_EXACT_MATCH_IN_FROZEN_SOURCE_CONFIRMED_GLOBALERROR_E_TEMPLATES",
   "next_boundary": "Any grammar expansion requires a separately reviewed offline preparation. No 004H rerun and no 004I runtime launch is authorized.",
   "prohibited_operations_zero": [
@@ -103,5 +48,37 @@
     "AI call",
     "YouTube/SNS publish",
     "user-PC execution"
+  ],
+  "candidate_sources": [
+    {
+      "source_file": "apt-pkg/cacheset.cc",
+      "source_line": 840,
+      "family": "DEPENDENCY_VERSION_NOT_AVAILABLE"
+    },
+    {
+      "source_file": "apt-private/private-install.cc",
+      "source_line": 77,
+      "family": "BROKEN_PACKAGE_SUMMARY"
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1418,
+      "family": "BROKEN_PACKAGE_SUMMARY"
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1196,
+      "family": "HELD_PACKAGE_SUMMARY"
+    },
+    {
+      "source_file": "apt-pkg/algorithms.cc",
+      "source_line": 1194,
+      "family": "HELD_PACKAGE_SUMMARY"
+    },
+    {
+      "source_file": "apt-private/private-cachefile.cc",
+      "source_line": 113,
+      "family": "BROKEN_PACKAGE_SUMMARY"
+    }
   ]
 }

@@ -115,8 +115,9 @@ class V4BDiagnosticTests(unittest.TestCase):
     def test_consumed_004_never_reusable(self):
         self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4_ID)).is_file())
         with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004'):b.cloud_launch_guard({},b.PREFLIGHT_V4_ID)
-    def test_004c_and_render_unused(self):
-        for identity in (b.PREFLIGHT_V4H_ID,b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(identity)).exists())
+    def test_004h_consumed_003_and_render_unused(self):
+        self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4H_ID)).is_file())
+        for identity in (b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(identity)).exists())
     def test_new_marker_first_addition_and_rerun(self):
         k=setup(b.PREFLIGHT_V4H_ID);self.assertTrue(b.launch_gate(**k)['consumed']);k['context']['run_attempt']=2
         with self.assertRaisesRegex(Stop,'RERUN'):b.launch_gate(**k)

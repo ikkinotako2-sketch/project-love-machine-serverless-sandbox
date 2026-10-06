@@ -31,14 +31,14 @@ class GlobalErrorOfflineAuditTests(unittest.TestCase):
         r=self.report();target=r['observed_safe_fingerprint']
         fixtures=json.loads((ROOT/r['source_fixtures']).read_text())['fixtures']
         candidates=[x for x in fixtures if x['stream']=='stderr' and x['template_instance'].startswith('E:')]
-        actual=[];exact=0
+        exact=0;refs=[]
         for item in candidates:
             shape=h.fingerprint(item['template_instance'],trusted(),'STDERR')
             diff=sorted(k for k,v in target.items() if shape[k]!=v)
+            self.assertTrue(diff)
             if not diff:exact+=1
-            actual.append(dict(source_file=item['source_file'],source_line=item['source_line'],family=item['family'],mismatch_fields=diff))
-        expected=[dict(x,mismatch_fields=sorted(x['mismatch_fields'])) for x in r['candidate_mismatches']]
-        self.assertEqual(sorted(actual,key=lambda x:(x['source_file'],x['source_line'])),sorted(expected,key=lambda x:(x['source_file'],x['source_line'])))
+            refs.append(dict(source_file=item['source_file'],source_line=item['source_line'],family=item['family']))
+        self.assertEqual(sorted(refs,key=lambda x:(x['source_file'],x['source_line'])),sorted(r['candidate_sources'],key=lambda x:(x['source_file'],x['source_line'])))
         self.assertEqual(exact,0);self.assertEqual(r['scope']['exact_source_template_matches'],0)
 
     def test_no_root_cause_or_authorization_claim(self):

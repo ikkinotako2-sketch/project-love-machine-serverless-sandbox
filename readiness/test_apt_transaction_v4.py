@@ -160,7 +160,8 @@ class TransactionV4Tests(unittest.TestCase):
         for n in (PREFLIGHT_ID,b.PREFLIGHT_V2_ID,b.PREFLIGHT_V4_ID):
             self.assertTrue((b.ROOT/b.marker_path(n)).is_file())
             with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED'):b.cloud_launch_guard({},n)
-        for n in (b.PREFLIGHT_V3_ID,b.PREFLIGHT_V4H_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(n)).exists())
+        self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4H_ID)).is_file())
+        for n in (b.PREFLIGHT_V3_ID,RENDER_ID):self.assertFalse((b.ROOT/b.marker_path(n)).exists())
     def test_workflow_marker_gated_read_only(self):
         text=(b.ROOT/b.SPEC[v.IDENTITY][1]).read_text()
         self.assertIn("github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'",text);self.assertIn('contents: read',text);self.assertIn('actions: read',text)

@@ -95,21 +95,10 @@ class ActivationTests(unittest.TestCase):
     def test_bounded_process_no_capture_output(self):
         source=Path(v.__file__).read_text();self.assertNotIn('capture_output=True',source)
         for text in ('2_000_000','stderr_size<=65536','time.monotonic()+120','os.killpg'):self.assertIn(text,source)
-    def test_absent_marker_actual_cloud_guard(self):
-        k=setup(b.PREFLIGHT_V4H_ID)
-        event={'before':k['context']['approved_parent_sha'],'after':k['context']['sha'],
-               'ref':'refs/heads/'+b.BRANCH,'forced':False,'deleted':False,'created':False}
-        with tempfile.TemporaryDirectory() as directory:
-            event_path=Path(directory)/'event.json';event_path.write_text(json.dumps(event))
-            env={'GITHUB_ACTIONS':'true','RUNNER_ENVIRONMENT':'github-hosted','RUNNER_OS':'Linux','RUNNER_ARCH':'X64',
-                 'GITHUB_REPOSITORY':b.REPO,'GITHUB_EVENT_NAME':'push','GITHUB_REF':event['ref'],
-                 'GITHUB_SHA':event['after'],'GITHUB_RUN_ATTEMPT':'1','GITHUB_EVENT_PATH':str(event_path)}
-            def read(route,**kwargs):
-                if route.startswith('/commits/'):
-                    return {'files':[]} if 'page=2' in route else k['commit']
-                if route.startswith('/contents/'):return None
-                raise AssertionError('Unexpected read before absent-marker STOP')
-            with self.assertRaisesRegex(Stop,'MARKER_MISSING'):b.cloud_launch_guard(env,b.PREFLIGHT_V4H_ID,read=read)
+    def test_004h_consumed_marker_rejected_by_primary_history_guard(self):
+        self.assertTrue((b.ROOT/b.marker_path(b.PREFLIGHT_V4H_ID)).is_file())
+        k=setup(b.PREFLIGHT_V4H_ID);k['parent_marker']=k['marker']
+        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_PARENT'):b.launch_gate(**k)
     def test_bounded_output_limit_stops_and_no_raw_exception(self):
         class Pipe:
             def fileno(self):return 1
