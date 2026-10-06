@@ -1,0 +1,41 @@
+{
+  "status": "OFFLINE_VERIFICATION_PENDING_CI",
+  "production_repository": "ikkinotako2-sketch/project-love-machine",
+  "production_base_sha": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+  "sandbox_parent_sha": "fa5501f22223537b29858c928c0261b7ed1b702e",
+  "old_patch_path": "readiness/production-candidate/production.patch",
+  "old_patch_sha256": "841bb6315b8b2a36e3a14e127bc082f8483f11461493b8f7092c44b83f40e0f4",
+  "revised_patch_path": "readiness/production-candidate/production-revised.patch",
+  "revised_patch_sha256": "797cf37848a45e752edd27e240c716ab67e6feb220ad59c7e2a0dbc044f4bbc3",
+  "revised_expression": "!cancelled() && needs.render.result == 'success' && (inputs.serverless_context == '' || needs.checkpoint_render.result == 'success')",
+  "changed_production_files": [
+    ".github/workflows/youtube-pipeline.yml",
+    ".github/workflows/youtube-adapter.yml",
+    "plm/entrypoints/yt_serverless_candidate.py"
+  ],
+  "unexpected_production_files": 0,
+  "candidate_sha256": {
+    ".github/workflows/youtube-pipeline.yml": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55",
+    ".github/workflows/youtube-adapter.yml": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51",
+    "plm/entrypoints/yt_serverless_candidate.py": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5"
+  },
+  "candidate_delta_from_old": "one youtube job if expression only; adapter/sender unchanged",
+  "old_artifacts_preserved": true,
+  "oracle": "documented GitHub status semantics offline model; not live scheduler execution",
+  "oracle_sources": [
+    "https://docs.github.com/en/actions/reference/workflows-and-actions/expressions",
+    "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-cancellation"
+  ],
+  "oracle_scope": "reachable legacy graph initialize -> render -> youtube; render success requires initialize success; checkpoint skipped for empty context; workflow cancellation stops new youtube eligibility",
+  "offline_local_tests": {
+    "existing_callback_checkpoint_dispatch_fixture": 12,
+    "scheduling_and_scope": 15,
+    "exhaustive_status_combinations": 64,
+    "yaml_parse": "PASS",
+    "actual_patch_apply_and_3_file_readback": "PASS"
+  },
+  "merge_approved": false,
+  "production_branch_created": false,
+  "live_operations": 0,
+  "consumed_identity_reruns": 0
+}
