@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "identity": "youtube-automation-private-offline-boundary-20261006",
+  "mode": "OFFLINE_ONLY",
+  "parent_sha": "d9bc6a7e51864d51a561808db26de813d7a14268",
+  "repository": "ikkinotako2-sketch/project-love-machine-serverless-sandbox",
+  "branch": "plm-offline-readiness-v1-20261002",
+  "sandbox_main_sha": "8ac2337a37072ae23f7781e2f47e8dfc7016b30f",
+  "production_sha": "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+  "prior_successful_offline_run": 37403869297,
+  "consumed_runtime": {
+    "identity": "manual-fixture-runtime-preflight-20261005-004h",
+    "launch_sha": "450acb8dade21fa0f267217113dd35b888efaf77",
+    "run_id": 37403151934,
+    "attempt": 1,
+    "ffmpeg_simulations": 1,
+    "return_code": 100,
+    "remaining_simulations": 0,
+    "transaction_proof": false,
+    "install_authorized": false
+  },
+  "apt_conclusion": "NO_EXACT_MATCH_IN_FROZEN_SOURCE_CONFIRMED_GLOBALERROR_E_TEMPLATES",
+  "live_ready": false,
+  "execution_approved": false,
+  "runtime_operations": 0,
+  "no_retry": true,
+  "no_resume": true,
+  "safety_flags": {
+    "TEST_ONLY": true,
+    "DRY_RUN": true,
+    "NO_PUBLISH": true,
+    "EMERGENCY_STOP": true
+  },
+  "workflow_unchanged": ".github/workflows/plm-offline-readiness.yml",
+  "frozen_sandbox_sha256": {
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004h.json": "2972461887223ea20015fc5c988dbb576fd3b76549156d64f7337728d2f497bd",
+    "readiness/runtime-preflight-v4i-global-error-offline-audit.json": "d93ca62246414d5a60ce465045ad155019485b784c7b8eef6e59d37c2278f0da",
+    "readiness/apt-user-error-v4g-source-evidence.json": "5904e779cb173e5939465d67a14a0c2be750542e3b175175a2c8d507955cadcf",
+    "readiness/apt-user-error-v4g-source-fixtures.json": "d591354bf6eea8fb0d11cde69d9e3c2c655864f85668c2f7af342514ecd70dc0",
+    "readiness/apt_safe_fingerprint_v4h.py": "118e9b082a475dc10da8e45f3f965bb826d38f93f28e2c056b176bcf738eca29",
+    ".github/workflows/plm-cloud-runtime-preflight-v4h-once.yml": "139184eb86b4a35f9c0dfdd2fa764c6b0bda3efde341db0dcc6e8d624e601289",
+    "readiness/one-shot-render-plan.json": "0c452bc36092b6e87f49569eeee72f1f460654ba673cd6aa5c38c482ea2b7fc7",
+    "readiness/manual_fixture/render-payload.canonical.json": "2b92b1b2266da9be38e0cebdd061add724734049f08afc0bbffbe06b7aa53c40"
+  },
+  "existing_consumed_markers_git_blob_sha": {
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261004-001.json": "840339c827253d8d9a15efb53983e358c4bb4ed6",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261004-002.json": "8ba2410f0bdc9cbf0eba4316584ba102bc26d0e6",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004.json": "274559c7b4d0295008740a9f555de8e802cccc91",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004b.json": "7bf8de2ea807e993e5d30dddf0d4440e5a7929ad",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004c.json": "5de2f848e27fe6c85a37c0871449847587b4a221",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004d.json": "1d183b142cfd4507aba4f8a07e06c86f73b4f583",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004e.json": "779244b544bb6e937b6b4801bbc405d76acfddcd",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004f.json": "6074ec4b16bc7509aec4d77cc41139d0bce20450",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004g.json": "20dbd0a7190ff830a335d6d1056cc3868167b2bd",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004h.json": "316d88225e05ce88d7020af0217066275f832388"
+  },
+  "absent_markers": [
+    "audit-evidence/consumed/manual-fixture-render-20261004-001.json",
+    "audit-evidence/consumed/manual-fixture-runtime-preflight-20261006-004j.json",
+    "audit-evidence/consumed/manual-fixture-youtube-private-20261006-001.json"
+  ],
+  "production_source_evidence": [
+    {
+      "path": ".github/workflows/render-short.yml",
+      "sha256": "d2a02202245c222a4b9a0622ba3c2f17c174e0ea478cf84b2180bb72b4e6a573",
+      "git_blob_sha": "72e9f17ede5c1b0ec811782c6057fa151f112404"
+    },
+    {
+      "path": ".github/workflows/youtube-pipeline.yml",
+      "sha256": "5f3550854efc85ec46c6e4bbb5061c009530f6760f3ac1ebc5c64f63aa2b4928",
+      "git_blob_sha": "bf4912b4fadf9954923074da1e5341bd7c686acc"
+    },
+    {
+      "path": ".github/workflows/youtube-adapter.yml",
+      "sha256": "388c3471323524152c227f4056aac9656fb95902362ad883a9258881296946c2",
+      "git_blob_sha": "3321dc6c72024df40a5658d40dc5b92cacdb1d3c"
+    },
+    {
+      "path": "plm/entrypoints/youtube_job.py",
+      "sha256": "13fc9c182df04ad874499a1b6d169ebc111c535c4406614c82a6ec58cbb32259",
+      "git_blob_sha": "78479c142a9226b8bb67a2954a38e83a7429f159"
+    },
+    {
+      "path": "plm/social_adapters/hub.py",
+      "sha256": "201be80e385a54df055a1b9dc0e4c41cd3b65ac72dc9a343e5fe00cbdc94d7c6",
+      "git_blob_sha": "cda239319512ae212d96505eeb1d7f8e80bc155f"
+    },
+    {
+      "path": "plm/social_adapters/dedupe.py",
+      "sha256": "63015cd783491dabd7ad7707bc0c298ad59b2ac57b7ab0a2d33b6db3c318931f",
+      "git_blob_sha": "81e50b8b9dbf57a547a78723b2ce77207290900c"
+    },
+    {
+      "path": "plm/social_adapters/youtube/api.py",
+      "sha256": "e5919dcf30d01799b1121a49c689287440af4d5f67cc9e3175bb0c14f18ef5f0",
+      "git_blob_sha": "128a22cf406dc9d36f1916c499d9c2f2debdfea0"
+    },
+    {
+      "path": "plm/social_adapters/youtube/adapter.py",
+      "sha256": "d97ebe31e6a4f033df8b60067a95ba60d1e820465cc4f3cc42754d0595fec8d2",
+      "git_blob_sha": "b74d43bc7e02ece7c99bb93441aa59969ee68748"
+    },
+    {
+      "path": "plm/social_adapters/youtube/oauth.py",
+      "sha256": "9fbce205a267ee3a880eb3d34b6e02d410e9aa249d78b16a686a0f559639a8e9",
+      "git_blob_sha": "f42ce125552b36210b12b91b2d55caa18439d899"
+    },
+    {
+      "path": "plm/social_adapters/youtube/quota.py",
+      "sha256": "d7842aefa8a35f578a00277d2d551c84c79886d593e2b4736286c03a8afca9cc",
+      "git_blob_sha": "c3e7f53f8794509c7e3e863816a6b3c3f97ff7c4"
+    },
+    {
+      "path": "plm/pipeline/result_store.py",
+      "sha256": "bd28380cb7fe5a8138c3520ac4ed8a978e73798d06c732ac656a987dde9d1e86",
+      "git_blob_sha": "dac083bd786c728e4895a6fcd2e23550952a3ecf"
+    },
+    {
+      "path": "plm/pipeline/result.py",
+      "sha256": "b76138393519d0da46943d6675930c39df03aa6f1efea21da420bf38594ed257",
+      "git_blob_sha": "81ea5354afb897090bfb823dcac404bb96c7ad65"
+    },
+    {
+      "path": "render-worker/quality_gate.py",
+      "sha256": "f3cbc58d62d0cfda41997fe8d420a3a630173effcbbfcbc397b0063cf14400ec",
+      "git_blob_sha": "e6321a9f13764a7ab68e8e88a787c178fd9e9699"
+    },
+    {
+      "path": "render-worker/render.py",
+      "sha256": "993a89b8117b2cbb12be3409891a95beea22d9a64c56d93fe710f97ecd62640b",
+      "git_blob_sha": "6f2d62997c7b4f85083fcdf3f75da4880a9db4b3"
+    }
+  ],
+  "gates": [
+    {
+      "id": 1,
+      "name": "APT / FFmpeg runtime",
+      "depends": [],
+      "state": "BLOCKED",
+      "evidence": [
+        "readiness/runtime-preflight-v4i-global-error-offline-audit.json"
+      ],
+      "remaining": "Unknown STDERR GlobalError E fingerprint. Frozen source templates have zero exact matches. No root cause and no transaction/install authorization. No unknown acceptance or 004H replay."
+    },
+    {
+      "id": 2,
+      "name": "Python fixed runtime",
+      "depends": [],
+      "state": "OFFLINE_PIN_ONLY",
+      "evidence": [
+        "readiness/one_shot_executor.py",
+        ".github/workflows/plm-cloud-runtime-preflight-v4h-once.yml"
+      ],
+      "remaining": "Existing exact 3.12.15 preflight pin preserved. Production render uses 3.12; safe renderer requires exact-version workflow proposal and separate runtime approval."
+    },
+    {
+      "id": 3,
+      "name": "VOICEVOX immutable version/digest",
+      "depends": [
+        1,
+        2
+      ],
+      "state": "OFFLINE_PIN_ONLY",
+      "evidence": [
+        "readiness/one_shot_executor.py"
+      ],
+      "remaining": "Existing engine 0.25.2 amd64 manifest digest preserved; production cpu-latest is forbidden. Runtime digest/version confirmation and approved Docker execution still required."
+    },
+    {
+      "id": 4,
+      "name": "speaker metadata",
+      "depends": [
+        3
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/one_shot_executor.py"
+      ],
+      "remaining": "Require exact version + sole speaker style id=1, name/style match before synthesis. No runtime speaker observation yet."
+    },
+    {
+      "id": 5,
+      "name": "FFmpeg / fonts",
+      "depends": [
+        1,
+        2
+      ],
+      "state": "BLOCKED",
+      "evidence": [
+        "readiness/one_shot_executor.py"
+      ],
+      "remaining": "Existing exact package pins, libav lock, required filters/encoders and Noto Sans CJK JP checks preserved. Install is unapproved and not proven."
+    },
+    {
+      "id": 6,
+      "name": "render consumption",
+      "depends": [
+        3,
+        4,
+        5
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/branch_marker_once.py",
+        "readiness/one_shot_executor.py"
+      ],
+      "remaining": "Render marker absent. Existing marker-only launch guard is reused; no render authorization. APT rc100 is never install authorization."
+    },
+    {
+      "id": 7,
+      "name": "Quality Gate",
+      "depends": [
+        6
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/one_shot_executor.py",
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "Reuse dimensions/fps/duration/audio/luma/captions checks. Bind QG bytes and media digest to uploaded bytes. Tests use data only; no actual MP4 or trusted runtime attestation."
+    },
+    {
+      "id": 8,
+      "name": "artifact capacity / retention / zero cost",
+      "depends": [
+        7
+      ],
+      "state": "LIVE_EVIDENCE_REQUIRED",
+      "evidence": [
+        "readiness/one_shot_executor.py"
+      ],
+      "remaining": "Reuse exact 3-file inventory <=12MiB, retention1day, max1upload/retry0. Production pipeline retention30days must be bounded before activation. Owner current aggregate free capacity is not verified; no price/billing or service changes."
+    },
+    {
+      "id": 9,
+      "name": "OAuth secret readiness",
+      "depends": [],
+      "state": "LIVE_EVIDENCE_REQUIRED",
+      "evidence": [
+        "plm/social_adapters/youtube/oauth.py",
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "OAuth values not fetched. Existence and least-privilege/account match require safe cloud preflight. Offline existence booleans are fixtures only."
+    },
+    {
+      "id": 10,
+      "name": "private upload",
+      "depends": [
+        7,
+        8,
+        9,
+        11
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "Require exactly1 asset, private, notifyfalse, no schedule, explicit audience/synthetic disclosure. Real adapter integration and separate first-upload approval required. Do not invoke production workflow accepting public/unlisted/schedule."
+    },
+    {
+      "id": 11,
+      "name": "idempotency / duplicate prevention",
+      "depends": [],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "SQL unique key/job/media claim consumes before attempt, never resets UNKNOWN/failed. Reference memory DB tests persist across oracle objects only. Deploy durable ledger separately; existing production in-memory FAILED reclaim and resumable retries must be replaced before upload."
+    },
+    {
+      "id": 12,
+      "name": "pipeline result storage",
+      "depends": [
+        10,
+        11
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/youtube_pipeline_production_result_snapshot.py",
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "Reuse production build_pipeline_result shape behind strict confirmed private/processed/video-id projection. Persist/readback before next; UNKNOWN or save ambiguity stops. Existing builder accepts ok=true with failed/unknown/queued state, so cannot be sole success gate. No raw body/error stored."
+    },
+    {
+      "id": 13,
+      "name": "n8n / serverless split",
+      "depends": [
+        12
+      ],
+      "state": "OFFLINE_DESIGN_ONLY",
+      "evidence": [
+        "serverless/youtube-roundtrip-read-only.mjs"
+      ],
+      "remaining": "Keep existing n8n producer/result consumer compatible; move one-job claim/stage/result gating into durable serverless ledger. Existing YouTube D1 checkpoint is proposed only; no deployment/schema mutations here."
+    },
+    {
+      "id": 14,
+      "name": "trigger / queue / dispatch",
+      "depends": [
+        11,
+        12,
+        13
+      ],
+      "state": "OFFLINE_CONTRACT_ONLY",
+      "evidence": [
+        "readiness/youtube_pipeline_offline.py"
+      ],
+      "remaining": "Offline SQL blocks distinct next job until prior RESULT_SAVED. Full unattended generation is also gated on current $0 provider entitlement. No auto-dispatch/schedule/paid provider enabled; no live queue installed."
+    }
+  ],
+  "approval_boundaries": {
+    "runtime": "Before new exact-parent/hash-bound marker-only launch, STOP for explicit owner approval. No runtime candidate or marker created in this change.",
+    "upload": "Before first real upload require QG PASS, exactly1 video, new durable key/no duplicate claim, OAuth existence only, private, notifyfalse, current $0 quota, explicit owner approval."
+  },
+  "prohibited_operations": [
+    "004H rerun/retry/resume",
+    "consumed marker mutation",
+    "APT simulation or package mutation",
+    "Docker",
+    "VOICEVOX",
+    "FFmpeg runtime",
+    "media creation",
+    "artifact/cache upload",
+    "D1/Worker changes",
+    "AI calls",
+    "YouTube/SNS upload",
+    "user-PC execution",
+    "005 installer"
+  ]
+}
