@@ -1,0 +1,62 @@
+{
+  "kind": "FRESH_READ_ONLY_SCHEMA_DIAGNOSTIC_NOT_DEPLOY_AUTHORIZATION",
+  "run_id": 37409541462,
+  "attempt": 1,
+  "head": "fa9890e4350c4bb97b50e2cef5ad0ab750c500ef",
+  "conclusion": "success",
+  "checked_at": "2026-10-06T03:33:41Z",
+  "result": {
+    "account_free_plan": "UNVERIFIED",
+    "account_usage": "UNVERIFIED",
+    "d1_write": 0,
+    "database_size_bytes": 196608,
+    "deploy": 0,
+    "dispatch": 0,
+    "execution_approved": false,
+    "failure_code": "LIVE_GATES_UNVERIFIED_STOP",
+    "live_ready": false,
+    "oauth_current": "UNVERIFIED",
+    "protected_schema_exact": true,
+    "provider_neutral": "NOT_APPLIED",
+    "query_rows_read": 85,
+    "queue_result": "NOT_APPLIED",
+    "raw_retention": 0,
+    "read_only_calls": 3,
+    "read_token_active": true,
+    "readiness": "READ_ONLY_CONFIRMED",
+    "retry": 0,
+    "unknown_objects_count": 0,
+    "worker_current": "UNVERIFIED",
+    "youtube_upload": 0
+  },
+  "offline_ci": {
+    "run_id": 37409541417,
+    "conclusion": "success",
+    "python_pass": 1360,
+    "node_pass": 947,
+    "total_pass": 2307
+  },
+  "target": {
+    "account": "6c8ccd6aface937ab5dabef61cb64534",
+    "database": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "name": "plm-serverless-sandbox-state"
+  },
+  "scope": {
+    "schema_only": true,
+    "protected_rows_current": "UNVERIFIED",
+    "account_wide_storage_usage": "UNVERIFIED",
+    "artifact_account_usage": "UNVERIFIED",
+    "worker_current": "UNVERIFIED",
+    "oauth": "HISTORICALLY_CONFIRMED_CURRENTLY_UNVERIFIED",
+    "callback_secrets_current": "UNVERIFIED",
+    "transaction_proof": false,
+    "install_authorized": false
+  },
+  "plan_sha256": "1ba3c9b7a5bf8c0662b6fba98f31c553347cb80b751d03839dfe335b99e2affb",
+  "marker_created": false,
+  "read_only_identity_consumed": true,
+  "retry_permitted": false,
+  "resume_permitted": false,
+  "deploy_launchable": false,
+  "source_bundle_complete": false
+}

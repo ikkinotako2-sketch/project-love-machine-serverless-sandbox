@@ -37,3 +37,4 @@ GitHub接続はsecrets metadata APIをサポートしていない。`PLM_YOUTUBE
 公開上限やdatabase sizeだけでaccount-wide $0をPASSにしない。DDL/indexのphysical rows writtenはCREATE statement数と異なるため上限を捏造しない。課金・quota不明なら有料upgradeせず停止。
 
 安全停止は全4 flags=true、cron/consumer/routes無効を維持。claim削除、UNKNOWN reset、durable row rollback、再uploadをしない。004Hは永久consumed、APT未知GlobalErrorは未解決。既存productionの成功証拠とは独立で、今回APT/runtime/markerは0。
+fresh read-only run `37409541462`（attempt1、head `fa9890e4350c4bb97b50e2cef5ad0ab750c500ef`）SUCCESS。token active、primary fixed SELECTのrows_written=0、既存29 objectのschema exact、unknown object=0、database size=196608 bytesを確認。provider-neutral v2とQueue/result候補はともにNOT_APPLIED。read requests=3、query rows read=85。保護対象行、account-wide quota、Worker、OAuthは引き続きUNVERIFIED。固定結果は `youtube-remote-readonly-37409541462.json`。このread-only identityも再実行しない。
