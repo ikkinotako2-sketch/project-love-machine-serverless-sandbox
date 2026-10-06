@@ -33,3 +33,9 @@ n8nのテーマ/input producerと結果consumerは当面維持し、serverless�
 ## 既存input経路との接続
 
 `youtube_preparation_bridge.py` は既存 `script_to_render`、`parity.normalize_script/render_payload/pipeline_inputs` を通してテーマ・固定台本から既存形式の入力を作る。job IDは既存yt-number-timestamp形式を維持し、account/job/contentで安定したidempotency keyを導出する。provider-neutral checkpointの再利用もテストする。fake QG/private response/result保存まで1つのoffline経路で確認するが、render/uploadの実行実績には数えない。QGはfield whitelistとsecret-like caption拒否を追加した。
+
+## consumed guard強化とOAuth metadata確認
+
+004Hはmarker/historyに依存する拒否に加え、両guard entryで明示的に `IDENTITY_CONSUMED_004H` として最初に拒否する。marker不存在を仮定したoffline oracleでも拒否し、runtime/metadata commandの前にSTOPする。既存marker・APT/runtime workflowは不変。旧004H parent guardテストは、より早い固定code拒否を確認するよう更新した。
+
+production/sandboxのActions secret一覧metadataのみ読み取りを試みたが、この接続ではUNVERIFIED。値は取得していない。secret不在とは判定せず、upload readinessは引き続きBLOCKEDとする。

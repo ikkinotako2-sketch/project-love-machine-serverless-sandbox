@@ -328,5 +328,22 @@
     "user-PC execution",
     "005 installer"
   ],
-  "offline_entry": "readiness/youtube_preparation_bridge.py"
+  "offline_entry": "readiness/youtube_preparation_bridge.py",
+  "consumed_guard_hardening": {
+    "identity": "manual-fixture-runtime-preflight-20261005-004h",
+    "guard_sha256": "e85896d63d3b63a24557a24655d0257a1d765d286982f6c6360f4a7194c4bc76",
+    "before_marker_or_history_reads": true,
+    "before_runtime": true
+  },
+  "oauth_metadata_readiness": {
+    "production": {
+      "status": "UNVERIFIED",
+      "reason": "METADATA_READ_UNAVAILABLE"
+    },
+    "sandbox": {
+      "status": "UNVERIFIED",
+      "reason": "METADATA_READ_UNAVAILABLE"
+    },
+    "values_read": false
+  }
 }

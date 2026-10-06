@@ -309,3 +309,24 @@ class ExistingRouteBridgeTests(unittest.TestCase):
     def test_replay_stable_idempotency_and_content_change_binding(self):
         self.assertEqual(self.prepare()['request']['idempotency_key'],
                          self.prepare()['request']['idempotency_key'])
+
+class PermanentConsumedGuardTests(unittest.TestCase):
+    def test_004h_both_guards_stop_even_without_marker_or_context(self):
+        import branch_marker_once as b
+        from test_branch_marker_once import setup
+        calls=[]
+        with self.assertRaisesRegex(y.Stop,'IDENTITY_CONSUMED_004H'):
+            b.cloud_launch_guard({},b.PREFLIGHT_V4H_ID,read=lambda route:calls.append(route))
+        self.assertEqual(calls,[])
+        fake=setup(b.PREFLIGHT_V4H_ID)
+        fake['parent_marker']=None
+        with self.assertRaisesRegex(y.Stop,'IDENTITY_CONSUMED_004H'):
+            b.launch_gate(**fake)
+
+    def test_004h_executor_stops_before_runtime_or_metadata(self):
+        import cloud_runtime_preflight_v4h as old
+        with patch.object(old,'command') as command,patch.object(old,'load_indices') as metadata:
+            with self.assertRaisesRegex(y.Stop,'IDENTITY_CONSUMED_004H'):
+                old.execute({}, {})
+        command.assert_not_called()
+        metadata.assert_not_called()

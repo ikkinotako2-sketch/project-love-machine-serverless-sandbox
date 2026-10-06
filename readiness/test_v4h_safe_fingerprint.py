@@ -123,7 +123,7 @@ class PreparationTests(unittest.TestCase):
         from one_shot_executor import Stop
         from test_branch_marker_once import setup
         k=setup(b.PREFLIGHT_V4H_ID);k['parent_marker']=k['marker']
-        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_PARENT'):b.launch_gate(**k)
+        with self.assertRaisesRegex(Stop,'IDENTITY_CONSUMED_004H'):b.launch_gate(**k)
     def test_004h_marker_present_exact(self):
         path=ROOT/'audit-evidence/consumed/manual-fixture-runtime-preflight-20261005-004h.json'
         self.assertTrue(path.is_file());m=json.loads(path.read_text())

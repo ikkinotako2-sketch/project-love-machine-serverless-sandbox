@@ -127,6 +127,7 @@ def launch_gate(context, commit, marker, parent_marker, history_page, marker_his
     need(identity != PREFLIGHT_V4E_ID, 'IDENTITY_CONSUMED_004E')
     need(identity != PREFLIGHT_V4F_ID, 'IDENTITY_CONSUMED_004F')
     need(identity != PREFLIGHT_V4G_ID, 'IDENTITY_CONSUMED_004G')
+    need(identity != PREFLIGHT_V4H_ID, 'IDENTITY_CONSUMED_004H')
     need(context.get('repository') == REPO and context.get('event') == 'push' and
          context.get('branch') == BRANCH, 'UNEXPECTED_BRANCH_OR_EVENT')
     need(type(context.get('run_attempt')) is int and context['run_attempt'] == 1, 'RERUN_REJECTED')
@@ -192,6 +193,7 @@ def cloud_launch_guard(env, identity=PREFLIGHT_ID, read=read_api):
     need(identity != PREFLIGHT_V4E_ID, 'IDENTITY_CONSUMED_004E')
     need(identity != PREFLIGHT_V4F_ID, 'IDENTITY_CONSUMED_004F')
     need(identity != PREFLIGHT_V4G_ID, 'IDENTITY_CONSUMED_004G')
+    need(identity != PREFLIGHT_V4H_ID, 'IDENTITY_CONSUMED_004H')
     need(env.get('GITHUB_ACTIONS') == 'true' and env.get('RUNNER_ENVIRONMENT') == 'github-hosted' and
          env.get('RUNNER_OS') == 'Linux' and env.get('RUNNER_ARCH') == 'X64', 'CLOUD_RUNNER_REQUIRED')
     try:
