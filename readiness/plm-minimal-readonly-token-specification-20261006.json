@@ -1,0 +1,78 @@
+{
+  "specification_id": "plm-youtube-sandbox-minimal-readonly-token-specification-20261006-r1",
+  "status": "APPROVAL_REQUIRED_FOR_NEW_MINIMAL_READONLY_TOKEN_CREATION",
+  "checked_date": "2026-10-06",
+  "creation_authorized": false,
+  "token_type": "ACCOUNT_OWNED",
+  "token_name": "plm-youtube-sandbox-readonly-20261006-r1",
+  "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+  "worker_name": "plm-serverless-sandbox-control",
+  "permission_policies": [
+    {
+      "effect": "allow",
+      "permission_name": "Content Read-Only",
+      "product": "Workers",
+      "resource_scope": {
+        "account_id": "6c8ccd6aface937ab5dabef61cb64534",
+        "scope_kind": "Individual Workers",
+        "selected_workers_exact": ["plm-serverless-sandbox-control"]
+      },
+      "purpose": ["Worker script/source read", "Worker schedules/cron read"],
+      "legacy_api_permission_equivalent": "Workers Scripts Read",
+      "legacy_permission_not_granted": true,
+      "reason": "Official Workers documentation supports per-Worker Content Read-Only; legacy Workers Scripts Read grants product-level access and is not the minimal selection."
+    },
+    {
+      "effect": "allow",
+      "permission_name": "Queues Read",
+      "resource_scope": {"account_id": "6c8ccd6aface937ab5dabef61cb64534", "category": "Account", "resource_selector": "com.cloudflare.api.account.6c8ccd6aface937ab5dabef61cb64534", "value": "*"},
+      "purpose": ["List account queues and read existence/consumer metadata"],
+      "reason": "Separate explicit queue read policy avoids assuming a per-Worker role authorizes account-wide Queues list. Queue inventory requires the exact account scope."
+    },
+    {
+      "effect": "allow",
+      "permission_name": "Account API Tokens Read",
+      "resource_scope": {"account_id": "6c8ccd6aface937ab5dabef61cb64534", "category": "Account", "resource_selector": "com.cloudflare.api.account.6c8ccd6aface937ab5dabef61cb64534", "value": "*"},
+      "purpose": ["Read new token policy metadata/details"],
+      "limitation": "Account-level token metadata visibility may extend beyond self. No self-only scope is asserted. Future probe may fetch only the exact ID returned by its own verify response."
+    }
+  ],
+  "scope_encoding": {"worker_api_resource_selector": "NOT_ASSERTED_USE_DOCUMENTED_DASHBOARD_INDIVIDUAL_WORKERS_SELECTION", "permission_group_ids": "NOT_GUESSED_UI_SELECTION_BY_EXACT_NAMES", "wildcard_account_id_allowed": false, "all_workers_allowed": false, "developer_platform_scope_allowed": false},
+  "routes": {"state": "ROUTES_DEFERRED_UNTIL_EXACT_ZONE_ID", "permission_included": false, "required_future_permission": "Workers Routes Read", "zone_id": null, "endpoint": "GET /zones/{exact_zone_id}/workers/routes", "account_workers_routes_endpoint_forbidden": true},
+  "endpoint_mapping_reference_only_not_execution_approval": {
+    "worker_source": "GET /accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2",
+    "worker_schedules": "GET /accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules",
+    "queues": "GET /accounts/6c8ccd6aface937ab5dabef61cb64534/queues",
+    "token_verify": "GET /accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/verify",
+    "token_details": "GET /accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/{exact_verify_result_id}"
+  },
+  "github_destination": {"repository": "ikkinotako2-sketch/project-love-machine-serverless-sandbox", "scope": "REPOSITORY", "secret_name": "PLM_CF_WORKER_API_TOKEN"},
+  "current_creator_capability": "UNVERIFIED_NO_CLOUDFLARE_ACCOUNT_ACCESS_PERFORMED",
+  "creator_prerequisite": "Existing API Token Provisioning capability or existing Super Administrator membership; grantable token permissions must be a subset of the existing member permissions. Do not grant Admin to the token or escalate the member.",
+  "creation_procedure_future_separate_approval_only": [
+    "Confirm exact account, existing creator capability, target Worker selection and absence of same-name token. Missing capability or target selection: STOP.",
+    "Prepare GitHub Repository secret input in the exact sandbox repository. If an existing secret now exists: STOP; do not overwrite it.",
+    "In Manage account > Account API tokens, prepare the exact name and three read-only policies above. Select Individual Workers > plm-serverless-sandbox-control for Content Read-Only. Do not create yet.",
+    "Review summary: exact account, exact single Worker, Queues Read and Account API Tokens Read only; no Write/Edit/Admin, D1, zone or platform-wide permissions. Missing choices or broader fallback required: STOP.",
+    "Only after separate explicit creation approval, user directly creates the token and transfers the one-time displayed value to the prepared GitHub Repository secret input without revealing it to the assistant. Credential entry and submission are performed by the user; no chat or file intermediary.",
+    "Verify secret name/scope/updated metadata only, then STOP. Do not start a workflow or API probe."
+  ],
+  "secret_handling": {"assistant_value_access": false, "chat": false, "report": false, "stdout": false, "file": false, "issue_pr_commit": false, "artifact": false, "workflow_log": false, "clipboard_history_report": false, "secret_screen_capture": false, "retention": 0, "value_display_once": true},
+  "revocation_procedure_future_separate_approval_only": [
+    "Identify only this newly created token by recorded nonsecret token ID, exact name and account; do not guess IDs.",
+    "With separate revocation approval, the authorized owner revokes only that exact token in Account API tokens using existing account permissions. The read-only token cannot revoke itself and receives no Write permission for cleanup.",
+    "Any removal of the sandbox Repository secret requires separate explicit approval. Do not affect any other token or secret."
+  ],
+  "stop_conditions": ["Account mismatch", "ACCOUNT_OWNED creation unavailable with existing privileges", "Token name collision", "Exact Worker unavailable or ambiguous", "Per-Worker Content Read-Only unavailable", "Any Write/Edit/Admin required", "Broader resource scope required", "Unexpected permission or destination", "Existing GitHub secret would be overwritten", "Secret handling requires assistant exposure or file retention", "Exact zone absent: routes remain deferred", "Any remote probe would be executed without separate approval"],
+  "consumed_identity": {"identity": "youtube-cloudflare-credential-policy-readonly-20261006-r1", "run_id": "37450428476", "permanent_no_retry_no_resume_no_rerun": true},
+  "operations_this_preparation": {"token_creation": 0, "token_rotation": 0, "secret_registration": 0, "cloudflare_authenticated_api_requests": 0, "worker_get": 0, "d1_read": 0, "d1_write": 0, "worker_deploy": 0, "migration": 0, "route_cron_queue_changes": 0, "workflow_runs": 0, "production_changes": 0, "youtube_operations": 0, "consumed_identity_reruns": 0},
+  "sources": [
+    "https://developers.cloudflare.com/workers/authorization/workers/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/content/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/schedules/methods/get/",
+    "https://developers.cloudflare.com/api/resources/queues/methods/list/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/routes/methods/list/",
+    "https://developers.cloudflare.com/api/resources/accounts/subresources/tokens/methods/get/",
+    "https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/"
+  ]
+}
