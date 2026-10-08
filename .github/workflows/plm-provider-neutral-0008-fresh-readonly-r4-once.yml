@@ -1,0 +1,50 @@
+name: PLM Provider Neutral 0008 Fresh Readonly R4 Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261008-r4.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: provider-neutral-0008-fresh-readonly-preflight-20261008-r4
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.head_commit.message == 'PLM 0008 fresh readonly once provider-neutral-0008-fresh-readonly-preflight-20261008-r4' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_APPROVED_BEFORE: ${{ github.event.before }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 3
+      - name: Exact prepared parent and marker-only new consumption
+        run: |
+          python3 - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          from readiness.provider_neutral_0008_fresh_preflight_r4 import MARKER,PLAN,WORKFLOW,HELPER,SCHEMA,PARENT,marker_check,load_candidate
+          def git(*args):return subprocess.check_output(['git',*args],text=True).strip()
+          before=os.environ['PLM_APPROVED_BEFORE']
+          assert git('rev-parse','HEAD^')==before
+          assert git('rev-parse',before+'^')==PARENT
+          assert git('diff','--name-only',before,'HEAD')==MARKER
+          assert subprocess.run(['git','cat-file','-e',before+':'+MARKER],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode!=0
+          files={p:Path(p).read_bytes() for p in (PLAN,WORKFLOW,HELPER,SCHEMA)}
+          marker_check(json.loads(Path(MARKER).read_bytes()),json.loads(files[PLAN]),before,files)
+          load_candidate()
+          PY
+      - name: Bounded readonly audit; stop before any migration
+        env:
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN: ${{ secrets.PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: python3 readiness/provider_neutral_0008_fresh_preflight_r4.py

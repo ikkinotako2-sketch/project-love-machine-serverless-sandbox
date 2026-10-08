@@ -192,7 +192,7 @@ class FreshPreflightR2Tests(unittest.TestCase):
    e=dict(env)
    if value is not None:e['PLM_CF_D1_ROUNDTRIP_BACKEND_OWNER_EVIDENCE']=value
    stdout=io.StringIO()
-   with patch.dict('os.environ',e,clear=True),patch.object(Path,'read_bytes',fake_read),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=lambda *a:None),patch.object(p,'bounded_http',return_value=(200,b'{"total_count":0,"workflow_runs":[]}')),patch.object(p,'preflight',return_value={'pass':True,'cloudflare_read_only_calls':0}) as preflight,contextlib.redirect_stdout(stdout):p.main()
+   with patch.dict('os.environ',e,clear=True),patch.object(Path,'read_bytes',fake_read),patch.object(Path,'rglob',return_value=[Path(p.PRIOR_PREFLIGHT_MARKER)]),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=lambda *a:None),patch.object(p,'bounded_http',return_value=(200,b'{"total_count":0,"workflow_runs":[]}')),patch.object(p,'preflight',return_value={'pass':True,'cloudflare_read_only_calls':0}) as preflight,contextlib.redirect_stdout(stdout):p.main()
    preflight.assert_called_once();self.assertTrue(json.loads(stdout.getvalue())['pass']);self.assertNotIn('fixture',stdout.getvalue())
  def test_owner_dependency_absent_from_runtime(self):
   for path in (p.HELPER,p.WORKFLOW,p.PLAN):

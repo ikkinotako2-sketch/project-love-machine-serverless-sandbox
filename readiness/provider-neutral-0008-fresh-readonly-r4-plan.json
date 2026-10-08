@@ -1,0 +1,382 @@
+{
+  "identity": "provider-neutral-0008-fresh-readonly-preflight-20261008-r4",
+  "exact_parent_sha": "ec2146a71fb9470fea4ac0f4dfafbc469724828b",
+  "prepared_not_executed": true,
+  "execution_approved": false,
+  "target_account": "6c8ccd6aface937ab5dabef61cb64534",
+  "target_database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "target_database_name": "plm-serverless-sandbox-state",
+  "namespace": "plm_rt_v2_",
+  "candidate_raw_hashes": {
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+    "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+    "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a"
+  },
+  "workflow_path": ".github/workflows/plm-provider-neutral-0008-fresh-readonly-r4-once.yml",
+  "helper_path": "readiness/provider_neutral_0008_fresh_preflight_r4.py",
+  "marker_schema_path": "readiness/provider-neutral-0008-fresh-readonly-r4-marker.schema.json",
+  "maximum_cloudflare_read_only_calls": 16,
+  "backend_token_verify_get_max": 1,
+  "d1_read_token_audit_calls_max": 15,
+  "maximum_writes": 0,
+  "run_attempt": 1,
+  "retry": 0,
+  "resend": 0,
+  "resume": 0,
+  "fallback": 0,
+  "automatic_rollback": 0,
+  "raw_retention": 0,
+  "redirect": 0,
+  "no_retry": true,
+  "no_resume": true,
+  "response_bytes_max_each": 262144,
+  "maximum_github_history_gets": 100,
+  "history_per_page": 5,
+  "history_response_max_bytes": 262144,
+  "history_complete_required": true,
+  "request_sequence": [
+    {
+      "credential": "backend",
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/verify",
+      "body_sha256": null
+    },
+    {
+      "credential": "read",
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database?page=1&per_page=100",
+      "body_sha256": null
+    },
+    {
+      "credential": "read",
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+      "body_sha256": null
+    },
+    {
+      "credential": "read",
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/time_travel/bookmark",
+      "body_sha256": null
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "34c402cb8f60dba121f475a7e55faa2a085a779f1a60e0a236a33e7a4357971d"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "50399762c6e522b447ef5ba3dd155fd1623a28c2da0aea4972536ca03ca331f2"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "90b9de4259ee68be10fbedfb64c7a70bb186b44d9449bbca5e66f193b13539c8"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "080c4b0f5473f3fadbda6d9ed236d6a0ece7c844a4823bf5b64651e15aec446e"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "eebc172f8a47181d55d38bc4ef3e31729758af0dfcbe06e0c41042053d5492e9"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "8154eef23c26639bbfef8e295dc02a16e69ed11b6b318700b844267cecc00dc5"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "9b1e9a86b241aa5f2cf9cdc00c5ce71831df813e93284d7587901328514ff95c"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "621905318c49b5226fe26447b29d90551ece59f6c3ff64f5e38b56b67f0a3be2"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "850183effe0c5765f40134447a03e055519deae3dc7aaeaa2a2728def4138f6e"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "02aef3b7b6d840f11184644d34df7ee464e50d9d55dbeb6c06994ba18bf6aedc"
+    },
+    {
+      "credential": "read",
+      "method": "POST",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/query",
+      "body_sha256": "194e7a41cdd6375f4ebdea37cc3e656911d66ba277a40e6ef457c149db9cfcd0"
+    },
+    {
+      "credential": "read",
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/d1/database/18050cf6-934e-4f3a-a1cd-5041bac1c35e/time_travel/bookmark",
+      "body_sha256": null
+    }
+  ],
+  "readonly_queries": [
+    {
+      "kind": "schema",
+      "sql_sha256": "eba3330468f4fc5fb96dae08258e000de863acf74c0189a66ab1c3c10134d209",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sql_bytes": 28794,
+      "parameter_count": 0
+    },
+    {
+      "kind": "rows:backend_probe_v1",
+      "sql_sha256": "02aed979c7061b02e09639259a216c8e0906957ddbc8db6fdba65f551c4fd089",
+      "params_sha256": "e72ef2eb0320a479225e4d2cfb353c9dff74e2763d78dfb9063cc2786d1be6bb",
+      "sql_bytes": 1516,
+      "parameter_count": 30
+    },
+    {
+      "kind": "rows:durable_stage2_callback",
+      "sql_sha256": "904045e9a0f2e935de161ae62a13e54a537286d2e7501554eb3c69167e4b5fbc",
+      "params_sha256": "ca5d9c5571d04157e60ffa6c2ab165bde85c37f83a3b5d51c59ef9fc983bfefd",
+      "sql_bytes": 1161,
+      "parameter_count": 18
+    },
+    {
+      "kind": "rows:durable_stage2_checkpoint",
+      "sql_sha256": "2966977dd29c079ceeaf7dc4968329cc66566d9472fd2f68439c59f5d57ebbef",
+      "params_sha256": "f11ce59d45a245f3bbe1c27610b5ad6f26f83bf657a1e0635e74024b8155bb8e",
+      "sql_bytes": 1331,
+      "parameter_count": 22
+    },
+    {
+      "kind": "rows:durable_stage2_job",
+      "sql_sha256": "ccca0bd1c899c8f76414cae793e73f1293f55f3b043fc201c254e2d28d2a1d3f",
+      "params_sha256": "8dfb2531a1c3a9454fc31cea6cbcb0dcc8cc47c3addc612e6a2169e155fd10d9",
+      "sql_bytes": 1612,
+      "parameter_count": 32
+    },
+    {
+      "kind": "rows:plm_rt_v1_callback",
+      "sql_sha256": "be2f6c829a5e4463f59244d548902531f5c945a8c8763981f53c5a2de7897897",
+      "params_sha256": "fceadfe69a1205b33f3bf7f52d01c0b370b5ae683c354f348e961a3219e1a45c",
+      "sql_bytes": 1188,
+      "parameter_count": 20
+    },
+    {
+      "kind": "rows:plm_rt_v1_effect",
+      "sql_sha256": "20a3ef1409488a79e3ecad362d1ffc298d0c32d2b69d1651af222bc1d04622f4",
+      "params_sha256": "61c5a3d13fd27df88f7bb095f6581bede16f2218d06346b2449ea6a4a9eb907c",
+      "sql_bytes": 3126,
+      "parameter_count": 78
+    },
+    {
+      "kind": "rows:plm_rt_v1_job",
+      "sql_sha256": "e5db168b2084e80782290ca9777e75cbb4ebbc64c2b98112d018e36d6613fc34",
+      "params_sha256": "bc9023ba0cc8295f08c2e9b7f73c1e5abf7a06eed0124183ebd21e319c9fe3c8",
+      "sql_bytes": 3171,
+      "parameter_count": 78
+    },
+    {
+      "kind": "rows:plm_rt_v1_render",
+      "sql_sha256": "d5c5a021536231ea732e4accfa94b076ddba5462af56a4c4ccfda1b282a0248c",
+      "params_sha256": "6cce6f0c18887f26052a619fbecb6e726f2afefb85c4f536c74077513da5c8c5",
+      "sql_bytes": 1270,
+      "parameter_count": 22
+    },
+    {
+      "kind": "rows:plm_rt_v1_script",
+      "sql_sha256": "5e4c09af0143be0d40353011215a2b6226044a96e46369f4d278ff3b5e2cce93",
+      "params_sha256": "b8b0eab3e358c636d85fd32cd1740f41cc8a56d203d786faf38cff63c3cff5f1",
+      "sql_bytes": 1434,
+      "parameter_count": 28
+    },
+    {
+      "kind": "rows:test_jobs",
+      "sql_sha256": "8ebc9b510f8b37f7907d3daebd03284e2e9eda64e6358890f16938b66ec3758d",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sql_bytes": 444,
+      "parameter_count": 0
+    }
+  ],
+  "row_proof": "Server-side typed binary equality count for every distinct expected row plus total row count. Full exact table column/index metadata. No raw remote row values returned, read, logged or retained. _cf_KV contents not queried.",
+  "schema_proof": "All 29 non-internal objects exact type/name/table/SQL count; total exactly29; namespace absent. Per-table column/index metadata exact. No unknown objects.",
+  "fresh_bookmark_proof": "GET current bookmark before and after all11 exact readonly SELECTs; must match. Primary query metadata required; rows_written=changes=0 and changed_db=false. No restore.",
+  "token_type": "ACCOUNT_OWNED",
+  "read_secret_reference": "PLM_CF_D1_READ_TOKEN",
+  "backend_secret_reference": "PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN",
+  "backend_allowed_operation": {
+    "method": "GET",
+    "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/verify",
+    "max": 1
+  },
+  "backend_scope_api_independently_verified": false,
+  "prior_execution_gate": {
+    "recursive_receipts_and_consumed_marker_scan": true,
+    "no_sent_success_partial_unknown_failure_receipts": true,
+    "complete_GitHub_execution_history_before_Cloudflare": true,
+    "any_prior_0008_migration_run_stops_even_if_skipped": true,
+    "own_fresh_preflight_marker_excluded_from_prior_migration_scan": true,
+    "old_consumed_workflows_never_reused": true,
+    "fresh_history_at_execution_required": true,
+    "allowed_prior_preflights": [
+      {
+        "path": "audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261006-r1.json",
+        "sha256": "92d58f4a7027de3f67a8cfcb02af554fa8d08a43f418821e5761cc61989a86fe",
+        "run_id": 37480012730,
+        "migration_send": false,
+        "state": "PERMANENTLY_CONSUMED"
+      },
+      {
+        "path": "audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261007-r2.json",
+        "sha256": "145b6475cb10cb8e8c0a06897fa99ded90c745c615fb827b2c65479d8b971aca",
+        "run_id": 37745767546,
+        "migration_send": false,
+        "state": "PERMANENTLY_CONSUMED"
+      },
+      {
+        "path": "audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261008-r3.json",
+        "sha256": "62f9afdc8f714b0d560ab0b7ec31e7a1e13751e5a737a0b45016df24952edc6f",
+        "run_id": 37749010863,
+        "migration_send": false,
+        "state": "PERMANENTLY_CONSUMED"
+      }
+    ]
+  },
+  "worker_evidence": {
+    "run_id": 37475870966,
+    "identity": "youtube-worker-current-readonly-inspect-20261006-r1",
+    "marker_commit": "110b6f8b81225ca2777cd214b7bb2f62d389079f",
+    "kind": "HISTORICAL_2026_10_06_SANITIZED_INSPECTION",
+    "worker_exists": true,
+    "cron_count": 0,
+    "queue_count": 0,
+    "consumer_association": "CONFIRMED_ABSENT",
+    "source_response_sha256": "06f5a741873d92fcc30479a85be1ea37cfb5fa5b810a3783b7c596bb366d1b84",
+    "hash_scope": "EXACT_MULTIPART_CONTENT_V2_RESPONSE_BYTES",
+    "bundle_equality": "UNVERIFIED",
+    "new_Worker_GETs": 0,
+    "current_day_state_not_asserted": true
+  },
+  "migrations": {
+    "0008": "NOT_APPLIED_HISTORICAL_REQUIRES_FRESH_PROOF",
+    "0009": "NOT_APPLIED",
+    "0010": "NOT_APPLIED"
+  },
+  "accept_classification_only": "NOT_APPLIED",
+  "reject_classifications": [
+    "FULL_APPLIED",
+    "PARTIAL_APPLIED",
+    "STILL_UNKNOWN"
+  ],
+  "marker": {
+    "path": "audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261008-r4.json",
+    "state": "NOT_CREATED_NOT_CONSUMED",
+    "future_message": "PLM 0008 fresh readonly once provider-neutral-0008-fresh-readonly-preflight-20261008-r4",
+    "prepared_commit_exact_required": true,
+    "candidate_four_hashes_required": true,
+    "only_changed_file": true,
+    "absent_in_prepared_tree_required": true
+  },
+  "expected_terminal_result": "FRESH_PREFLIGHT_SUCCESS_STOP_BEFORE_MIGRATION",
+  "stop_conditions": [
+    "missing backend/read credential or credential roles not distinct",
+    "expiry missing/expired/changed during audit",
+    "verify HTTP/status/invalid token ID",
+    "prior receipt/run or incomplete history",
+    "inventory pagination/target mismatch",
+    "schema/row/metadata drift",
+    "candidate not NOT_APPLIED",
+    "fresh bookmark absent/changed",
+    "response size/shape/primary/write metadata abnormal",
+    "HTTP error/redirect/timeout/unknown no retry",
+    "hash/parent/marker/attempt mismatch"
+  ],
+  "forbidden": [
+    "D1 mutation/import/apply",
+    "Backend-token D1 query",
+    "Worker/Queues/routes GET",
+    "production access/change",
+    "YouTube operation",
+    "secret changes",
+    "migration0008/0009/0010",
+    "rerun retry resume rollback fallback"
+  ],
+  "official_sources": [
+    "https://developers.cloudflare.com/api/resources/d1/subresources/database/methods/query/",
+    "https://developers.cloudflare.com/api/resources/d1/subresources/database/subresources/time_travel/methods/get_bookmark/",
+    "https://developers.cloudflare.com/d1/platform/limits/"
+  ],
+  "workflow_sha256": "e55024e4830123d86be57a15f873238cc6e39e92af6835e2618dd64b29b8c526",
+  "helper_sha256": "226bb774d8a3f1451a25f4ca3688e35eff164ee6e393df556b4e659e2581504d",
+  "marker_schema_sha256": "a099607512f61239238a4a77a62127447eb55e2f36c60904c9863488cc0c6bcd",
+  "distinct_read_and_backend_credential_values_required": true,
+  "credential_design": "VERIFY_SELF_METADATA_NO_MANUAL_TOKEN_ID",
+  "owner_evidence_variable_required": false,
+  "verify_self_gate": {
+    "status": "active",
+    "id_pattern": "^[a-f0-9]{32}$",
+    "finite_expiry_required": true,
+    "expiry_after_execution_time_required": true,
+    "scope_api_independently_verified": false,
+    "scope_status": "OWNER_ATTESTED_D1_WRITE_ONLY_NOT_API_VERIFIED",
+    "sanitized_retained_fields": [
+      "id",
+      "status",
+      "expires_on",
+      "token_type"
+    ],
+    "missing_backend": "BACKEND_CREDENTIAL_MISSING_STOP",
+    "missing_read": "CREDENTIAL_MISSING_STOP"
+  },
+  "history_endpoint": "/repos/ikkinotako2-sketch/project-love-machine-serverless-sandbox/actions/runs?per_page=5&page={n}",
+  "history_total_capacity": 500,
+  "history_completeness": {
+    "all_pages_same_total_count": true,
+    "duplicate_run_id_forbidden": true,
+    "seen_count_equals_total_count": true,
+    "over_500_or_incomplete": "HISTORY_INCOMPLETE_STOP",
+    "count_drift": "HISTORY_CHANGED_STOP",
+    "oversize": "RESPONSE_BOUND_STOP",
+    "retry": 0
+  },
+  "predecessor_stop": {
+    "identity": "provider-neutral-0008-fresh-readonly-preflight-20261008-r3",
+    "run_id": 37749010863,
+    "result": "HTTP_STOP",
+    "http_status": "UNRECORDED",
+    "cloudflare_error_codes": "UNRECORDED",
+    "cloudflare_calls": 1,
+    "d1_writes": 0,
+    "phase": "BACKEND_VERIFY"
+  },
+  "http_diagnostic": "STATUS_ONLY_PLUS_NUMERIC_CF_ERROR_CODES",
+  "error_body_max_bytes": 32768,
+  "maximum_error_codes": 8,
+  "error_raw_retention": 0,
+  "error_body_read_bound": "32768 bytes plus one oversize-detection byte; never retained",
+  "diagnostic_fields": [
+    "http_status",
+    "cloudflare_error_codes",
+    "error_body_status"
+  ],
+  "history_result_fields": [
+    "history_complete",
+    "history_total_runs",
+    "history_pages"
+  ],
+  "error_messages_headers_and_other_payload_never_retained": true
+}

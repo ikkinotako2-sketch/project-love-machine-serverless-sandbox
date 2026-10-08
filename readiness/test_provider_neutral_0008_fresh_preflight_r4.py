@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 from oracle_bridge import require_guard
 require_guard()
-import provider_neutral_0008_fresh_preflight_r3 as p
+import provider_neutral_0008_fresh_preflight_r4 as p
 ROOT=Path(__file__).resolve().parents[1]
 NOW=1791295200
 EXP='2026-10-07T00:00:00Z'
@@ -22,7 +22,7 @@ def fixtures():
  calls=[]
  def transport(*args):calls.append(args);return 200,json.dumps(responses[len(calls)-1]).encode()
  return b,a,responses,transport,calls
-class FreshPreflightR3Tests(unittest.TestCase):
+class FreshPreflightR4Tests(unittest.TestCase):
  def test_four_raw_hashes(self):
   p.load_candidate(ROOT)
   for path,h in p.PINS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
@@ -42,7 +42,7 @@ class FreshPreflightR3Tests(unittest.TestCase):
   with self.assertRaises(p.Stop):p.compare_query(spec,[dict(row) for row in conn.execute(spec['sql'],spec['params']).fetchall()])
   conn.close()
  def test_success_bound(self):
-  b,a,responses,transport,calls=fixtures();out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0})
+  b,a,responses,transport,calls=fixtures();out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1})
   self.assertTrue(out['pass']);self.assertEqual(len(calls),16);self.assertEqual(out['candidate_classification'],'NOT_APPLIED');self.assertEqual(out['worker_bundle_equality'],'UNVERIFIED')
  def test_classification_reject(self):
   self.assertEqual(p.classifier(0),'NOT_APPLIED')
@@ -53,11 +53,11 @@ class FreshPreflightR3Tests(unittest.TestCase):
    with self.assertRaises(p.Stop):p.compare_query(q,[row])
  def test_second_application_stop(self):
   b,a,responses,transport,calls=fixtures();responses[4]['result'][0]['results'][0]['candidate']=16
-  out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(calls),5)
+  out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(calls),5)
  def test_protected_row_or_schema_drift(self):
   for i in (4,5,9,14):
    b,a,responses,transport,calls=fixtures();responses[i]['result'][0]['results'][0]['total']+=1
-   out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(calls),i+1)
+   out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(calls),i+1)
  def test_deleted_changed_row_count(self):
   q=p.queries(p.load_candidate(ROOT)[0])[1];self.assertIn('r0',q['expected'])
   for value in (0,2):
@@ -90,9 +90,9 @@ class FreshPreflightR3Tests(unittest.TestCase):
  def test_inactive_expiry_binding(self):
   for change in ({'status':'inactive'},{'expires_on':None},{'expires_on':'2026-01-01T00:00:00Z'},{'id':'BAD'},{'expires_on':'not-a-timestamp'}):
    b,a,responses,transport,calls=fixtures();responses[0]['result'].update(change)
-   out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(calls),1)
+   out=p.preflight(transport,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(calls),1)
  def test_token_expired_during_audit(self):
-  b,a,r,t,c=fixtures();out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0},clock=lambda:NOW+86400*3);self.assertFalse(out['pass'])
+  b,a,r,t,c=fixtures();out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1},clock=lambda:NOW+86400*3);self.assertFalse(out['pass'])
  def test_prior_send_consumed_stop(self):
   for name in ['audit-evidence/provider-neutral-backend-sent-x.json','audit-evidence/0008-unknown-receipt.json','audit-evidence/consumed/provider-neutral-0008-old.json']:
    with self.assertRaises(p.Stop):p.prior_check([name])
@@ -103,13 +103,13 @@ class FreshPreflightR3Tests(unittest.TestCase):
  def test_bookmark_required_unchanged(self):
   for i,bookmark in [(3,None),(15,'0'*32)]:
    b,a,r,t,c=fixtures();r[i]['result']['bookmark']=bookmark
-   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass'])
+   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass'])
  def test_inventory_ambiguous(self):
   b,a,r,t,c=fixtures();r[1]['result_info']['total_count']=2
-  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(c),2)
+  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(c),2)
  def test_write_metadata_stop(self):
   b,a,r,t,c=fixtures();r[4]['result'][0]['meta']['rows_written']=1
-  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(c),5)
+  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(c),5)
  def test_response_bounds_duplicate(self):
   for raw in (b'x'*(p.MAX_BYTES+1),b'{"success":true,"success":true}'):
    with self.assertRaises(p.Stop):p.decode(raw)
@@ -125,10 +125,10 @@ class FreshPreflightR3Tests(unittest.TestCase):
   for status in (403,404,302):
    calls=[]
    def t(*a):calls.append(a);return status,b'never-retain-fixture'
-   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(calls),1)
+   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(calls),1)
  def test_secret_never_logged(self):
   b,a,r,t,c=fixtures();stdout=io.StringIO()
-  with contextlib.redirect_stdout(stdout):out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0})
+  with contextlib.redirect_stdout(stdout):out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1})
   self.assertEqual(stdout.getvalue(),'');self.assertNotIn('never-retain-fixture',json.dumps(out));self.assertNotIn('protected_rows',out)
  def test_credential_missing(self):
   b,_=p.load_candidate(ROOT)
@@ -143,29 +143,29 @@ class FreshPreflightR3Tests(unittest.TestCase):
   files={path:(ROOT/path).read_bytes() for path in (p.PLAN,p.WORKFLOW,p.HELPER,p.SCHEMA)};plan=json.loads(files[p.PLAN]);before='1'*40
   marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,'candidate_raw_hashes':p.PINS,**{key:p.sha(files[path]) for key,path in [('workflow_sha256',p.WORKFLOW),('helper_sha256',p.HELPER),('preflight_plan_sha256',p.PLAN)]}}
   p.marker_check(marker,plan,before,files)
-  for identity in ['provider-neutral-0008-fresh-readonly-preflight-20261007-r2','provider-neutral-0008-fresh-readonly-preflight-20261006-r1','004H','youtube-worker-current-readonly-inspect-20261006-r1','youtube-cloudflare-credential-policy-readonly-20261006-r2']:
+  for identity in ['provider-neutral-0008-fresh-readonly-preflight-20261008-r3','provider-neutral-0008-fresh-readonly-preflight-20261007-r2','provider-neutral-0008-fresh-readonly-preflight-20261006-r1','004H','youtube-worker-current-readonly-inspect-20261006-r1','youtube-cloudflare-credential-policy-readonly-20261006-r2']:
    with self.assertRaises(p.Stop):p.marker_check(dict(marker,identity=identity),plan,before,files)
   bad=copy.deepcopy(marker);bad['candidate_raw_hashes'][next(iter(p.PINS))]='0'*64
   with self.assertRaises(p.Stop):p.marker_check(bad,plan,before,files)
  def test_worker_migrations_marker_workflow(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['worker_evidence']['bundle_equality'],'UNVERIFIED');self.assertEqual(plan['worker_evidence']['new_Worker_GETs'],0)
   for name in ('0009','0010'):self.assertEqual(plan['migrations'][name],'NOT_APPLIED')
-  self.assertEqual(json.loads((ROOT/p.MARKER).read_bytes())['prepared_commit_sha'],'62a4641bdd81460f36479b9e71cb90162140121a');workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
+  self.assertFalse((ROOT/p.MARKER).exists());workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
   self.assertNotIn('upload-artifact',workflow)
 
 
  def test_self_verified_metadata(self):
   b,a,r,t,c=fixtures();r[0]['result']['id']='b'*32;r[0]['result']['expires_on']='2026-10-09T00:00:00Z'
-  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0})
+  out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1})
   self.assertTrue(out['pass']);self.assertEqual(out['token_id'],'b'*32);self.assertEqual(out['token_type'],'ACCOUNT_OWNED');self.assertFalse(out['scope_api_independently_verified']);self.assertEqual(out['scope_status'],'OWNER_ATTESTED_D1_WRITE_ONLY_NOT_API_VERIFIED')
  def test_invalid_token_ids(self):
   for token_id in [None,'', 'A'*32, 'a'*31, 'a'*33, 'g'*32, 123]:
    b,a,r,t,c=fixtures();r[0]['result']['id']=token_id
-   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertEqual(out['result'],'TOKEN_ID_INVALID_STOP');self.assertEqual(len(c),1)
+   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertEqual(out['result'],'TOKEN_ID_INVALID_STOP');self.assertEqual(len(c),1)
  def test_finite_expiry(self):
   for exp in [None,'','99999-12-31T00:00:00Z','2026-10-07T00:00:00','infinity']:
    b,a,r,t,c=fixtures();r[0]['result']['expires_on']=exp
-   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertFalse(out['pass']);self.assertEqual(len(c),1)
+   out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertFalse(out['pass']);self.assertEqual(len(c),1)
  def test_r1_consumption_is_not_migration(self):
   p.prior_check([p.PRIOR_PREFLIGHT_MARKER])
   proof=p.history_check([{'total_count':1,'workflow_runs':[{'id':37480012730,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-once.yml'}]}])
@@ -200,7 +200,7 @@ class FreshPreflightR3Tests(unittest.TestCase):
   self.assertFalse(json.loads((ROOT/p.PLAN).read_bytes())['owner_evidence_variable_required'])
  def test_marker_schema_and_parent(self):
   schema=json.loads((ROOT/p.SCHEMA).read_bytes());self.assertEqual(schema['properties']['identity']['const'],p.IDENTITY);self.assertFalse(schema['additionalProperties'])
-  self.assertEqual(p.PARENT,'ad5545e793e1d0e7fdc39bc8932ffa097f7c9e4a')
+  self.assertEqual(p.PARENT,'ec2146a71fb9470fea4ac0f4dfafbc469724828b')
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['marker']['state'],'NOT_CREATED_NOT_CONSUMED');self.assertEqual(plan['credential_design'],'VERIFY_SELF_METADATA_NO_MANUAL_TOKEN_ID')
  def test_plan_exact_query_request_manifest(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());before,_=p.load_candidate(ROOT)
@@ -209,9 +209,9 @@ class FreshPreflightR3Tests(unittest.TestCase):
   for q,manifest in zip(p.queries(before),plan['readonly_queries']):self.assertEqual(p.sha(q['sql'].encode()),manifest['sql_sha256']);self.assertEqual(p.sha(p.canonical(q['params']).encode()),manifest['params_sha256'])
  def test_query_metadata_all_write_signals_rejected(self):
   for change in [{'changed_db':True},{'changes':1},{'served_by_primary':False},{'rows_written':False}]:
-   b,a,r,t,c=fixtures();r[4]['result'][0]['meta'].update(change);out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0});self.assertEqual(out['result'],'READ_ONLY_RESPONSE_STOP');self.assertEqual(len(c),5)
+   b,a,r,t,c=fixtures();r[4]['result'][0]['meta'].update(change);out=p.preflight(t,b,NOW,history={'complete':True,'prior_send':0,'total':0,'pages':1});self.assertEqual(out['result'],'READ_ONLY_RESPONSE_STOP');self.assertEqual(len(c),5)
  def test_prior_migration_stops_before_cloudflare(self):
-  b,a,r,t,c=fixtures();out=p.preflight(t,b,NOW,['audit-evidence/0008-migration-sent.json'],{'complete':True,'prior_send':0});self.assertEqual(out['result'],'PRIOR_EXECUTION_NO_RESEND_STOP');self.assertEqual(c,[])
+  b,a,r,t,c=fixtures();out=p.preflight(t,b,NOW,['audit-evidence/0008-migration-sent.json'],{'complete':True,'prior_send':0,'total':0,'pages':1});self.assertEqual(out['result'],'PRIOR_EXECUTION_NO_RESEND_STOP');self.assertEqual(c,[])
  def test_no_other_product_requests(self):
   b,_=p.load_candidate(ROOT)
   for role,method,path,body in p.request_specs(b):self.assertNotIn('/workers/',path);self.assertNotIn('/queues',path);self.assertNotIn('/routes',path);self.assertNotIn('/import',path)
@@ -221,7 +221,7 @@ class FreshPreflightR3Tests(unittest.TestCase):
 def history_pages(total):
  return [{'total_count':total,'workflow_runs':[{'id':i+1,'path':'.github/workflows/plm-offline-readiness.yml'} for i in range(start,min(start+5,total))]} for start in range(0,total,5)] or [{'total_count':0,'workflow_runs':[]}]
 
-class HistoryR3Tests(unittest.TestCase):
+class HistoryR4Tests(unittest.TestCase):
  def fetch_fixture(self,pages):
   calls=[]
   def http(host,path,method,headers,body=None):
@@ -274,7 +274,7 @@ class HistoryR3Tests(unittest.TestCase):
   with patch.object(p,'bounded_http',return_value=(200,raw)):out=p.fetch_history('fixture-only')
   self.assertEqual(out['total'],5);self.assertNotIn('unused_metadata',json.dumps(out))
  def test_r1_r2_markers_allowed_and_unchanged(self):
-  self.assertEqual(len(p.PRIOR_PREFLIGHT_MARKERS),2);p.prior_check(list(p.PRIOR_PREFLIGHT_MARKERS))
+  self.assertEqual(len(p.PRIOR_PREFLIGHT_MARKERS),3);p.prior_check(list(p.PRIOR_PREFLIGHT_MARKERS))
   for path,h in p.PRIOR_PREFLIGHT_MARKERS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
   pages=[{'total_count':2,'workflow_runs':[{'id':37480012730,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-once.yml'},{'id':37745767546,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml'}]}]
   self.assertEqual(p.history_check(pages)['prior_send'],0)
@@ -305,7 +305,80 @@ class HistoryR3Tests(unittest.TestCase):
   old=(ROOT/'readiness/provider_neutral_0008_fresh_preflight_r2.py').read_text();new=(ROOT/p.HELPER).read_text()
   def functions(src):return {n.name:ast.get_source_segment(src,n) for n in ast.parse(src).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
   a,b=functions(old),functions(new)
-  for name in ['load_candidate','queries','compare_query','classifier','decode','expiry','request_specs','Gate','preflight','bounded_http','live_transport']:self.assertEqual(a[name],b[name],name)
+  for name in ['load_candidate','queries','compare_query','classifier','decode','expiry','request_specs','live_transport']:self.assertEqual(a[name],b[name],name)
  def test_r2_runtime_hashes_unchanged(self):
   for path,h in [('readiness/provider_neutral_0008_fresh_preflight_r2.py','49a4496f2f5034b6eaf2ea58be266240b63ea4f1f4143db0c5190d63a9e142b1'),('.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml','36b5496f26e379dc2de49fdac7a04089d2142c1d60a21229145980a92d50cca7'),('readiness/provider-neutral-0008-fresh-readonly-r2-plan.json','2d3aee45b8507fbefec88c897cd09722c3062fa91dd74b15a2c5ef0b06782f1f'),('readiness/provider-neutral-0008-fresh-readonly-r2-marker.schema.json','9052e868e60a79951762c92e53aaafdfd77d141e356ae4b079af6feb2b51596a')]:self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
+
+
+
+class HTTPDiagnosticR4Tests(unittest.TestCase):
+ HISTORY={'complete':True,'prior_send':0,'total':264,'pages':53}
+ def outcome(self,status,raw):
+  b,_=p.load_candidate(ROOT);calls=[]
+  def transport(*args):calls.append(args);return status,raw
+  out=p.preflight(transport,b,NOW,history=self.HISTORY)
+  self.assertEqual(len(calls),1);self.assertEqual(calls[0],('backend','GET',p.VERIFY,None));self.assertEqual(out['cloudflare_read_only_calls'],1);self.assertEqual(out['d1_writes'],0)
+  self.assertTrue(out['history_complete']);self.assertEqual(out['history_total_runs'],264);self.assertEqual(out['history_pages'],53)
+  return out
+ def test_exact_400(self):self.assertEqual(self.outcome(400,b'bad')['result'],'HTTP_400_STOP')
+ def test_exact_401(self):self.assertEqual(self.outcome(401,b'bad')['result'],'HTTP_401_STOP')
+ def test_exact_403(self):self.assertEqual(self.outcome(403,b'bad')['result'],'HTTP_403_STOP')
+ def test_exact_404(self):self.assertEqual(self.outcome(404,b'bad')['result'],'HTTP_404_STOP')
+ def test_exact_429(self):self.assertEqual(self.outcome(429,b'bad')['result'],'HTTP_429_STOP')
+ def test_exact_5xx_and_unknown_status(self):
+  for status in (500,502,503,599,418,302,799):
+   out=self.outcome(status,b'bad');self.assertEqual(out['result'],'HTTP_'+str(status)+'_STOP');self.assertEqual(out['http_status'],status)
+ def test_numeric_codes_only_max8(self):
+  raw=json.dumps({'success':False,'errors':[{'code':n,'message':'secret-fixture','documentation_url':'https://private.invalid'} for n in range(12)]+[{'code':True},{'code':'10000'},{'code':1.1}],'creator_email':'private-fixture','ip':'private-fixture','Authorization':'Bearer secret-fixture','value':'secret-fixture'}).encode()
+  out=self.outcome(403,raw);self.assertEqual(out['cloudflare_error_codes'],list(range(8)));self.assertEqual(out['error_body_status'],'PARSED_CODES_ONLY')
+  for text in ('secret-fixture','private-fixture','Authorization','message','documentation_url','creator_email'):self.assertNotIn(text,json.dumps(out))
+ def test_nonintegers_not_codes(self):
+  raw=json.dumps({'success':False,'errors':[{'code':True},{'code':'1'},{'code':1.0},{'code':None},{'code':10000}]}).encode()
+  self.assertEqual(self.outcome(401,raw)['cloudflare_error_codes'],[10000])
+ def test_non_json_status_preserved(self):
+  out=self.outcome(502,b'<html>private-fixture</html>');self.assertEqual(out['http_status'],502);self.assertEqual(out['cloudflare_error_codes'],[]);self.assertNotIn('private-fixture',json.dumps(out))
+ def test_malformed_envelopes_no_codes(self):
+  for raw in [b'{"success":false,"errors":{}}',b'{"success":true,"errors":[{"code":1}]}',b'{"success":false,"errors":[{"code":1,"code":2}]}',b'[]',b'\xff']:
+   self.assertEqual(self.outcome(400,raw)['cloudflare_error_codes'],[])
+ def test_oversize_body_status_preserved(self):
+  out=self.outcome(403,b'x'*(p.ERROR_BODY_MAX_BYTES+1));self.assertEqual(out['error_body_status'],'OVERSIZE_NOT_RETAINED');self.assertEqual(out['http_status'],403);self.assertEqual(out['cloudflare_error_codes'],[])
+ def test_200_runs_full_preflight(self):
+  b,a,r,t,c=fixtures();out=p.preflight(t,b,NOW,history=self.HISTORY);self.assertTrue(out['pass']);self.assertEqual(len(c),16);self.assertEqual(out['result'],'FRESH_PREFLIGHT_SUCCESS_STOP_BEFORE_MIGRATION');self.assertEqual(out['history_total_runs'],264);self.assertEqual(out['history_pages'],53)
+ def test_200_invalid_verify_still_blocks(self):
+  for change in [{'status':'inactive'},{'id':'invalid'},{'expires_on':None},{'expires_on':'2020-01-01T00:00:00Z'}]:
+   b,a,r,t,c=fixtures();r[0]['result'].update(change);out=p.preflight(t,b,NOW,history=self.HISTORY);self.assertFalse(out['pass']);self.assertEqual(len(c),1)
+  b,a,r,t,c=fixtures();r[0]['success']=False;out=p.preflight(t,b,NOW,history=self.HISTORY);self.assertFalse(out['pass']);self.assertEqual(len(c),1)
+ def test_transport_error_body_bounded_and_not_logged(self):
+  from unittest.mock import Mock
+  cases=[(str(p.ERROR_BODY_MAX_BYTES+1),b'','OVERSIZE_NOT_RETAINED'),(None,b'x'*(p.ERROR_BODY_MAX_BYTES+1),'OVERSIZE_NOT_RETAINED'),('invalid',b'','INVALID_LENGTH_NOT_RETAINED'),(None,b'{"success":false,"errors":[{"code":10000,"message":"secret-fixture"}]}','PARSED_CODES_ONLY')]
+  for length,body,state in cases:
+   response=Mock(status=403);response.getheader.return_value=length;response.read.return_value=body;conn=Mock();conn.getresponse.return_value=response;stdout=io.StringIO()
+   with patch('http.client.HTTPSConnection',return_value=conn),contextlib.redirect_stdout(stdout):
+    with self.assertRaises(p.HTTPFailure) as error:p.bounded_http('api.cloudflare.com','/client/v4'+p.VERIFY,'GET',{'Authorization':'Bearer secret-fixture'})
+   self.assertEqual(str(error.exception),'HTTP_403_STOP');self.assertEqual(error.exception.metadata['error_body_status'],state);self.assertNotIn('secret-fixture',str(error.exception.metadata));self.assertEqual(stdout.getvalue(),'');conn.request.assert_called_once();conn.close.assert_called_once()
+   if length is None:response.read.assert_called_once_with(p.ERROR_BODY_MAX_BYTES+1)
+   else:response.read.assert_not_called()
+ def test_body_read_failure_preserves_status(self):
+  from unittest.mock import Mock
+  response=Mock(status=500);response.getheader.return_value=None;response.read.side_effect=TimeoutError('secret-fixture');conn=Mock();conn.getresponse.return_value=response
+  with patch('http.client.HTTPSConnection',return_value=conn):
+   with self.assertRaises(p.HTTPFailure) as error:p.bounded_http('api.cloudflare.com','/client/v4'+p.VERIFY,'GET',{})
+  self.assertEqual(error.exception.metadata,{'http_status':500,'cloudflare_error_codes':[],'error_body_status':'READ_FAILED_NOT_RETAINED'});conn.close.assert_called_once()
+ def test_live_adapter_http_failure_exact_one_send(self):
+  from unittest.mock import Mock
+  b,_=p.load_candidate(ROOT);response=Mock(status=401);response.getheader.return_value=None;response.read.return_value=b'{"success":false,"errors":[{"code":10000,"message":"secret-fixture"}]}';conn=Mock();conn.getresponse.return_value=response
+  with patch('http.client.HTTPSConnection',return_value=conn):out=p.preflight(p.live_transport('read-fixture','backend-fixture',b),b,NOW,history=self.HISTORY)
+  self.assertEqual(out['result'],'HTTP_401_STOP');self.assertEqual(out['cloudflare_error_codes'],[10000]);self.assertEqual(out['cloudflare_read_only_calls'],1);conn.request.assert_called_once();self.assertNotIn('fixture',json.dumps(out))
+ def test_failure_gate_cannot_continue(self):
+  b,_=p.load_candidate(ROOT);calls=[]
+  def t(*args):calls.append(args);return 403,b'not-json'
+  gate=p.Gate(t,p.request_specs(b))
+  with self.assertRaises(p.HTTPFailure):gate.call(*gate.specs[0])
+  with self.assertRaises(p.Stop):gate.call(*gate.specs[1])
+  self.assertEqual(len(calls),1)
+ def test_r3_marker_and_runtime_immutable(self):
+  path='audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261008-r3.json';self.assertEqual(p.sha((ROOT/path).read_bytes()),p.PRIOR_PREFLIGHT_MARKERS[path]);p.prior_check([path])
+  for path,h in [('readiness/provider_neutral_0008_fresh_preflight_r3.py','ba36164a216cefeeb4ba24882a2c3a0e3132966fa3ee198387273c61be833b12'),('.github/workflows/plm-provider-neutral-0008-fresh-readonly-r3-once.yml','e1b88c868de6ef76514518d9427c20d6a3c4a83368b9b0d4370c7b185fc85610'),('readiness/provider-neutral-0008-fresh-readonly-r3-plan.json','fc3a2494ab37a1447ce0c46ee041f2a6e6bb388a1144521a4e9276534ca93bfa'),('readiness/provider-neutral-0008-fresh-readonly-r3-marker.schema.json','74ceec6a2b77efa4a818a8baddc3827660f9d13fbf6310897951270a64ef9689')]:self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
+ def test_diagnostic_fixed_schema(self):
+  plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['http_diagnostic'],'STATUS_ONLY_PLUS_NUMERIC_CF_ERROR_CODES');self.assertEqual(plan['error_body_max_bytes'],32768);self.assertEqual(plan['maximum_error_codes'],8);self.assertEqual(plan['error_raw_retention'],0)
 if __name__=='__main__':unittest.main()
