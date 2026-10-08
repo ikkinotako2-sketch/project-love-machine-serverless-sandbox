@@ -1,0 +1,14 @@
+{
+  "identity": "provider-neutral-0008-fresh-readonly-preflight-20261008-r3",
+  "state": "CONSUMED_BEFORE_REMOTE",
+  "prepared_commit_sha": "62a4641bdd81460f36479b9e71cb90162140121a",
+  "workflow_sha256": "e1b88c868de6ef76514518d9427c20d6a3c4a83368b9b0d4370c7b185fc85610",
+  "helper_sha256": "ba36164a216cefeeb4ba24882a2c3a0e3132966fa3ee198387273c61be833b12",
+  "preflight_plan_sha256": "fc3a2494ab37a1447ce0c46ee041f2a6e6bb388a1144521a4e9276534ca93bfa",
+  "candidate_raw_hashes": {
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+    "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+    "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a"
+  }
+}
