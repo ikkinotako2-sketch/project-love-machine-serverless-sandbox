@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 from oracle_bridge import require_guard
 require_guard()
-import provider_neutral_0008_fresh_preflight_r2 as p
+import provider_neutral_0008_fresh_preflight_r3 as p
 ROOT=Path(__file__).resolve().parents[1]
 NOW=1791295200
 EXP='2026-10-07T00:00:00Z'
@@ -22,7 +22,7 @@ def fixtures():
  calls=[]
  def transport(*args):calls.append(args);return 200,json.dumps(responses[len(calls)-1]).encode()
  return b,a,responses,transport,calls
-class FreshPreflightR2Tests(unittest.TestCase):
+class FreshPreflightR3Tests(unittest.TestCase):
  def test_four_raw_hashes(self):
   p.load_candidate(ROOT)
   for path,h in p.PINS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
@@ -143,14 +143,14 @@ class FreshPreflightR2Tests(unittest.TestCase):
   files={path:(ROOT/path).read_bytes() for path in (p.PLAN,p.WORKFLOW,p.HELPER,p.SCHEMA)};plan=json.loads(files[p.PLAN]);before='1'*40
   marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':before,'candidate_raw_hashes':p.PINS,**{key:p.sha(files[path]) for key,path in [('workflow_sha256',p.WORKFLOW),('helper_sha256',p.HELPER),('preflight_plan_sha256',p.PLAN)]}}
   p.marker_check(marker,plan,before,files)
-  for identity in ['provider-neutral-0008-fresh-readonly-preflight-20261006-r1','004H','youtube-worker-current-readonly-inspect-20261006-r1','youtube-cloudflare-credential-policy-readonly-20261006-r2']:
+  for identity in ['provider-neutral-0008-fresh-readonly-preflight-20261007-r2','provider-neutral-0008-fresh-readonly-preflight-20261006-r1','004H','youtube-worker-current-readonly-inspect-20261006-r1','youtube-cloudflare-credential-policy-readonly-20261006-r2']:
    with self.assertRaises(p.Stop):p.marker_check(dict(marker,identity=identity),plan,before,files)
   bad=copy.deepcopy(marker);bad['candidate_raw_hashes'][next(iter(p.PINS))]='0'*64
   with self.assertRaises(p.Stop):p.marker_check(bad,plan,before,files)
  def test_worker_migrations_marker_workflow(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['worker_evidence']['bundle_equality'],'UNVERIFIED');self.assertEqual(plan['worker_evidence']['new_Worker_GETs'],0)
   for name in ('0009','0010'):self.assertEqual(plan['migrations'][name],'NOT_APPLIED')
-  self.assertEqual(json.loads((ROOT/p.MARKER).read_bytes())['prepared_commit_sha'],'2b74f39310bc5dc5a050096434644126673f301e');workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
+  self.assertFalse((ROOT/p.MARKER).exists());workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
   self.assertNotIn('upload-artifact',workflow)
 
 
@@ -200,7 +200,7 @@ class FreshPreflightR2Tests(unittest.TestCase):
   self.assertFalse(json.loads((ROOT/p.PLAN).read_bytes())['owner_evidence_variable_required'])
  def test_marker_schema_and_parent(self):
   schema=json.loads((ROOT/p.SCHEMA).read_bytes());self.assertEqual(schema['properties']['identity']['const'],p.IDENTITY);self.assertFalse(schema['additionalProperties'])
-  self.assertEqual(p.PARENT,'0a1d29b92044e0d315a23184e14f2596dd719fcc')
+  self.assertEqual(p.PARENT,'ad5545e793e1d0e7fdc39bc8932ffa097f7c9e4a')
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['marker']['state'],'NOT_CREATED_NOT_CONSUMED');self.assertEqual(plan['credential_design'],'VERIFY_SELF_METADATA_NO_MANUAL_TOKEN_ID')
  def test_plan_exact_query_request_manifest(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());before,_=p.load_candidate(ROOT)
@@ -215,4 +215,97 @@ class FreshPreflightR2Tests(unittest.TestCase):
  def test_no_other_product_requests(self):
   b,_=p.load_candidate(ROOT)
   for role,method,path,body in p.request_specs(b):self.assertNotIn('/workers/',path);self.assertNotIn('/queues',path);self.assertNotIn('/routes',path);self.assertNotIn('/import',path)
+
+
+
+def history_pages(total):
+ return [{'total_count':total,'workflow_runs':[{'id':i+1,'path':'.github/workflows/plm-offline-readiness.yml'} for i in range(start,min(start+5,total))]} for start in range(0,total,5)] or [{'total_count':0,'workflow_runs':[]}]
+
+class HistoryR3Tests(unittest.TestCase):
+ def fetch_fixture(self,pages):
+  calls=[]
+  def http(host,path,method,headers,body=None):
+   calls.append((host,path,method,body));self.assertEqual((host,method,body),('api.github.com','GET',None));self.assertEqual(path,p.HISTORY+str(len(calls)))
+   return 200,json.dumps(pages[len(calls)-1]).encode()
+  with patch.object(p,'bounded_http',side_effect=http):out=p.fetch_history('fixture-only')
+  return out,calls
+ def test_exact_per_page_5(self):
+  self.assertEqual(p.HISTORY,'/repos/'+p.REPO+'/actions/runs?per_page=5&page=');self.assertEqual(p.HISTORY_PER_PAGE,5);self.assertEqual(p.MAX_HISTORY_GETS,100);self.assertEqual(p.MAX_BYTES,262144)
+  self.assertNotIn('per_page=20',(ROOT/p.HELPER).read_text());self.assertNotIn('per_page=20',(ROOT/p.PLAN).read_text())
+ def test_264_runs_53_pages_complete(self):
+  out,calls=self.fetch_fixture(history_pages(264));self.assertEqual(out,{'complete':True,'total':264,'pages':53,'prior_send':0});self.assertEqual(len(calls),53)
+ def test_500_runs_100_pages_complete(self):
+  out,calls=self.fetch_fixture(history_pages(500));self.assertEqual(out['pages'],100);self.assertEqual(out['total'],500);self.assertEqual(len(calls),100)
+ def test_501_runs_incomplete_immediate_stop(self):
+  with patch.object(p,'bounded_http',return_value=(200,json.dumps(history_pages(501)[0]).encode())) as http:
+   with self.assertRaisesRegex(p.Stop,'HISTORY_INCOMPLETE_STOP'):p.fetch_history('fixture-only')
+   self.assertEqual(http.call_count,1)
+ def test_total_count_drift_stops(self):
+  pages=history_pages(10);pages[1]['total_count']=11
+  with patch.object(p,'bounded_http',side_effect=[(200,json.dumps(d).encode()) for d in pages]) as http:
+   with self.assertRaisesRegex(p.Stop,'HISTORY_CHANGED_STOP'):p.fetch_history('fixture-only')
+   self.assertEqual(http.call_count,2)
+ def test_duplicate_run_id_stops(self):
+  pages=history_pages(10);pages[1]['workflow_runs'][0]['id']=1
+  with self.assertRaises(p.Stop):self.fetch_fixture(pages)
+ def test_incomplete_last_page_stops(self):
+  pages=history_pages(9);pages[-1]['workflow_runs'].pop()
+  with self.assertRaisesRegex(p.Stop,'HISTORY_INCOMPLETE_STOP'):self.fetch_fixture(pages)
+ def test_empty_last_page_stops(self):
+  pages=history_pages(6);pages[-1]['workflow_runs']=[]
+  with self.assertRaisesRegex(p.Stop,'HISTORY_INCOMPLETE_STOP'):self.fetch_fixture(pages)
+ def test_oversize_page_stops_no_retry(self):
+  with patch.object(p,'bounded_http',return_value=(200,b'x'*(p.MAX_BYTES+1))) as http:
+   with self.assertRaisesRegex(p.Stop,'RESPONSE_BOUND_STOP'):p.fetch_history('fixture-only')
+   self.assertEqual(http.call_count,1)
+ def test_real_transport_size_boundary(self):
+  from unittest.mock import Mock
+  for content_length,body in [(str(p.MAX_BYTES+1),b''),(None,b'x'*(p.MAX_BYTES+1))]:
+   response=Mock(status=200);response.getheader.return_value=content_length;response.read.return_value=body;conn=Mock();conn.getresponse.return_value=response
+   with patch('http.client.HTTPSConnection',return_value=conn):
+    with self.assertRaisesRegex(p.Stop,'RESPONSE_BOUND_STOP'):p.bounded_http('api.github.com',p.HISTORY+'1','GET',{})
+   conn.request.assert_called_once();conn.close.assert_called_once()
+   if content_length is None:response.read.assert_called_once_with(p.MAX_BYTES+1)
+   else:response.read.assert_not_called()
+ def test_five_large_entries_within_bound(self):
+  page=history_pages(5)[0]
+  for run in page['workflow_runs']:run['unused_metadata']='x'*50000
+  raw=json.dumps(page).encode();self.assertLess(len(raw),p.MAX_BYTES)
+  with patch.object(p,'bounded_http',return_value=(200,raw)):out=p.fetch_history('fixture-only')
+  self.assertEqual(out['total'],5);self.assertNotIn('unused_metadata',json.dumps(out))
+ def test_r1_r2_markers_allowed_and_unchanged(self):
+  self.assertEqual(len(p.PRIOR_PREFLIGHT_MARKERS),2);p.prior_check(list(p.PRIOR_PREFLIGHT_MARKERS))
+  for path,h in p.PRIOR_PREFLIGHT_MARKERS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
+  pages=[{'total_count':2,'workflow_runs':[{'id':37480012730,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-once.yml'},{'id':37745767546,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml'}]}]
+  self.assertEqual(p.history_check(pages)['prior_send'],0)
+ def test_actual_migration_history_and_receipts_block(self):
+  for kind in ['migration','import','apply','approved','sent','success','partial','unknown','failure','receipt']:
+   with self.subTest(kind=kind):
+    with self.assertRaisesRegex(p.Stop,'PRIOR_EXECUTION_NO_RESEND_STOP'):p.history_check([{'total_count':1,'workflow_runs':[{'id':1,'path':'.github/workflows/plm-provider-neutral-0008-'+kind+'.yml'}]}])
+    with self.assertRaisesRegex(p.Stop,'PRIOR_EXECUTION_NO_RESEND_STOP'):p.prior_check(['audit-evidence/provider-neutral-0008-'+kind+'.json'])
+  with self.assertRaises(p.Stop):p.prior_check(['audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-unknown.json'])
+ def test_cloudflare_zero_until_history_complete(self):
+  env={'GITHUB_REPOSITORY':p.REPO,'GITHUB_REF':'refs/heads/plm-offline-readiness-v1-20261002','GITHUB_EVENT_NAME':'push','GITHUB_RUN_ATTEMPT':'1','PLM_APPROVED_BEFORE':'1'*40,'PLM_HISTORY_GITHUB_TOKEN':'history-fixture',p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture',**{k:'true' for k in ('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP')}}
+  original=Path.read_bytes
+  def reader(path):return b'{}' if str(path)==p.MARKER else original(ROOT/path)
+  before,_=p.load_candidate(ROOT)
+  for pages,expected in [(history_pages(264),None),(history_pages(501),'HISTORY_INCOMPLETE_STOP'),([{'total_count':1,'workflow_runs':[]}],'HISTORY_INCOMPLETE_STOP')]:
+   history_calls=[];cloudflare_calls=[];output=io.StringIO()
+   def http(host,path,method,headers,body=None):
+    self.assertEqual(host,'api.github.com');history_calls.append(path);return 200,json.dumps(pages[len(history_calls)-1]).encode()
+   def cloudflare(*args):cloudflare_calls.append(args);raise AssertionError('unexpected network')
+   def preflight(*args,**kwargs):
+    self.assertEqual(len(history_calls),53);self.assertTrue(args[4]['complete']);return {'pass':True,'cloudflare_read_only_calls':0}
+   with patch.dict('os.environ',env,clear=True),patch.object(Path,'read_bytes',reader),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=cloudflare),patch.object(p,'bounded_http',side_effect=http),patch.object(p,'preflight',side_effect=preflight) as audit,contextlib.redirect_stdout(output):p.main()
+   self.assertEqual(cloudflare_calls,[]);result=json.loads(output.getvalue());self.assertNotIn('fixture',output.getvalue())
+   if expected:audit.assert_not_called();self.assertEqual(result['gate_code'],expected);self.assertEqual(result['cloudflare_read_only_calls'],0)
+   else:audit.assert_called_once();self.assertTrue(result['pass'])
+ def test_cloudflare_proof_functions_identical_to_r2(self):
+  import ast
+  old=(ROOT/'readiness/provider_neutral_0008_fresh_preflight_r2.py').read_text();new=(ROOT/p.HELPER).read_text()
+  def functions(src):return {n.name:ast.get_source_segment(src,n) for n in ast.parse(src).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+  a,b=functions(old),functions(new)
+  for name in ['load_candidate','queries','compare_query','classifier','decode','expiry','request_specs','Gate','preflight','bounded_http','live_transport']:self.assertEqual(a[name],b[name],name)
+ def test_r2_runtime_hashes_unchanged(self):
+  for path,h in [('readiness/provider_neutral_0008_fresh_preflight_r2.py','49a4496f2f5034b6eaf2ea58be266240b63ea4f1f4143db0c5190d63a9e142b1'),('.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml','36b5496f26e379dc2de49fdac7a04089d2142c1d60a21229145980a92d50cca7'),('readiness/provider-neutral-0008-fresh-readonly-r2-plan.json','2d3aee45b8507fbefec88c897cd09722c3062fa91dd74b15a2c5ef0b06782f1f'),('readiness/provider-neutral-0008-fresh-readonly-r2-marker.schema.json','9052e868e60a79951762c92e53aaafdfd77d141e356ae4b079af6feb2b51596a')]:self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
 if __name__=='__main__':unittest.main()
