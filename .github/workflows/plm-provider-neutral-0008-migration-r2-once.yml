@@ -1,0 +1,42 @@
+name: PLM Provider Neutral 0008 Migration R2 Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['audit-evidence/consumed/provider-neutral-0008-migration-20261010-r2.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: provider-neutral-0008-migration-20261010-r2
+  cancel-in-progress: false
+jobs:
+  stage:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event.head_commit.message == 'PLM 0008 migration once provider-neutral-0008-migration-20261010-r2' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+      PLM_APPROVED_BEFORE: ${{ github.event.before }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 5
+      - name: Exact immutable preparation and marker-only chain
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0,'readiness')
+          from provider_neutral_0008_stage_common_r2 import local_gate
+          local_gate('migration')
+          PY
+      - name: Run exact stage once
+        env:
+          PLM_CF_D1_READ_TOKEN: ${{ secrets.PLM_CF_D1_READ_TOKEN }}
+          PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN: ${{ secrets.PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN }}
+          PLM_HISTORY_GITHUB_TOKEN: ${{ github.token }}
+        run: python3 readiness/provider_neutral_0008_migration_r2_once.py
