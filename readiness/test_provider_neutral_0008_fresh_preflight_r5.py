@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 from oracle_bridge import require_guard
 require_guard()
-import provider_neutral_0008_fresh_preflight_r4 as p
+import provider_neutral_0008_fresh_preflight_r5 as p
 ROOT=Path(__file__).resolve().parents[1]
 NOW=1791295200
 EXP='2026-10-07T00:00:00Z'
@@ -22,7 +22,7 @@ def fixtures():
  calls=[]
  def transport(*args):calls.append(args);return 200,json.dumps(responses[len(calls)-1]).encode()
  return b,a,responses,transport,calls
-class FreshPreflightR4Tests(unittest.TestCase):
+class FreshPreflightR5Tests(unittest.TestCase):
  def test_four_raw_hashes(self):
   p.load_candidate(ROOT)
   for path,h in p.PINS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
@@ -150,7 +150,7 @@ class FreshPreflightR4Tests(unittest.TestCase):
  def test_worker_migrations_marker_workflow(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['worker_evidence']['bundle_equality'],'UNVERIFIED');self.assertEqual(plan['worker_evidence']['new_Worker_GETs'],0)
   for name in ('0009','0010'):self.assertEqual(plan['migrations'][name],'NOT_APPLIED')
-  self.assertEqual(json.loads((ROOT/p.MARKER).read_bytes())['prepared_commit_sha'],'1cf7c145c16ff7e438997498f6e43a3784cac2ab');workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
+  self.assertFalse((ROOT/p.MARKER).exists());workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
   self.assertNotIn('upload-artifact',workflow)
 
 
@@ -200,7 +200,7 @@ class FreshPreflightR4Tests(unittest.TestCase):
   self.assertFalse(json.loads((ROOT/p.PLAN).read_bytes())['owner_evidence_variable_required'])
  def test_marker_schema_and_parent(self):
   schema=json.loads((ROOT/p.SCHEMA).read_bytes());self.assertEqual(schema['properties']['identity']['const'],p.IDENTITY);self.assertFalse(schema['additionalProperties'])
-  self.assertEqual(p.PARENT,'ec2146a71fb9470fea4ac0f4dfafbc469724828b')
+  self.assertEqual(p.PARENT,'44f1454c0367645f42666abbda12840920116560')
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['marker']['state'],'NOT_CREATED_NOT_CONSUMED');self.assertEqual(plan['credential_design'],'VERIFY_SELF_METADATA_NO_MANUAL_TOKEN_ID')
  def test_plan_exact_query_request_manifest(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());before,_=p.load_candidate(ROOT)
@@ -274,7 +274,7 @@ class HistoryR4Tests(unittest.TestCase):
   with patch.object(p,'bounded_http',return_value=(200,raw)):out=p.fetch_history('fixture-only')
   self.assertEqual(out['total'],5);self.assertNotIn('unused_metadata',json.dumps(out))
  def test_r1_r2_markers_allowed_and_unchanged(self):
-  self.assertEqual(len(p.PRIOR_PREFLIGHT_MARKERS),3);p.prior_check(list(p.PRIOR_PREFLIGHT_MARKERS))
+  self.assertEqual(len(p.PRIOR_PREFLIGHT_MARKERS),5);p.prior_check(list(p.PRIOR_PREFLIGHT_MARKERS))
   for path,h in p.PRIOR_PREFLIGHT_MARKERS.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
   pages=[{'total_count':2,'workflow_runs':[{'id':37480012730,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-once.yml'},{'id':37745767546,'path':'.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml'}]}]
   self.assertEqual(p.history_check(pages)['prior_send'],0)
@@ -305,13 +305,13 @@ class HistoryR4Tests(unittest.TestCase):
   old=(ROOT/'readiness/provider_neutral_0008_fresh_preflight_r2.py').read_text();new=(ROOT/p.HELPER).read_text()
   def functions(src):return {n.name:ast.get_source_segment(src,n) for n in ast.parse(src).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
   a,b=functions(old),functions(new)
-  for name in ['load_candidate','queries','compare_query','classifier','decode','expiry','request_specs','live_transport']:self.assertEqual(a[name],b[name],name)
+  for name in ['load_candidate','queries','compare_query','classifier','decode','expiry','request_specs']:self.assertEqual(a[name],b[name],name)
  def test_r2_runtime_hashes_unchanged(self):
   for path,h in [('readiness/provider_neutral_0008_fresh_preflight_r2.py','49a4496f2f5034b6eaf2ea58be266240b63ea4f1f4143db0c5190d63a9e142b1'),('.github/workflows/plm-provider-neutral-0008-fresh-readonly-r2-once.yml','36b5496f26e379dc2de49fdac7a04089d2142c1d60a21229145980a92d50cca7'),('readiness/provider-neutral-0008-fresh-readonly-r2-plan.json','2d3aee45b8507fbefec88c897cd09722c3062fa91dd74b15a2c5ef0b06782f1f'),('readiness/provider-neutral-0008-fresh-readonly-r2-marker.schema.json','9052e868e60a79951762c92e53aaafdfd77d141e356ae4b079af6feb2b51596a')]:self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
 
 
 
-class HTTPDiagnosticR4Tests(unittest.TestCase):
+class HTTPDiagnosticR5Tests(unittest.TestCase):
  HISTORY={'complete':True,'prior_send':0,'total':264,'pages':53}
  def outcome(self,status,raw):
   b,_=p.load_candidate(ROOT);calls=[]

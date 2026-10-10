@@ -1,0 +1,166 @@
+{
+  "identity": "provider-neutral-0008-postcheck-20261010-r1",
+  "exact_parent_sha": "44f1454c0367645f42666abbda12840920116560",
+  "prepared_not_executed": true,
+  "execution_approved": false,
+  "target_account": "6c8ccd6aface937ab5dabef61cb64534",
+  "target_database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "target_database_name": "plm-serverless-sandbox-state",
+  "namespace": "plm_rt_v2_",
+  "candidate_raw_hashes": {
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+    "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+    "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a"
+  },
+  "workflow_path": ".github/workflows/plm-provider-neutral-0008-postcheck-once.yml",
+  "helper_path": "readiness/provider_neutral_0008_postcheck_once.py",
+  "marker_schema_path": "readiness/provider-neutral-0008-postcheck-marker.schema.json",
+  "workflow_sha256": "5c3c103c071d20d2d423eb105512fa91f98917305304a40b0d198bcda6857a34",
+  "helper_sha256": "44cbbc6ea9319a6f8f5a61e227ee56aa5a59288957747c2c0203f109800de675",
+  "marker_schema_sha256": "94e5d91273376b76c978be99cdfb635fc342009e3c3e2c8f89c077d4204cbc03",
+  "dependency_hashes": {
+    "readiness/provider_neutral_0008_fresh_preflight_r5.py": "a745fbe0cb728b2885c10a88d1214118153112db7ba611f7f0354ea49e137d1a",
+    ".github/workflows/plm-provider-neutral-0008-fresh-readonly-r5-once.yml": "887bc70a1a1dfe325d719a77f5b86e86eb4453418670ce55efb9c2a689404d37",
+    "readiness/provider-neutral-0008-fresh-readonly-r5-plan.json": "21dc1744aec703b2bf9d7d20bba49225c8d43d3932fcb50e7bdfabddfedb7240",
+    "readiness/provider-neutral-0008-fresh-readonly-r5-marker.schema.json": "55267f627becaa88f7adcb46e5af36dfee810cac774ff66da72caf19638c3ad6",
+    "readiness/provider_neutral_0008_stage_common.py": "0db8bb9fc080203f452cc9ed6acf8664f24a8514d0d4d21b5b264ccd9340bb0e",
+    ".github/workflows/plm-provider-neutral-0008-migration-once.yml": "0362f03c8de6266129dc35949c1917447b82a7893d00bfcae6e088b75edf4299",
+    "readiness/provider_neutral_0008_migration_once.py": "c62b2dab2dc9415e88f7b9d84aff22097cc175d0e58614e386f198e40e6ac80c",
+    "readiness/provider-neutral-0008-migration-plan.json": "4f285bda5b0ac4224276684b783c2f65aac8240d84469ffed2997834e3ee330c",
+    "readiness/provider-neutral-0008-migration-marker.schema.json": "ab189d71dd0de54553f660680b37e7213d481c7291ee6900bd24702167c183c5"
+  },
+  "run_attempt": 1,
+  "retry": 0,
+  "resend": 0,
+  "resume": 0,
+  "fallback": 0,
+  "redirect": 0,
+  "automatic_rollback": 0,
+  "raw_retention": 0,
+  "query_mutation": 0,
+  "marker": {
+    "path": "audit-evidence/consumed/provider-neutral-0008-postcheck-20261010-r1.json",
+    "state": "NOT_CREATED_NOT_CONSUMED",
+    "only_changed_file": true,
+    "future_message": "PLM 0008 postcheck once provider-neutral-0008-postcheck-20261010-r1",
+    "prepared_commit_sha": "EXACT_PREPARATION_COMMIT_REQUIRED_AT_APPROVAL"
+  },
+  "prior_success": {
+    "stage": "migration",
+    "specific_run_metadata_GETs": 2,
+    "exact_run_commit_and_attempt_and_workflow_and_successful_job_step_required": true,
+    "functional_STOP_is_nonzero_exit": true
+  },
+  "chain": "Only preceding stage marker-only commits may intervene; each exact marker hash-bound to same prepared commit",
+  "future_approval_required": true,
+  "0009": "NOT_APPLIED",
+  "0010": "NOT_APPLIED",
+  "worker_calls": 0,
+  "youtube_calls": 0,
+  "secret_retention": 0,
+  "token_scope": "OWNER_ATTESTED_D1_WRITE_ONLY_NOT_API_VERIFIED",
+  "maximum_cloudflare_calls": 21,
+  "maximum_writes": 0,
+  "migration_execution_max": 0,
+  "read_secret": "PLM_CF_D1_READ_TOKEN",
+  "backend_secret_used": false,
+  "query_count": 17,
+  "expected_objects": {
+    "tables": 5,
+    "triggers": 11,
+    "autoindexes": 14,
+    "new_data_rows": 0
+  },
+  "expected_classification": "FULL_APPLIED",
+  "expected_terminal_result": "0008_POSTCHECK_SUCCESS_STOP",
+  "bookmark_stable_required": true,
+  "database_size": "Positive integer recorded by provider; no invented exact post-DDL byte size",
+  "query_hashes": [
+    {
+      "kind": "schema",
+      "sql_sha256": "1aa23a598aec50cfc69873127f8914068a9140a5c3d8a2473eedfbf78f8d80eb",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "rows:backend_probe_v1",
+      "sql_sha256": "02aed979c7061b02e09639259a216c8e0906957ddbc8db6fdba65f551c4fd089",
+      "params_sha256": "e72ef2eb0320a479225e4d2cfb353c9dff74e2763d78dfb9063cc2786d1be6bb"
+    },
+    {
+      "kind": "rows:durable_stage2_callback",
+      "sql_sha256": "904045e9a0f2e935de161ae62a13e54a537286d2e7501554eb3c69167e4b5fbc",
+      "params_sha256": "ca5d9c5571d04157e60ffa6c2ab165bde85c37f83a3b5d51c59ef9fc983bfefd"
+    },
+    {
+      "kind": "rows:durable_stage2_checkpoint",
+      "sql_sha256": "2966977dd29c079ceeaf7dc4968329cc66566d9472fd2f68439c59f5d57ebbef",
+      "params_sha256": "f11ce59d45a245f3bbe1c27610b5ad6f26f83bf657a1e0635e74024b8155bb8e"
+    },
+    {
+      "kind": "rows:durable_stage2_job",
+      "sql_sha256": "ccca0bd1c899c8f76414cae793e73f1293f55f3b043fc201c254e2d28d2a1d3f",
+      "params_sha256": "8dfb2531a1c3a9454fc31cea6cbcb0dcc8cc47c3addc612e6a2169e155fd10d9"
+    },
+    {
+      "kind": "rows:plm_rt_v1_callback",
+      "sql_sha256": "be2f6c829a5e4463f59244d548902531f5c945a8c8763981f53c5a2de7897897",
+      "params_sha256": "fceadfe69a1205b33f3bf7f52d01c0b370b5ae683c354f348e961a3219e1a45c"
+    },
+    {
+      "kind": "rows:plm_rt_v1_effect",
+      "sql_sha256": "20a3ef1409488a79e3ecad362d1ffc298d0c32d2b69d1651af222bc1d04622f4",
+      "params_sha256": "61c5a3d13fd27df88f7bb095f6581bede16f2218d06346b2449ea6a4a9eb907c"
+    },
+    {
+      "kind": "rows:plm_rt_v1_job",
+      "sql_sha256": "e5db168b2084e80782290ca9777e75cbb4ebbc64c2b98112d018e36d6613fc34",
+      "params_sha256": "bc9023ba0cc8295f08c2e9b7f73c1e5abf7a06eed0124183ebd21e319c9fe3c8"
+    },
+    {
+      "kind": "rows:plm_rt_v1_render",
+      "sql_sha256": "d5c5a021536231ea732e4accfa94b076ddba5462af56a4c4ccfda1b282a0248c",
+      "params_sha256": "6cce6f0c18887f26052a619fbecb6e726f2afefb85c4f536c74077513da5c8c5"
+    },
+    {
+      "kind": "rows:plm_rt_v1_script",
+      "sql_sha256": "5e4c09af0143be0d40353011215a2b6226044a96e46369f4d278ff3b5e2cce93",
+      "params_sha256": "b8b0eab3e358c636d85fd32cd1740f41cc8a56d203d786faf38cff63c3cff5f1"
+    },
+    {
+      "kind": "rows:test_jobs",
+      "sql_sha256": "8ebc9b510f8b37f7907d3daebd03284e2e9eda64e6358890f16938b66ec3758d",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "new:plm_rt_v2_callback",
+      "sql_sha256": "161d809de0344fd0dfd7c3fe3f2559df7a41b17b298978e0eccf087c4a6e4abb",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "new:plm_rt_v2_effect",
+      "sql_sha256": "c306db87872e67b7d070ddaf29798f8a99485b8a0e2f906f179da10dd63bed21",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "new:plm_rt_v2_job",
+      "sql_sha256": "bcb39be3fdcc179e79af434d75162973fc319bcee014c33688a412cfb5eeb3ab",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "new:plm_rt_v2_render",
+      "sql_sha256": "2ba6c219bca0a2e0f1fa5ffaa307f006c1a2308eec4f544a36e5887c9b9a7dc9",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "new:plm_rt_v2_script",
+      "sql_sha256": "8ac7baee91cef38f873972a80a52b2c4bbbc48917550a626b8690a1ac92b1916",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "autoindexes",
+      "sql_sha256": "c538a9fdac30a640b766224a8b66b134f4757385864a76bbacfe61e2f06f5d12",
+      "params_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ]
+}

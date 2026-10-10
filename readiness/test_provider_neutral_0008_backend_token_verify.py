@@ -89,7 +89,7 @@ class VerifyTests(unittest.TestCase):
    with self.assertRaises(p.Stop):p.marker_check(dict(marker,identity=identity),plan,before,files)
   with self.assertRaises(p.Stop):p.marker_check(dict(marker,helper_sha256='0'*64),plan,before,files)
  def test_marker_only_trigger(self):
-  w=(ROOT/p.WORKFLOW).read_text();self.assertIn(p.MARKER,w);self.assertIn(p.MESSAGE,w);self.assertIn('github.run_attempt == 1',w);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",w);self.assertIn("git('rev-parse',before+'^')==PARENT",w);self.assertNotIn('workflow_dispatch',w);self.assertNotIn('PLM_HISTORY',w);self.assertNotIn('PLM_CF_D1_READ_TOKEN',w);self.assertNotIn('upload-artifact',w);self.assertFalse((ROOT/p.MARKER).exists())
+  w=(ROOT/p.WORKFLOW).read_text();self.assertIn(p.MARKER,w);self.assertIn(p.MESSAGE,w);self.assertIn('github.run_attempt == 1',w);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",w);self.assertIn("git('rev-parse',before+'^')==PARENT",w);self.assertNotIn('workflow_dispatch',w);self.assertNotIn('PLM_HISTORY',w);self.assertNotIn('PLM_CF_D1_READ_TOKEN',w);self.assertNotIn('upload-artifact',w);self.assertEqual(json.loads((ROOT/p.MARKER).read_bytes())['prepared_commit_sha'],'25d28d0d9db1dbdf09be473f12faa0a443fb06b3')
  def test_no_other_clients_or_operations(self):
   s=(ROOT/p.HELPER).read_text()
   for forbidden in ('/d1/','/workers/','youtube.com','api.github.com','sqlite3','fetch_history','/query','/import'):self.assertNotIn(forbidden,s)
