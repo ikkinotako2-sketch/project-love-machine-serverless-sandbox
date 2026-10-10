@@ -150,7 +150,7 @@ class FreshPreflightR4Tests(unittest.TestCase):
  def test_worker_migrations_marker_workflow(self):
   plan=json.loads((ROOT/p.PLAN).read_bytes());self.assertEqual(plan['worker_evidence']['bundle_equality'],'UNVERIFIED');self.assertEqual(plan['worker_evidence']['new_Worker_GETs'],0)
   for name in ('0009','0010'):self.assertEqual(plan['migrations'][name],'NOT_APPLIED')
-  self.assertFalse((ROOT/p.MARKER).exists());workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
+  self.assertEqual(json.loads((ROOT/p.MARKER).read_bytes())['prepared_commit_sha'],'1cf7c145c16ff7e438997498f6e43a3784cac2ab');workflow=(ROOT/p.WORKFLOW).read_text();self.assertNotIn('workflow_dispatch',workflow);self.assertIn('github.run_attempt == 1',workflow);self.assertIn("git('diff','--name-only',before,'HEAD')==MARKER",workflow)
   self.assertNotIn('upload-artifact',workflow)
 
 

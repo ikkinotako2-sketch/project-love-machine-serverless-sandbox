@@ -1,0 +1,90 @@
+{
+  "identity": "provider-neutral-0008-backend-token-verify-20261010-r1",
+  "exact_parent_sha": "a0097ad228cafa24b78c715965caef4dd8353c67",
+  "prepared_not_executed": true,
+  "execution_approved": false,
+  "workflow_path": ".github/workflows/plm-provider-neutral-0008-backend-token-verify-once.yml",
+  "helper_path": "readiness/provider_neutral_0008_backend_token_verify.py",
+  "marker_schema_path": "readiness/provider-neutral-0008-backend-token-verify-marker.schema.json",
+  "token_type": "ACCOUNT_OWNED",
+  "account": "6c8ccd6aface937ab5dabef61cb64534",
+  "credential": "PLM_CF_D1_ROUNDTRIP_BACKEND_TOKEN",
+  "method": "GET",
+  "endpoint": "https://api.cloudflare.com/client/v4/accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/verify",
+  "limits": {
+    "maximum_cloudflare_calls": 1,
+    "d1_calls": 0,
+    "maximum_writes": 0,
+    "github_history_calls": 0,
+    "worker_calls": 0,
+    "youtube_calls": 0,
+    "retry": 0,
+    "rerun": 0,
+    "resume": 0,
+    "resend": 0,
+    "fallback": 0,
+    "redirect": 0,
+    "automatic_rollback": 0,
+    "raw_retention": 0,
+    "run_attempt": 1
+  },
+  "success_response_max_bytes": 262144,
+  "error_body_max_bytes": 32768,
+  "error_read_sentinel_bytes": 1,
+  "maximum_error_codes": 8,
+  "http_diagnostic": "STATUS_ONLY_PLUS_NUMERIC_CF_ERROR_CODES",
+  "scope": "OWNER_ATTESTED_D1_WRITE_ONLY_NOT_API_VERIFIED",
+  "scope_api_independently_verified": false,
+  "owner_evidence_variable_required": false,
+  "pass_conditions": [
+    "HTTP200",
+    "success=true",
+    "result.status=active",
+    "id=32_lowercase_hex",
+    "timezone_aware_finite_future_expiry"
+  ],
+  "expected_terminal_result": "BACKEND_TOKEN_VERIFY_SUCCESS_STOP",
+  "marker": {
+    "path": "audit-evidence/consumed/provider-neutral-0008-backend-token-verify-20261010-r1.json",
+    "state": "NOT_CREATED_NOT_CONSUMED",
+    "future_message": "PLM backend token verify once provider-neutral-0008-backend-token-verify-20261010-r1",
+    "only_changed_file": true,
+    "absent_in_prepared_tree_required": true
+  },
+  "consumed_preflight_identities_forbidden": [
+    "provider-neutral-0008-fresh-readonly-preflight-20261006-r1",
+    "provider-neutral-0008-fresh-readonly-preflight-20261007-r2",
+    "provider-neutral-0008-fresh-readonly-preflight-20261008-r3",
+    "provider-neutral-0008-fresh-readonly-preflight-20261008-r4"
+  ],
+  "stop_conditions": [
+    "missing credential",
+    "marker/parent/hash/attempt mismatch",
+    "non200",
+    "timeout/transport unknown",
+    "invalid JSON/shape/size",
+    "inactive token",
+    "invalid ID",
+    "missing/unbounded/expired expiry",
+    "second send or nonallowlisted request"
+  ],
+  "migrations": {
+    "0008": "NOT_APPLIED_REFERENCE_ONLY",
+    "0009": "NOT_APPLIED_REFERENCE_ONLY",
+    "0010": "NOT_APPLIED_REFERENCE_ONLY"
+  },
+  "forbidden": [
+    "D1 inventory/bookmark/query/import/mutation",
+    "GitHub history scan",
+    "Worker/Queue/routes/schedules requests",
+    "YouTube",
+    "production changes",
+    "secret/token changes",
+    "retry/rerun/resume/resend/fallback/redirect/rollback",
+    "fresh preflight r5 creation/execution"
+  ],
+  "workflow_sha256": "adad4d87e5e823b823c4fdccd033f854ef3de479a4e2ba4d245d0d0f08776a3f",
+  "helper_sha256": "b2e3c257713ef1f11ce3fccd5282f5a4575878dc1bf3d03957c2f199167434bf",
+  "marker_schema_sha256": "24460d9edc90f98d8e364476daa66bcf60a04a2069ae920294ba9d7e566257b0",
+  "expiry_checked_at_response_time": true
+}

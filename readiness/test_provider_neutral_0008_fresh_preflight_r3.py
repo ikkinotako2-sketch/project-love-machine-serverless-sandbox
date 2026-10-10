@@ -192,7 +192,7 @@ class FreshPreflightR3Tests(unittest.TestCase):
    e=dict(env)
    if value is not None:e['PLM_CF_D1_ROUNDTRIP_BACKEND_OWNER_EVIDENCE']=value
    stdout=io.StringIO()
-   with patch.dict('os.environ',e,clear=True),patch.object(Path,'read_bytes',fake_read),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=lambda *a:None),patch.object(p,'bounded_http',return_value=(200,b'{"total_count":0,"workflow_runs":[]}')),patch.object(p,'preflight',return_value={'pass':True,'cloudflare_read_only_calls':0}) as preflight,contextlib.redirect_stdout(stdout):p.main()
+   with patch.dict('os.environ',e,clear=True),patch.object(Path,'read_bytes',fake_read),patch.object(Path,'rglob',return_value=[Path(x) for x in p.PRIOR_PREFLIGHT_MARKERS]),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=lambda *a:None),patch.object(p,'bounded_http',return_value=(200,b'{"total_count":0,"workflow_runs":[]}')),patch.object(p,'preflight',return_value={'pass':True,'cloudflare_read_only_calls':0}) as preflight,contextlib.redirect_stdout(stdout):p.main()
    preflight.assert_called_once();self.assertTrue(json.loads(stdout.getvalue())['pass']);self.assertNotIn('fixture',stdout.getvalue())
  def test_owner_dependency_absent_from_runtime(self):
   for path in (p.HELPER,p.WORKFLOW,p.PLAN):
@@ -296,7 +296,7 @@ class HistoryR3Tests(unittest.TestCase):
    def cloudflare(*args):cloudflare_calls.append(args);raise AssertionError('unexpected network')
    def preflight(*args,**kwargs):
     self.assertEqual(len(history_calls),53);self.assertTrue(args[4]['complete']);return {'pass':True,'cloudflare_read_only_calls':0}
-   with patch.dict('os.environ',env,clear=True),patch.object(Path,'read_bytes',reader),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=cloudflare),patch.object(p,'bounded_http',side_effect=http),patch.object(p,'preflight',side_effect=preflight) as audit,contextlib.redirect_stdout(output):p.main()
+   with patch.dict('os.environ',env,clear=True),patch.object(Path,'read_bytes',reader),patch.object(Path,'rglob',return_value=[Path(x) for x in p.PRIOR_PREFLIGHT_MARKERS]),patch.object(p,'marker_check'),patch.object(p,'load_candidate',return_value=(before,{})),patch.object(p,'live_transport',return_value=cloudflare),patch.object(p,'bounded_http',side_effect=http),patch.object(p,'preflight',side_effect=preflight) as audit,contextlib.redirect_stdout(output):p.main()
    self.assertEqual(cloudflare_calls,[]);result=json.loads(output.getvalue());self.assertNotIn('fixture',output.getvalue())
    if expected:audit.assert_not_called();self.assertEqual(result['gate_code'],expected);self.assertEqual(result['cloudflare_read_only_calls'],0)
    else:audit.assert_called_once();self.assertTrue(result['pass'])
