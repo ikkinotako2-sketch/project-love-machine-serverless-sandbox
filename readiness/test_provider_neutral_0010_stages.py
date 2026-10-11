@@ -202,8 +202,9 @@ class Integration(unittest.TestCase):
    with patch.object(c,'git',side_effect=lambda *a:'wrong' if a[0]=='diff' else git(*a)):
     with self.assertRaisesRegex(p.Stop,'MARKER_ONLY_STOP'):c.local_gate('preflight')
  def test_migration_main_unstable_never_writes(self):
+  # Historical pre-send fixture: current consumed migration receipts are tested separately.
   s,r,t,calls=fixture(None)
-  with patch.dict('os.environ',{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as write,contextlib.redirect_stdout(io.StringIO()) as buf:
+  with patch.dict('os.environ',{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as write,patch.object(Path,'rglob',return_value=iter([])),contextlib.redirect_stdout(io.StringIO()) as buf:
    self.assertEqual(m.main(),1);write.assert_not_called();out=json.loads(buf.getvalue());self.assertEqual(out['result'],'FRESH_PRE_GATE_STOP');self.assertEqual(out['side_effect_requests'],0);self.assertEqual(out['cloudflare_read_only_calls'],69)
  def test_postcheck_main_no_write_credential(self):
   import provider_neutral_0010_postcheck_once as post

@@ -81,6 +81,10 @@ class RuntimeReadinessTests(unittest.TestCase):
   self.assertTrue(any(b['id']=='LIVE_PLATFORM_GATES' for b in self.a['blockers']));self.assertNotIn('remote_worker_sha256',self.a)
  def test_old_target_and_missing_generation_are_explicit(self):
   ids={b['id'] for b in self.a['blockers']};self.assertIn('PRODUCTION_TARGET_NOT_PINNED',ids);self.assertIn('GENERATION_TO_QUEUE_UNCONNECTED',ids)
+ def test_real_consumed_migration_receipt_blocks_resend(self):
+  import provider_neutral_0010_common as p
+  path='audit-evidence/consumed/provider-neutral-0010-migration-20261011-r2.json'
+  with self.assertRaisesRegex(p.Stop,'PRIOR_EXECUTION_NO_RESEND_STOP'):p.prior_check([path],'not-this-consumed-marker.json')
  def test_consumed_markers_never_reset(self):
   for n in ('migration','postcheck'):
    obj=read('audit-evidence/consumed/provider-neutral-0010-'+n+'-20261011-r2.json');self.assertEqual(obj['state'],'CONSUMED_BEFORE_REMOTE')
