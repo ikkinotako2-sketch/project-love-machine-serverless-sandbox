@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_bundle_sha256": {
+      "const": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9"
+    },
+    "candidate_runtime_source_sha256": {
+      "const": "134c97c36a0a20cc43b35e3dce1a1243a5d9008673ece5fb29f7cb8c3a52f3ea"
+    },
+    "helper_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "identity": {
+      "const": "provider-neutral-runtime-remote-readonly-inspection-20261011-r1"
+    },
+    "plan_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "prepared_commit_sha": {
+      "pattern": "^[a-f0-9]{40}$",
+      "type": "string"
+    },
+    "state": {
+      "const": "CONSUMED_BEFORE_REMOTE"
+    },
+    "target_manifest_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "workflow_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "identity",
+    "state",
+    "prepared_commit_sha",
+    "plan_sha256",
+    "target_manifest_sha256",
+    "workflow_sha256",
+    "helper_sha256",
+    "candidate_bundle_sha256",
+    "candidate_runtime_source_sha256"
+  ],
+  "type": "object"
+}

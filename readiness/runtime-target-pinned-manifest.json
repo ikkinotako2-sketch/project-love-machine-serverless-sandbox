@@ -1,0 +1,67 @@
+{
+  "candidate_commit": "1d2f8f812dab936ae911a12c03886b3adea5415d",
+  "code_target_drift": 0,
+  "evidence": "readiness/runtime-target-readonly-inspection.json",
+  "execution_approved": false,
+  "files": {
+    ".github/workflows/youtube-adapter.yml": {
+      "bytes": 7525,
+      "current_equals_merge": true,
+      "git_blob_sha": "9c635d5219b91e0a92ab604349cd037a47147625",
+      "merge_blob_sha": "9c635d5219b91e0a92ab604349cd037a47147625",
+      "sandbox_byte_equality": true,
+      "sha256": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51"
+    },
+    ".github/workflows/youtube-pipeline.yml": {
+      "bytes": 10761,
+      "current_equals_merge": true,
+      "git_blob_sha": "8b4b575d0dbfb93fb8663335c193360f93004e1f",
+      "merge_blob_sha": "8b4b575d0dbfb93fb8663335c193360f93004e1f",
+      "sandbox_byte_equality": true,
+      "sha256": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55"
+    },
+    "plm/entrypoints/yt_serverless_candidate.py": {
+      "bytes": 8183,
+      "current_equals_merge": true,
+      "git_blob_sha": "51715b17734c02ca5f689a39f330720906936748",
+      "merge_blob_sha": "51715b17734c02ca5f689a39f330720906936748",
+      "sandbox_byte_equality": true,
+      "sha256": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5"
+    }
+  },
+  "historical_predecessor": "readiness/runtime-composition-target-manifest.json",
+  "identity": "provider-neutral-runtime-target-readonly-inspection-20261011-r1",
+  "immutable_ref_dispatch_acceptance": "IMMUTABLE_REF_DISPATCH_ACCEPTANCE_UNVERIFIED",
+  "launchable": false,
+  "mutable_branch_fallback": false,
+  "notify_subscribers": false,
+  "observed_current_main": "387e1784c031d6dc47bda33566506a7f9f2b0172",
+  "privacy": "private",
+  "production_repository": "ikkinotako2-sketch/project-love-machine",
+  "reason": "Candidate introduction merge commit pinned; current main has zero target byte drift. Pinning is not operation approval.",
+  "ref_mode": "EXACT_IMMUTABLE_COMMIT_ONLY",
+  "required_commit_sha": "1ea540cd373dab6c4ff789619b357fb72828a75e",
+  "run_attempt": 1,
+  "safe_defaults": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "GITHUB_SHA_exact_context": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true,
+    "bind_render_result_wiring": true,
+    "callback_route": "/youtube/result",
+    "checkpoint_route": "/youtube/checkpoint",
+    "exact_HTTPS_origin_route": true,
+    "independent_checkpoint_callback_keys": true,
+    "legacy_target_bytes_unchanged_since_candidate_merge": true,
+    "notify_subscribers": false,
+    "private_only": true,
+    "run_attempt_one": true,
+    "serverless_context_default": "",
+    "serverless_guard_default": false,
+    "serverless_input_guard": true,
+    "unknown_callback": "NO_RETRY",
+    "workflow_sha256_validation": true
+  },
+  "target_status": "PINNED_READONLY_NOT_EXECUTION_APPROVED"
+}

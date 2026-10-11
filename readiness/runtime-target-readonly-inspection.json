@@ -1,0 +1,95 @@
+{
+  "OAuth": "HISTORICALLY_CONFIRMED / CURRENTLY_UNVERIFIED",
+  "candidate_changed_files": [
+    ".github/workflows/youtube-adapter.yml",
+    ".github/workflows/youtube-pipeline.yml",
+    "plm/entrypoints/yt_serverless_candidate.py"
+  ],
+  "candidate_commit": "1d2f8f812dab936ae911a12c03886b3adea5415d",
+  "candidate_message": "Add inactive YouTube serverless candidate with cancellation-safe scheduling\n\nApply exact revised sandbox patch 797cf37848a45e752edd27e240c716ab67e6feb220ad59c7e2a0dbc044f4bbc3 from 66134eddea3d0e6d8f7caf7ad0cd9a4590a3e4a2.\nLegacy defaults remain empty context and false guard. No merge, dispatch, upload, deploy or migration authorized.",
+  "checks": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "GITHUB_SHA_exact_context": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true,
+    "bind_render_result_wiring": true,
+    "callback_route": "/youtube/result",
+    "checkpoint_route": "/youtube/checkpoint",
+    "exact_HTTPS_origin_route": true,
+    "independent_checkpoint_callback_keys": true,
+    "legacy_target_bytes_unchanged_since_candidate_merge": true,
+    "notify_subscribers": false,
+    "private_only": true,
+    "run_attempt_one": true,
+    "serverless_context_default": "",
+    "serverless_guard_default": false,
+    "serverless_input_guard": true,
+    "unknown_callback": "NO_RETRY",
+    "workflow_sha256_validation": true
+  },
+  "compare": {
+    "ahead_by": 21,
+    "base": "1ea540cd373dab6c4ff789619b357fb72828a75e",
+    "behind_by": 0,
+    "code_target_drift": 0,
+    "effective_changed_files": [
+      "docs/COMMAND_CENTER.md"
+    ],
+    "head": "387e1784c031d6dc47bda33566506a7f9f2b0172"
+  },
+  "execution_approved": false,
+  "files": {
+    ".github/workflows/youtube-adapter.yml": {
+      "bytes": 7525,
+      "current_equals_merge": true,
+      "git_blob_sha": "9c635d5219b91e0a92ab604349cd037a47147625",
+      "merge_blob_sha": "9c635d5219b91e0a92ab604349cd037a47147625",
+      "sandbox_byte_equality": true,
+      "sha256": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51"
+    },
+    ".github/workflows/youtube-pipeline.yml": {
+      "bytes": 10761,
+      "current_equals_merge": true,
+      "git_blob_sha": "8b4b575d0dbfb93fb8663335c193360f93004e1f",
+      "merge_blob_sha": "8b4b575d0dbfb93fb8663335c193360f93004e1f",
+      "sandbox_byte_equality": true,
+      "sha256": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55"
+    },
+    "plm/entrypoints/yt_serverless_candidate.py": {
+      "bytes": 8183,
+      "current_equals_merge": true,
+      "git_blob_sha": "51715b17734c02ca5f689a39f330720906936748",
+      "merge_blob_sha": "51715b17734c02ca5f689a39f330720906936748",
+      "sandbox_byte_equality": true,
+      "sha256": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5"
+    }
+  },
+  "historical_e2e": {
+    "classification": "HISTORICAL_ONLY_NOT_NEW_CANDIDATE_LIVE_E2E",
+    "new_uploads": 0,
+    "run": 36153932146
+  },
+  "identity": "provider-neutral-runtime-target-readonly-inspection-20261011-r1",
+  "immutable_ref_dispatch_acceptance": "IMMUTABLE_REF_DISPATCH_ACCEPTANCE_UNVERIFIED",
+  "inspection": "PASS",
+  "launchable": false,
+  "merge_changed_files": [
+    ".github/workflows/youtube-adapter.yml",
+    ".github/workflows/youtube-pipeline.yml",
+    "plm/entrypoints/yt_serverless_candidate.py"
+  ],
+  "merge_commit": "1ea540cd373dab6c4ff789619b357fb72828a75e",
+  "merge_message": "Merge inactive YouTube serverless candidate (#17)\n\nMerge only exact approved candidate 1d2f8f812dab936ae911a12c03886b3adea5415d. Legacy defaults remain empty context and false guard. Live dispatch, upload, deployment, migration and trigger activation remain unapproved.",
+  "merge_parents": [
+    "b0c7f429a1f58726c4a75f4fb090928cf567b585",
+    "1d2f8f812dab936ae911a12c03886b3adea5415d"
+  ],
+  "mutable_branch_fallback": false,
+  "observed_current_main": "387e1784c031d6dc47bda33566506a7f9f2b0172",
+  "production_github_writes": 0,
+  "production_repository": "ikkinotako2-sketch/project-love-machine",
+  "run_provenance_by_HMAC": "NOT_PROVEN",
+  "sandbox_parent": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+  "target_status": "PINNED_READONLY_NOT_EXECUTION_APPROVED"
+}
