@@ -31,7 +31,13 @@ class ExecutorTests(unittest.TestCase):
  def test_valid_marker_gate_offline_only(self):e.validate_gate(*fixtures())
  def test_missing_credential_explicit_stop(self):
   with self.assertRaisesRegex(e.Stop,'CREDENTIAL_MISSING_STOP'):e.authorize_transport(*fixtures())
- def test_marker_absent_in_preparation(self):self.assertFalse((ROOT/e.MARKER).exists())
+ def test_marker_absent_in_preparation(self):
+  # Historical preparation was marker-free; later consumed evidence is immutable.
+  marker=ROOT/e.MARKER
+  if marker.exists():
+   self.assertEqual(e.sha(marker.read_bytes()),'9b44a5b5b604403679369334bfaec4ac4a40270ab9113b051e410f80eb4acb5f')
+   data=json.loads(marker.read_bytes());self.assertEqual(data['identity'],e.IDENTITY);self.assertEqual(data['state'],'CONSUMED_BEFORE_REMOTE');self.assertEqual(data['prepared_commit_sha'],'9b5da03e127599a1cd576b21acfe9b703a4b8b44')
+  else:self.assertFalse(marker.exists())
  def test_fifth_request_rejected(self):
   g=e.FourGet(lambda *_:(200,b'x',{}))
   for p in e.ENDPOINTS:g.get('GET',p)
