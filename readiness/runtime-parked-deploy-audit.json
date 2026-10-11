@@ -1,0 +1,61 @@
+{
+  "bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "candidate_bytes_modified": false,
+  "createLiveComposition": "always throws PREPARATION_ONLY_REMOTE_ACTIVATION_DISABLED",
+  "credential_capability": {
+    "D1_permission_required": false,
+    "legacy_API_permission_label": "Workers Scripts Write",
+    "legacy_scope_limitation": "Legacy account-level grants may affect other Workers; do not silently fall back to broader scope. Current official model supports per-Worker Editor. Credential registration/scope verification is future and unverified.",
+    "minimum_current_role": "Workers Editor",
+    "read_preflight_secret": "PLM_CF_WORKER_API_TOKEN (existing read-only scope; any permission failure STOP)",
+    "read_write_values_must_differ": true,
+    "role_limit": "Editor includes other operations beyond upload; executor permits only one exact PUT",
+    "scope": "Individual Worker: plm-serverless-sandbox-control in exact account; exists already",
+    "secret": "PLM_CF_WORKER_DEPLOY_TOKEN",
+    "verified": false
+  },
+  "database": "0008/0009/0010 FULL_APPLIED inherited final postcheck only; no fresh DB audit in task",
+  "default_export": "literal async fetch 503 PARKED_RUNTIME_COMPOSITION only; no env/request/property reads",
+  "exposure_proof": "fresh four approved GETs + inherited cron/consumer zero; remaining metadata requires separate postdeploy read-only verification. No claim of atomic source/exposure CAS or fresh cron/consumer revalidation. Concurrent changes require operational exclusion before approval.",
+  "fresh_prewrite_source_required": true,
+  "future_activation": "separately reviewed successor required",
+  "identity": "provider-neutral-runtime-parked-deploy-20261011-r1",
+  "immutable_ref_dispatch_acceptance": "UNVERIFIED",
+  "legacy_TARGET": "unchanged, unreachable from literal default and disabled live factory; offline-only factory requires injected offline gate",
+  "marker_created": false,
+  "maximum_script_writes": 1,
+  "module_load": "offline Node import with fetch/WebSocket/global DB/env traps; exact content hash fails for any altered bundle",
+  "mutable_main_fallback": "FORBIDDEN",
+  "not_controlled_by_upload": [
+    "workers.dev",
+    "preview exposure",
+    "routes",
+    "custom domains",
+    "cron schedules",
+    "queue consumers"
+  ],
+  "official_documentation": {
+    "multipart": "https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/",
+    "permissions": "https://developers.cloudflare.com/workers/authorization/workers/",
+    "upload": "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/methods/update/"
+  },
+  "old_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "parent": "b6c1061e55c3cc03be1561ba482e5dc1b306bfb2",
+  "phase": "OFFLINE_PREPARATION_ONLY",
+  "production_target_status": "PINNED_READONLY_NOT_EXECUTION_APPROVED",
+  "queue": "throw QUEUE_CONSUMER_DISABLED only",
+  "scheduled": "throw CRON_DISABLED only",
+  "secret_exposure": 0,
+  "source_evidence_fresh": false,
+  "stopped_config_sha256": "461f93e9d8468fd26f93895f7cbac002d5b49d35ff3eabe0a865e422226652eb",
+  "upload_controlled": [
+    "main_module",
+    "compatibility_date",
+    "DB binding",
+    "four safe plain_text vars",
+    "keep_bindings empty (no secret binding inheritance)"
+  ],
+  "visibility_r4_classification": "REMOTE_INACTIVE_SOURCE_PINNED",
+  "visibility_r4_commit": "b6c1061e55c3cc03be1561ba482e5dc1b306bfb2",
+  "visibility_r4_run": 38134030175
+}

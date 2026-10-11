@@ -1,0 +1,33 @@
+name: PLM Runtime Parked Deploy Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['audit-evidence/consumed/provider-neutral-runtime-parked-deploy-20261011-r1.json']
+permissions:
+  contents: read
+concurrency:
+  group: provider-neutral-runtime-parked-deploy-20261011-r1
+  cancel-in-progress: false
+jobs:
+  replace:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.head_commit.message == 'PLM runtime parked deploy once provider-neutral-runtime-parked-deploy-20261011-r1' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Gate marker-only full history and exact parked bytes before credentials
+        run: python3 -c 'from readiness.runtime_parked_deploy_executor import load_gate; load_gate()'
+      - name: Four fresh GETs then at most one parked PUT and STOP
+        env:
+          PLM_CF_WORKER_API_TOKEN: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+          PLM_CF_WORKER_DEPLOY_TOKEN: ${{ secrets.PLM_CF_WORKER_DEPLOY_TOKEN }}
+        run: python3 -m readiness.runtime_parked_deploy_executor

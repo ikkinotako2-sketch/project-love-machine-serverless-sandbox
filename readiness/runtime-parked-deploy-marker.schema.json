@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "audit_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "bundle_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "executor_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "expected_new_bundle_sha256": {
+      "const": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9"
+    },
+    "exposure_parser_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "identity": {
+      "const": "provider-neutral-runtime-parked-deploy-20261011-r1"
+    },
+    "old_remote_source_sha256": {
+      "const": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    "parser_dependency_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "plan_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "postdeploy_plan_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "prepared_commit_sha": {
+      "pattern": "^[a-f0-9]{40}$",
+      "type": "string"
+    },
+    "schema_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "state": {
+      "const": "CONSUMED_BEFORE_REMOTE"
+    },
+    "stopped_config_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "target_manifest_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "visibility_r4_marker_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "workflow_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "workflow_sha256",
+    "executor_sha256",
+    "plan_sha256",
+    "schema_sha256",
+    "bundle_sha256",
+    "stopped_config_sha256",
+    "visibility_r4_marker_sha256",
+    "target_manifest_sha256",
+    "parser_dependency_sha256",
+    "exposure_parser_sha256",
+    "postdeploy_plan_sha256",
+    "audit_sha256",
+    "identity",
+    "state",
+    "prepared_commit_sha",
+    "old_remote_source_sha256",
+    "expected_new_bundle_sha256"
+  ],
+  "type": "object"
+}

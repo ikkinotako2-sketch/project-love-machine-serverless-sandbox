@@ -1,0 +1,64 @@
+{
+  "D1_requests": 0,
+  "STOP": "any mismatch/HTTP error/timeout/visibility incomplete STOP without retry",
+  "Worker_invocation": 0,
+  "activation_approved": false,
+  "credential": "PLM_CF_WORKER_API_TOKEN",
+  "execution_approved": false,
+  "expected_bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "identity": "provider-neutral-runtime-parked-postdeploy-readonly-20261011-r1",
+  "marker": "NOT_CREATED / NOT_CONSUMED",
+  "maximum_GETs": 7,
+  "maximum_writes": 0,
+  "not_prepared": "executor/workflow/marker require separate reviewed approval preparation; this plan cannot execute",
+  "preparation_only": true,
+  "prerequisite_identity": "provider-neutral-runtime-parked-deploy-20261011-r1",
+  "prerequisite_terminal": "PARKED_DEPLOY_ACK_STOP_BEFORE_POSTCHECK",
+  "raw_retention": 0,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/subdomain"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/domains?service=plm-serverless-sandbox-control"
+    },
+    {
+      "method": "GET",
+      "path": "/zones?account.id=6c8ccd6aface937ab5dabef61cb64534&per_page=50&page=1"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/queues"
+    }
+  ],
+  "requirements": {
+    "classic_route_count": 0,
+    "cron_count": 0,
+    "custom_domain_count": 0,
+    "previews_enabled": false,
+    "queues": "complete empty inventory required without extra GET fallback",
+    "settings": "DB d1 id exact; four plain_text safe vars true if safely visible; secret binding names/type only, never value; inability => BLOCKED",
+    "source": "single comparable main module exact new bundle SHA, memory only; parked semantics by offline exact source proof, no invocation",
+    "target_consumer_count": 0,
+    "workers_dev": false,
+    "zone_count": 0
+  },
+  "rerun": 0,
+  "resume": 0,
+  "retry": 0,
+  "secret_values_accessed": false
+}

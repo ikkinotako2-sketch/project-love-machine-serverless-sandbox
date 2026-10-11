@@ -166,7 +166,7 @@ class Visibility(unittest.TestCase):
   r=self.good();r[1]=(200,envlp([{'id':'a','service':'DO_NOT_RETAIN'}]),{});o=self.runinspect(r);self.assertFalse(o['domains_service_equality']);self.assertNotIn('DO_NOT_RETAIN',json.dumps(o));self.assertEqual(o['reason_codes'],['DOMAIN_FILTER_CONTRACT_STOP'])
  def test_wrong_account_diagnostic(self):
   r=self.good();r[2]=(200,envlp([{'id':'a'*32,'account':{'id':'b'*32}}]),{});o=self.runinspect(r);self.assertFalse(o['zones_account_equality']);self.assertEqual(o['reason_codes'],['ZONE_SHAPE_STOP'])
- def test_r4_marker_absent(self):self.assertFalse((ROOT/v.MARKER).exists())
+ def test_r4_marker_consumed_immutable(self):self.assertEqual(v.sha((ROOT/v.MARKER).read_bytes()),'f6de5d6bceb8789ef3941d7524ae4e74f3e61c3299f693531eb7a0a8181c851f')
  def test_r3_marker_immutable(self):self.assertEqual(v.sha((ROOT/v.R3_MARKER).read_bytes()),v.R3_MARKER_SHA)
  def test_r3_marker_drift(self):a=self.fixture();a[5][v.R3_MARKER]+=b'x';self.assertRaises(v.Stop,v.validate_gate,*a)
  def test_r3_historical_only(self):a=self.fixture();self.assertFalse(a[4]['r3_is_success_prerequisite']);self.assertEqual(a[4]['r3_historical_run'],38133099697)
