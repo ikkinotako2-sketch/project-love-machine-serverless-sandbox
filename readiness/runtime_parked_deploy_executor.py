@@ -1,8 +1,12 @@
 """One parked replacement; import-time behavior is strictly offline."""
 import hashlib,json,math,re
 from pathlib import Path
-from readiness.runtime_remote_readonly_executor import Stop,need,sha,json_exact,envelope,source_metadata,MAX,ERROR_MAX,TIMEOUT
-from readiness.runtime_visibility_completion_r4_executor import subdomain,domains,zones
+try:
+ from readiness.runtime_remote_readonly_executor import Stop,need,sha,json_exact,envelope,source_metadata,MAX,ERROR_MAX,TIMEOUT
+ from readiness.runtime_visibility_completion_r4_executor import subdomain,domains,zones
+except ModuleNotFoundError:
+ from runtime_remote_readonly_executor import Stop,need,sha,json_exact,envelope,source_metadata,MAX,ERROR_MAX,TIMEOUT
+ from runtime_visibility_completion_r4_executor import subdomain,domains,zones
 IDENTITY='provider-neutral-runtime-parked-deploy-20261011-r1'
 PARENT='b6c1061e55c3cc03be1561ba482e5dc1b306bfb2'
 REPO='ikkinotako2-sketch/project-love-machine-serverless-sandbox'

@@ -30,7 +30,7 @@
   "error_body_bytes_max": 32768,
   "exact_preparation_parent": "b6c1061e55c3cc03be1561ba482e5dc1b306bfb2",
   "execution_marker": "audit-evidence/consumed/provider-neutral-runtime-parked-deploy-20261011-r1.json",
-  "executor_sha256": "a988f7c8d1ae2cad49966aede7b6dbaa6ce9e2b0627133f26d30da3cbf79ddda",
+  "executor_sha256": "56163be0825d3cc240e85eef8a757ee2a50a2ea92380979aa3fae81a8a9f795d",
   "expected_new_bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
   "exposure_parser_sha256": "7c7f963852edeea87aac66d23da7779708bef21ede4272517fa32de7bf2331af",
   "exposure_settings": "unchanged by this API; fresh negative exposure proof required then separate read-only postcheck; no route/subdomain/cron/queue writes",

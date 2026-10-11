@@ -1,7 +1,10 @@
 import copy,json,unittest
 from pathlib import Path
 from unittest.mock import patch
-from readiness import runtime_parked_deploy_executor as v
+try:
+ from readiness import runtime_parked_deploy_executor as v
+except ModuleNotFoundError:
+ import runtime_parked_deploy_executor as v
 ROOT=Path(__file__).resolve().parents[1]
 def raw(result,**kw):return json.dumps({'success':True,'errors':[],'result':result,**kw}).encode()
 class Fake:
