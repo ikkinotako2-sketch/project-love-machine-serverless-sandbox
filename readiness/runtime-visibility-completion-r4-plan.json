@@ -1,0 +1,110 @@
+{
+  "identity": "provider-neutral-runtime-visibility-completion-20261011-r4",
+  "exact_preparation_parent": "7b66b1515bd1a4ef49e2ed391dcdb4a5d6322b51",
+  "allowed_requests": [
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/subdomain"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/domains?service=plm-serverless-sandbox-control"
+    },
+    {
+      "method": "GET",
+      "path": "/zones?account.id=6c8ccd6aface937ab5dabef61cb64534&per_page=50&page=1"
+    }
+  ],
+  "maximum_remote_reads": 3,
+  "expected_reads_with_positive_census": 3,
+  "timeout_seconds": 15,
+  "response_bytes_max_each": 262144,
+  "error_body_bytes_max": 32768,
+  "credential_secret_name": "PLM_CF_WORKER_API_TOKEN",
+  "run_attempt": 1,
+  "execution_approved": false,
+  "launchable": false,
+  "marker": "audit-evidence/consumed/provider-neutral-runtime-visibility-completion-20261011-r4.json",
+  "marker_state": "NOT_CREATED / NOT_CONSUMED",
+  "freshness": "Exposure is fresh; source/cron/consumer/D1 binding inherited strictly from run 38128155103. No claim of atomic or fresh cross-endpoint state. Any later deploy preparation requires new source drift gate.",
+  "classic_routes": "zone_count>0 => ROUTE_INSPECTION_REQUIRED; no route GET here",
+  "zone_403": "UNVERIFIED_ZONE_PERMISSION",
+  "classification": "REMOTE_INACTIVE_SOURCE_PINNED only with disabled workers.dev/previews, complete target domain absence, zero complete zones, positive parked source proof, inherited exact D1/cron/consumer evidence. Not deploy approval.",
+  "STOP_conditions": [
+    "HTTP non200",
+    "timeout",
+    "redirect",
+    "response bound",
+    "incomplete inventory",
+    "unexpected active exposure",
+    "zone>0",
+    "unknown source"
+  ],
+  "official_documentation": [
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/subdomain/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/domains/methods/list/",
+    "https://developers.cloudflare.com/api/resources/zones/methods/list/"
+  ],
+  "domain_fields": "Exact service-filtered SinglePage empty result is authoritative target absence. Optional result_info object; present five fields must be nonnegative integers; no equality constraints, including count/page/per_page/total_pages. Sanitized diagnostics only.",
+  "zone_permissions": "Official accepted permission name: Zone Zone Read. No credential expansion authorized.",
+  "maximum_writes": 0,
+  "maximum_D1_requests": 0,
+  "maximum_deploys": 0,
+  "maximum_dispatches": 0,
+  "maximum_uploads": 0,
+  "maximum_YouTube_calls": 0,
+  "retry": 0,
+  "resume": 0,
+  "redirect": 0,
+  "fallback": 0,
+  "pagination_fallback": 0,
+  "raw_retention": 0,
+  "workflow_sha256": "c5f33bdc92c3157ac11335fef10702df385c2f0ff05b28f46e1c80c5c3b877b1",
+  "helper_sha256": "7c7f963852edeea87aac66d23da7779708bef21ede4272517fa32de7bf2331af",
+  "schema_sha256": "8c784d1dc03f6f4219627e40559aeade1b0bc216eca8b076fc23e41c6e3f8d0b",
+  "census_sha256": "bf9fc8fa4666f961f536c69397c326ac00eeca9f713f7e0a688adcbe13e0312d",
+  "prior_evidence_sha256": "457eacb0f8e6f77c57d6d02d2b7fc5410eeee0a3302889e1d7d550a0d8a06109",
+  "parser_dependency_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "target_manifest_sha256": "8315eac39526ed97126c3b5f85df9e150afc63186c224a3820fb03103bf11828",
+  "known_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "preparation_chain": "Root r3 consumed marker commit; full history; max3 offline preparation commits; only r4 artifacts/integration CI and historical r3 marker fixture. r1/r2/r3 markers immutable, historical-only, never success prerequisites.",
+  "checkout_fetch_depth": 0,
+  "r1_historical_failure_run": 38130789006,
+  "r1_is_success_prerequisite": false,
+  "r1_consumed_marker_sha256": "d07a86dd1f6cd9b46396cbb7c726016333ae07986183cd5cd825bb2e15f7a9cb",
+  "source_remote_reads": 0,
+  "zones_parser": "Exact requested page1/per_page50. Optional result_info diagnostics. Present page must equal1, per_page50. All five supplied fields nonnegative integers. No count/total_count/total_pages equality. len(result)<50 proves bounded endpoint page completeness; len50 STOP; >50 shape STOP. Positive zone count STOP, no route GET.",
+  "r2_historical_run": 38131868706,
+  "r2_is_success_prerequisite": false,
+  "r2_consumed_marker_sha256": "c7a26d251f4569ec82a4fa1bef7159267feeac8200ea1ebe47f00ff98b01ad3a",
+  "source_policy": "Pinned positive historical census required by pre-credential gate; no source GET fallback; source_freshly_revalidated=false.",
+  "r2_historical_result": {
+    "run_id": 38131868706,
+    "classification": "BLOCKED_REMOTE_VISIBILITY",
+    "reason": "BLOCKED_CUSTOM_DOMAIN_PAGINATION",
+    "requests_attempted": 2,
+    "http_statuses": [
+      200,
+      200
+    ],
+    "workers_dev_enabled": false,
+    "previews_enabled": false,
+    "fresh_in_r3": false
+  },
+  "official_contract_review": "2026-10-11: Workers Domains SDK SinglePage; result_info diagnostics only. Zones page/per_page bounded contract, requested50; short-first-page proof per owner specification.",
+  "zone_inventory_scope": "Only exact approved account-filtered /zones endpoint; no additional type/status query or page request. Current official contract excludes internal zones without type filter. No universal account/zone type visibility claim beyond endpoint scope.",
+  "r3_historical_run": 38133099697,
+  "r3_is_success_prerequisite": false,
+  "r3_consumed_marker_sha256": "1d129721fa111e18882d38f569cf463d053140e314e2eb2ec741cddf938a1675",
+  "r3_historical_result": {
+    "classification": "BLOCKED_REMOTE_VISIBILITY",
+    "reason": "BLOCKED_CUSTOM_DOMAIN_INCONSISTENT_METADATA",
+    "requests_attempted": 2,
+    "http_statuses": [
+      200,
+      200
+    ],
+    "fresh_in_r4": false
+  },
+  "diagnostic_policy": "Shared output receives only integers, booleans, null, and exact zone IDs. Parser STOP preserves already validated derived fields. Never retain raw bodies, hostnames, headers, tokens, or arbitrary response strings."
+}

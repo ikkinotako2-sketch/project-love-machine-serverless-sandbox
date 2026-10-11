@@ -134,7 +134,10 @@ class Visibility(unittest.TestCase):
  def test_old_identities_rejected(self):
   for old in ['provider-neutral-runtime-visibility-completion-20261011-r1','provider-neutral-runtime-visibility-completion-20261011-r2']:
    a=self.fixture();a[3]['identity']=old;self.assertRaises(v.Stop,v.validate_gate,*a)
- def test_r3_marker_absent(self):self.assertFalse((ROOT/v.MARKER).exists())
+ def test_r3_marker_absent(self):
+  p=ROOT/v.MARKER
+  if p.exists():self.assertEqual(v.sha(p.read_bytes()),'1d129721fa111e18882d38f569cf463d053140e314e2eb2ec741cddf938a1675')
+  else:self.assertFalse(p.exists())
  def test_r2_not_success_prerequisite(self):a=self.fixture();self.assertFalse(a[4]['r2_is_success_prerequisite']);self.assertEqual(a[4]['r2_historical_run'],38131868706)
  def test_read_only_limits(self):o=self.runinspect();self.assertTrue(o['pass']);self.assertEqual(o['requests_attempted'],3);self.assertTrue(all(o[k]==0 for k in ['writes','D1_requests','deploys','dispatches','uploads','YouTube_calls','retry','resume','redirect','fallback','raw_retention','secret_exposure']))
 if __name__=='__main__':unittest.main()

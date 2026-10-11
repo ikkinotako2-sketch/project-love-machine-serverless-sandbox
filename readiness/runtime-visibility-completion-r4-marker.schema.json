@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "state",
+    "prepared_commit_sha",
+    "workflow_sha256",
+    "helper_sha256",
+    "plan_sha256",
+    "schema_sha256",
+    "census_sha256",
+    "prior_evidence_sha256",
+    "parser_dependency_sha256",
+    "target_manifest_sha256",
+    "known_source_sha256",
+    "r1_consumed_marker_sha256",
+    "r2_consumed_marker_sha256",
+    "r3_consumed_marker_sha256"
+  ],
+  "properties": {
+    "identity": {
+      "const": "provider-neutral-runtime-visibility-completion-20261011-r4"
+    },
+    "state": {
+      "const": "CONSUMED_BEFORE_REMOTE"
+    },
+    "prepared_commit_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "workflow_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "helper_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "schema_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "census_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "prior_evidence_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "parser_dependency_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "target_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "known_source_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "r1_consumed_marker_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "r2_consumed_marker_sha256": {
+      "const": "c7a26d251f4569ec82a4fa1bef7159267feeac8200ea1ebe47f00ff98b01ad3a"
+    },
+    "r3_consumed_marker_sha256": {
+      "const": "1d129721fa111e18882d38f569cf463d053140e314e2eb2ec741cddf938a1675"
+    }
+  }
+}
