@@ -1,9 +1,9 @@
 name: PLM Runtime Integration Offline
 on:
   push:
-    paths: ['readiness/runtime-integration-*.json', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
+    paths: ['readiness/runtime-integration-*.json', 'readiness/runtime-composition-*.json', 'readiness/test_runtime_composition.py', 'readiness/build_runtime_composition_bundle.py', 'serverless/youtube-connection/runtime*.mjs', 'serverless/youtube-connection/operation-gate.mjs', 'serverless/youtube-connection/generation-adapter.mjs', 'serverless/test-runtime-composition.mjs', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
   pull_request:
-    paths: ['readiness/runtime-integration-*.json', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
+    paths: ['readiness/runtime-integration-*.json', 'readiness/runtime-composition-*.json', 'readiness/test_runtime_composition.py', 'readiness/build_runtime_composition_bundle.py', 'serverless/youtube-connection/runtime*.mjs', 'serverless/youtube-connection/operation-gate.mjs', 'serverless/youtube-connection/generation-adapter.mjs', 'serverless/test-runtime-composition.mjs', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
 permissions:
   contents: read
 jobs:
@@ -31,3 +31,4 @@ jobs:
           node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
           serverless/test-youtube-live.mjs serverless/test-youtube-live-sql.mjs
           serverless/test-youtube-connection.mjs serverless/test-runtime-integration-readiness.mjs
+          serverless/test-runtime-composition.mjs

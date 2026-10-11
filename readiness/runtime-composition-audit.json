@@ -1,0 +1,60 @@
+{
+  "identity": "provider-neutral-runtime-composition-implementation-20261011-r1",
+  "legacy": "UNCHANGED",
+  "mapping": [
+    {
+      "action": "SELECT exact approved generation; no new job",
+      "guards": "ACTIVE / COMPLETED / CONFIRMED and owner epoch fence hash",
+      "objects": "plm_rt_v2_job / script / effect",
+      "runtime": "generation-adapter.mjs"
+    },
+    {
+      "action": "INSERT QUEUED / atomic claim / DISPATCHED / UNKNOWN / COMPLETE",
+      "guards": "generation proof, schema fencing, expected version",
+      "objects": "plm_ytq_v1_queue",
+      "runtime": "generation-adapter.mjs + runtime.mjs + ConnectionBoundary"
+    },
+    {
+      "action": "atomic reserve + SENT before one send; UNKNOWN/CONFIRMED",
+      "guards": "dispatch ID/hash/ref/workflow, single in-memory send capability + durable sentinel",
+      "objects": "plm_ytq_v1_outbox",
+      "runtime": "runtime.mjs + ConnectionBoundary + abortableOneSend"
+    },
+    {
+      "action": "SELECT exact; INSERT bind",
+      "guards": "job/dispatch/run/render_run/attempt/workflow/payload/bind hash; duplicate rejected",
+      "objects": "plm_ytp_v1_binding",
+      "runtime": "runtime.mjs + checkpoint.mjs"
+    },
+    {
+      "action": "INSERT render / confirm RENDER / reserve then SENT UPLOAD",
+      "guards": "signed checkpoint, pre-existing binding; no actual upload here",
+      "objects": "plm_rt_v2_render / UPLOAD effect",
+      "runtime": "checkpoint.mjs through runtime.mjs"
+    },
+    {
+      "action": "atomic INSERT result + callback; triggers confirm job/effect/outbox/queue",
+      "guards": "binding + checkpoint + HMAC + private/no notify + exact owner/fence/hash; replay no-op only",
+      "objects": "plm_rt_v2_callback / plm_ytq_v1_result",
+      "runtime": "ConnectionBoundary.callback through runtime.mjs"
+    }
+  ],
+  "next_one_action": "prepare read-only immutable production target inspection; no activation or deploy",
+  "parent": "626ea5c919749ee8dcff553cda7c9d6dcf8961af",
+  "recommended_next_type": "D",
+  "remaining_blockers": [
+    "CURRENT_PRODUCTION_TARGET_UNVERIFIED",
+    "LIVE_PLATFORM_GATES",
+    "FUTURE_DURABLE_OPERATION_LEDGER_AND_KEY_READINESS"
+  ],
+  "remote_bundle_equality": "UNVERIFIED",
+  "resolved_offline": [
+    "NO_RUNTIME_COMPOSITION",
+    "GENERATION_TO_QUEUE_UNCONNECTED",
+    "REPLAY_AND_AUTH_LIFECYCLE_UNFIXED_OFFLINE"
+  ],
+  "run_provenance": "UNVERIFIED; HMAC not sufficient",
+  "scope": "Offline only; synthetic SQLite data/mock transport are not real jobs or remote dispatches",
+  "target_manifest": "readiness/runtime-composition-target-manifest.json",
+  "worker": "PARKED"
+}

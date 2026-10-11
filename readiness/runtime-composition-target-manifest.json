@@ -1,0 +1,22 @@
+{
+  "approval_status": "CURRENT_PRODUCTION_TARGET_UNVERIFIED",
+  "approved": false,
+  "candidate_entrypoint_path": "plm/entrypoints/yt_serverless_candidate.py",
+  "candidate_sha256": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+  "evidence_scope": "Repository revised candidate bytes only, not current production HEAD or approved remote target",
+  "launchable": false,
+  "notify_subscribers": false,
+  "privacy": "private",
+  "repository": "ikkinotako2-sketch/project-love-machine",
+  "required_commit_sha": null,
+  "required_future_inspection": [
+    "current production commit",
+    "exact workflow and sender bytes at immutable commit",
+    "run metadata provenance separate from HMAC"
+  ],
+  "run_attempt": 1,
+  "sender_path": "plm/entrypoints/yt_serverless_candidate.py",
+  "sender_sha256": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+  "workflow_path": ".github/workflows/youtube-pipeline.yml",
+  "workflow_sha256": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55"
+}

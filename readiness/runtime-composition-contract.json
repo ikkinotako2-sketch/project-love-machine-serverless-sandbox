@@ -1,0 +1,157 @@
+{
+  "binding": {
+    "callback_without_binding": "reject",
+    "duplicate": "reject",
+    "requires": [
+      "job_id",
+      "dispatch_id",
+      "pipeline_run_id numeric",
+      "render_run_id == pipeline_run_id",
+      "run_attempt == 1",
+      "workflow_sha256",
+      "dispatch_payload_sha256",
+      "bind_payload_sha256"
+    ],
+    "table": "plm_ytp_v1_binding"
+  },
+  "callback": {
+    "body_bytes_max": 8192,
+    "changed_replay": "reject",
+    "domain": "plm-youtube-result-v2",
+    "duplicate_result": "schema rejection",
+    "exact_fields": "existing FIELDS canonical contract",
+    "exact_replay": "idempotent no-op via schema/old contract",
+    "github_run_provenance": "NOT established by body HMAC; exact remote metadata inspection required",
+    "hmac": "SHA256",
+    "timestamp_skew_seconds": 300
+  },
+  "candidate_routes": {
+    "callback": "POST /youtube/result",
+    "checkpoint": "POST /youtube/checkpoint"
+  },
+  "cron_count": 0,
+  "database_evidence": {
+    "commit": "1dcbb0db8736527e15ef3ed6bab1f5ebbec4ce66",
+    "run": 38119266513,
+    "scope": "Historical postcheck only, no remote reads"
+  },
+  "database_state": {
+    "0008": "FULL_APPLIED",
+    "0009": "FULL_APPLIED",
+    "0010": "FULL_APPLIED"
+  },
+  "db_binding": "explicit db.withSession(first-primary), no env/global fallback",
+  "dispatch": {
+    "maximum_sends_per_operation": 1,
+    "non204_timeout_unknown": "queue/outbox UNKNOWN, NO RESEND",
+    "notify_subscribers": false,
+    "order": [
+      "QUEUED",
+      "atomic claim",
+      "atomic outbox reservation",
+      "durable SENT",
+      "one abortable transport",
+      "binding"
+    ],
+    "privacy": "private",
+    "resend": 0,
+    "resume": 0,
+    "retry": 0
+  },
+  "entrypoint": "serverless/youtube-connection/runtime-bundle.mjs",
+  "exact_parent_sha": "626ea5c919749ee8dcff553cda7c9d6dcf8961af",
+  "fetch": "503 PARKED_RUNTIME_COMPOSITION",
+  "generation_adapter": {
+    "duplicate_enqueue": "exact QUEUED match no-op, changed or consumed rejected",
+    "job_creation": false,
+    "preexisting_approved_job_only": true,
+    "requires": [
+      "ACTIVE job",
+      "COMPLETED script",
+      "CONFIRMED GENERATION effect",
+      "exact owner/epoch/fence/script hash"
+    ]
+  },
+  "identity": "provider-neutral-runtime-composition-implementation-20261011-r1",
+  "key_roles": {
+    "callback": {
+      "purpose": "result HMAC",
+      "required_env": "PLM_YOUTUBE_RESULT_CALLBACK_KEY"
+    },
+    "checkpoint": {
+      "purpose": "checkpoint HMAC",
+      "required_env": "PLM_YOUTUBE_CHECKPOINT_KEY"
+    },
+    "dispatch": {
+      "purpose": "GitHub dispatch credential",
+      "required_env": "PLM_GITHUB_DISPATCH_TOKEN"
+    }
+  },
+  "keys": "IDs/roles/env names only persisted; material explicitly injected in memory, independent values/IDs, fixture material rejected, all live configuration rejected",
+  "kind": "OFFLINE_PARKED_SUCCESSOR",
+  "legacy_policy": "Old worker/modules/bundles/SQL/revised production path byte unchanged",
+  "operation_descriptor_fields": [
+    "operation_id",
+    "operation_kind",
+    "job_id",
+    "intent_id",
+    "account_id",
+    "owner",
+    "owner_epoch",
+    "fencing_token",
+    "script_sha256",
+    "media_sha256",
+    "dispatch_id",
+    "dispatch_payload_sha256",
+    "bind_payload_sha256",
+    "pipeline_run_id",
+    "run_attempt",
+    "expected_state",
+    "target",
+    "workflow_sha256",
+    "sender_sha256",
+    "callback_key_id",
+    "checkpoint_key_id",
+    "dispatch_key_id",
+    "route",
+    "created_at",
+    "expires_at",
+    "consumed_state",
+    "source_manifest_sha256"
+  ],
+  "operation_gate": {
+    "consumption": "atomic injected ledger consumes before local action; CONFIRMED or UNKNOWN sealed; UNKNOWN never resumed",
+    "explicit_injection": true,
+    "ledger": "offline reference only; future live durable lifecycle and restart proof separately required; no live factory available",
+    "max_lifetime_seconds": 300,
+    "run_attempt": 1
+  },
+  "queue_consumers": 0,
+  "remote_activation_supported": false,
+  "routes_enabled": 0,
+  "runtime_activation_launchable": false,
+  "safe_defaults": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true,
+    "serverless_context": "",
+    "serverless_guard": false
+  },
+  "side_effect_budget": {
+    "Cloudflare": 0,
+    "D1_remote_reads": 0,
+    "D1_remote_writes": 0,
+    "YouTube": 0,
+    "consumed_rerun": 0,
+    "deploy": 0,
+    "dispatch": 0,
+    "publish": 0,
+    "secret_changes": 0,
+    "token_changes": 0
+  },
+  "source_drift": "exact source bytes + canonical manifest SHA checked before any operation",
+  "target_account": "6c8ccd6aface937ab5dabef61cb64534",
+  "target_db_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+  "target_db_name": "plm-serverless-sandbox-state"
+}

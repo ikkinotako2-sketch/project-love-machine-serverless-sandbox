@@ -1,0 +1,24 @@
+{
+  "compatibility_date": "2026-10-06",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+      "database_name": "plm-serverless-sandbox-state"
+    }
+  ],
+  "main": "runtime-bundle.mjs",
+  "name": "plm-serverless-sandbox-control",
+  "preview_urls": false,
+  "routes": [],
+  "triggers": {
+    "crons": []
+  },
+  "vars": {
+    "DRY_RUN": "true",
+    "EMERGENCY_STOP": "true",
+    "NO_PUBLISH": "true",
+    "TEST_ONLY": "true"
+  },
+  "workers_dev": false
+}

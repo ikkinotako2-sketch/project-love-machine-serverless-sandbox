@@ -1,0 +1,51 @@
+{
+  "bundle": "serverless/youtube-connection/runtime-bundle.mjs",
+  "bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "default_entrypoint": "503 PARKED",
+  "deploy_launchable": false,
+  "exact_parent_sha": "626ea5c919749ee8dcff553cda7c9d6dcf8961af",
+  "execution_launchable": false,
+  "execution_marker": "NOT_CREATED / NOT_CONSUMED",
+  "future_activation_requires": [
+    "explicit safe-flag transition",
+    "exact operation approval",
+    "approved immutable target",
+    "DB binding",
+    "verified distinct live key IDs/roles",
+    "durable operation lifecycle proof",
+    "remote inspection PASS",
+    "separate deploy approval"
+  ],
+  "future_execution_workflow_created": false,
+  "identity": "provider-neutral-runtime-composition-implementation-20261011-r1",
+  "live_factory": "always PREPARATION_ONLY_REMOTE_ACTIVATION_DISABLED",
+  "maximum_remote_calls": 0,
+  "maximum_remote_writes": 0,
+  "next_one_action": "prepare read-only GitHub immutable production target inspection",
+  "next_type": "D",
+  "prerequisite_database": "0008/0009/0010 historical FULL_APPLIED",
+  "side_effect_budget": {
+    "Cloudflare": 0,
+    "D1_remote_reads": 0,
+    "D1_remote_writes": 0,
+    "YouTube": 0,
+    "consumed_rerun": 0,
+    "deploy": 0,
+    "dispatch": 0,
+    "publish": 0,
+    "secret_changes": 0,
+    "token_changes": 0
+  },
+  "source_manifest": "readiness/runtime-composition-source-hashes.json",
+  "stop_conditions": [
+    "source/target drift",
+    "missing operation/DB/keys/target",
+    "expired/consumed/unknown descriptor",
+    "owner/epoch/fence/hash/run mismatch",
+    "transport timeout/non204 => UNKNOWN_NO_RESEND",
+    "need live remote execution",
+    "need secret value",
+    "any deployment"
+  ],
+  "target_manifest": "readiness/runtime-composition-target-manifest.json"
+}
