@@ -1,0 +1,81 @@
+{
+  "identity": "provider-neutral-runtime-visibility-completion-20261011-r2",
+  "exact_preparation_parent": "224e15e9fd598337da1ecedf7bc7c2e04dd99dda",
+  "allowed_requests": [
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/subdomain"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/domains"
+    },
+    {
+      "method": "GET",
+      "path": "/zones?account.id=6c8ccd6aface937ab5dabef61cb64534&per_page=50&page=1"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2"
+    }
+  ],
+  "maximum_remote_reads": 4,
+  "expected_reads_with_positive_census": 3,
+  "timeout_seconds": 15,
+  "response_bytes_max_each": 262144,
+  "error_body_bytes_max": 32768,
+  "credential_secret_name": "PLM_CF_WORKER_API_TOKEN",
+  "run_attempt": 1,
+  "execution_approved": false,
+  "launchable": false,
+  "marker": "audit-evidence/consumed/provider-neutral-runtime-visibility-completion-20261011-r2.json",
+  "marker_state": "NOT_CREATED / NOT_CONSUMED",
+  "GET4_condition": "Only if offline positive source identity/parked proof is absent; this pinned census has proof so source GET skipped",
+  "freshness": "Exposure is fresh; source/cron/consumer/D1 binding inherited strictly from run 38128155103. No claim of atomic or fresh cross-endpoint state. Any later deploy preparation requires new source drift gate.",
+  "classic_routes": "zone_count>0 => ROUTE_INSPECTION_REQUIRED; no route GET here",
+  "zone_403": "UNVERIFIED_ZONE_PERMISSION",
+  "classification": "REMOTE_INACTIVE_SOURCE_PINNED only with disabled workers.dev/previews, complete target domain absence, zero complete zones, positive parked source proof, inherited exact D1/cron/consumer evidence. Not deploy approval.",
+  "strict_source_parser": "Finite literal fetch-only grammar, no dynamic JS evaluator. Unsupported false. Multipart unsupported for generic static proof.",
+  "STOP_conditions": [
+    "HTTP non200",
+    "timeout",
+    "redirect",
+    "response bound",
+    "incomplete inventory",
+    "unexpected active exposure",
+    "zone>0",
+    "unknown source"
+  ],
+  "official_documentation": [
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/subdomain/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/domains/methods/list/",
+    "https://developers.cloudflare.com/api/resources/zones/methods/list/"
+  ],
+  "domain_fields": "service exact Worker; enabled OR previews_enabled true blocks; any target domain record blocks negative completeness",
+  "zone_permissions": "Official accepted permission name: Zone Zone Read. No credential expansion authorized.",
+  "maximum_writes": 0,
+  "maximum_D1_requests": 0,
+  "maximum_deploys": 0,
+  "maximum_dispatches": 0,
+  "maximum_uploads": 0,
+  "maximum_YouTube_calls": 0,
+  "retry": 0,
+  "resume": 0,
+  "redirect": 0,
+  "fallback": 0,
+  "pagination_fallback": 0,
+  "raw_retention": 0,
+  "workflow_sha256": "7e311d6529f64a87ae4d8ed3afc252e80a0f89320c7baeecd9f4a1da1cd3fc3a",
+  "helper_sha256": "703e935bd72d3e73b8b196b64ea02471181db102f6698f64544efb6ac444cd05",
+  "schema_sha256": "5310a64460f57807b3f42c8db3ecfb5831caa709c1be1fb882c78f4a18937699",
+  "census_sha256": "bf9fc8fa4666f961f536c69397c326ac00eeca9f713f7e0a688adcbe13e0312d",
+  "prior_evidence_sha256": "457eacb0f8e6f77c57d6d02d2b7fc5410eeee0a3302889e1d7d550a0d8a06109",
+  "parser_dependency_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "target_manifest_sha256": "8315eac39526ed97126c3b5f85df9e150afc63186c224a3820fb03103bf11828",
+  "known_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "preparation_chain": "r2 root is r1 consumed marker commit 224e15e9fd598337da1ecedf7bc7c2e04dd99dda; full history required; max3 offline preparation commits; only r2 artifacts/integration CI and historical r1 marker lifecycle fixture; r1 marker immutable; no r1 success prerequisite.",
+  "checkout_fetch_depth": 0,
+  "r1_historical_failure_run": 38130789006,
+  "r1_is_success_prerequisite": false,
+  "r1_consumed_marker_sha256": "d07a86dd1f6cd9b46396cbb7c726016333ae07986183cd5cd825bb2e15f7a9cb"
+}

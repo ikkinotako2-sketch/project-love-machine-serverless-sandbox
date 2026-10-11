@@ -59,7 +59,11 @@ class Visibility(unittest.TestCase):
  def test_timeout(self):
   def t(*a):raise TimeoutError('TOKEN')
   g=v.RequestGate(t);self.assertRaises(v.Stop,g.get,'GET',v.ENDPOINTS[0]);self.assertEqual(g.count,1);self.assertRaises(v.Stop,g.get,'GET',v.ENDPOINTS[1])
- def test_marker_absent(self):self.assertFalse((ROOT/v.MARKER).exists())
+ def test_marker_absent(self):
+  # Historical preparation fixture: consumed marker must remain exact.
+  marker=ROOT/v.MARKER
+  if marker.exists():self.assertEqual(v.sha(marker.read_bytes()),'d07a86dd1f6cd9b46396cbb7c726016333ae07986183cd5cd825bb2e15f7a9cb')
+  else:self.assertFalse(marker.exists())
  def fixture(self):
   files={p:(ROOT/p).read_bytes() for p in v.PIN_FILES.values()};plan=json.loads(files[v.PLAN]);before='a'*40;after='b'*40;marker={k:v.sha(files[p]) for k,p in v.PIN_FILES.items()};marker.update(identity=v.IDENTITY,state='CONSUMED_BEFORE_REMOTE',prepared_commit_sha=before);env={'GITHUB_REPOSITORY':v.REPO,'GITHUB_REF':v.BRANCH,'GITHUB_EVENT_NAME':'push','GITHUB_RUN_ATTEMPT':'1','GITHUB_SHA':after,**{k:'true' for k in ['TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP']}};event={'before':before,'after':after,'head_commit':{'id':after,'message':v.MESSAGE},'commits':[{}]};facts={'head':after,'parent':before,'preparation_root_ancestor':True,'preparation_commit_count':3,'preparation_files':[v.HELPER,v.WORKFLOW,v.PLAN,v.SCHEMA,v.CENSUS,v.PRIOR,'readiness/test_runtime_visibility_completion.py','.github/workflows/plm-runtime-integration-offline.yml','readiness/test_runtime_remote_readonly_executor.py','readiness/test_runtime_target_readonly.py'],'files':[v.MARKER],'marker_preexisted':False,'message':v.MESSAGE};return [env,event,facts,marker,plan,files]
  def test_gate_pass(self):v.validate_gate(*self.fixture())
