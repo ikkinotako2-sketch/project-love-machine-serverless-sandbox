@@ -1,0 +1,154 @@
+"""Independent two-GET credential proof. No IO or credential lookup on import."""
+import json,re
+from pathlib import Path
+from datetime import datetime,timezone
+try:
+ from readiness.runtime_remote_readonly_executor import Stop,need,sha,json_exact,envelope,source_metadata,MAX,ERROR_MAX,TIMEOUT
+except ModuleNotFoundError:
+ from runtime_remote_readonly_executor import Stop,need,sha,json_exact,envelope,source_metadata,MAX,ERROR_MAX,TIMEOUT
+IDENTITY='provider-neutral-runtime-parked-deploy-token-verify-20261011-r1'
+PARENT='acf9822aeedc4418c8f47bed760c18fd18db2be3'
+REPO='ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+BRANCH='refs/heads/plm-offline-readiness-v1-20261002'
+ACCOUNT='6c8ccd6aface937ab5dabef61cb64534'
+WORKER='plm-serverless-sandbox-control'
+SECRET='PLM_CF_WORKER_DEPLOY_TOKEN'
+OLD='6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451'
+NEW='8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9'
+GETS=('/accounts/'+ACCOUNT+'/tokens/verify','/accounts/'+ACCOUNT+'/workers/scripts/'+WORKER+'/content/v2')
+WORKFLOW='.github/workflows/plm-runtime-parked-deploy-token-verify-once.yml'
+HELPER='readiness/runtime_parked_deploy_token_verify.py'
+PLAN='readiness/runtime-parked-deploy-token-verify-plan.json'
+SCHEMA='readiness/runtime-parked-deploy-token-verify-marker.schema.json'
+DEPLOY_PLAN='readiness/runtime-parked-deploy-plan.json'
+DEPLOY_EXECUTOR='readiness/runtime_parked_deploy_executor.py'
+PARSER='readiness/runtime_remote_readonly_executor.py'
+BOOTSTRAP='serverless/bootstrap-placeholder.mjs'
+BUNDLE='serverless/youtube-connection/runtime-bundle.mjs'
+DEPLOY_MARKER='audit-evidence/consumed/provider-neutral-runtime-parked-deploy-20261011-r1.json'
+MARKER='audit-evidence/consumed/'+IDENTITY+'.json'
+MESSAGE='PLM runtime parked deploy token verify once '+IDENTITY
+FLAGS={k:'true' for k in ('TEST_ONLY','DRY_RUN','NO_PUBLISH','EMERGENCY_STOP')}
+IMMUTABLE={DEPLOY_PLAN:'b96edafbbc0df5121eda655bd1fa12af6dc086f9b2077982410c97f740851985',DEPLOY_EXECUTOR:'56163be0825d3cc240e85eef8a757ee2a50a2ea92380979aa3fae81a8a9f795d',PARSER:'4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6',BOOTSTRAP:OLD,BUNDLE:NEW}
+PINS={'workflow_sha256':WORKFLOW,'executor_sha256':HELPER,'plan_sha256':PLAN,'schema_sha256':SCHEMA,'parked_deploy_plan_sha256':DEPLOY_PLAN,'parked_deploy_executor_sha256':DEPLOY_EXECUTOR,'parser_dependency_sha256':PARSER,'expected_old_source_sha256':BOOTSTRAP,'expected_new_bundle_sha256':BUNDLE}
+PREPARATION_FILES={WORKFLOW,HELPER,PLAN,SCHEMA,'readiness/test_runtime_parked_deploy_token_verify.py','.github/workflows/plm-runtime-integration-offline.yml'}
+ZERO_KEYS=('writes','D1_requests','deploys','Worker_invocations','dispatches','YouTube_calls','route_writes','domain_writes','subdomain_writes','retry','rerun','resume','resend','redirect','fallback','raw_retention')
+def timestamp(value):
+ need(type(value) is str and len(value)<=64 and re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})',value),'TOKEN_TIMESTAMP_STOP')
+ try:t=datetime.fromisoformat(value.replace('Z','+00:00'));need(t.tzinfo is not None and t.utcoffset() is not None,'TOKEN_TIMESTAMP_STOP');return t
+ except Stop:raise
+ except Exception:raise Stop('TOKEN_TIMESTAMP_STOP') from None
+
+def verify(raw,now):
+ need(type(raw) is bytes and len(raw)<=MAX,'RESPONSE_BOUND_STOP')
+ r=envelope(raw).get('result');need(type(r) is dict and r.get('status')=='active','TOKEN_NOT_ACTIVE_STOP')
+ out={'token_status':'active'}
+ if 'expires_on' in r:need(timestamp(r['expires_on'])>now,'TOKEN_EXPIRED_STOP');out['expires_on']=r['expires_on']
+ if 'not_before' in r:need(timestamp(r['not_before'])<=now,'TOKEN_NOT_YET_VALID_STOP');out['not_before']=r['not_before']
+ # ID, policy, creator and arbitrary remote fields deliberately never accessed.
+ return out
+
+def numeric_errors(raw):
+ try:
+  d=json_exact(raw);rows=d.get('errors',[]);return [e['code'] for e in rows[:8] if type(e) is dict and type(e.get('code')) is int] if type(rows) is list else []
+ except Exception:return []
+
+def validate_gate(env,event,facts,marker,files):
+ need(all(env.get(k)=='true' for k in FLAGS),'SAFE_FLAGS_STOP')
+ need(env.get('GITHUB_REPOSITORY')==REPO and env.get('GITHUB_REF')==BRANCH and env.get('GITHUB_EVENT_NAME')=='push' and env.get('GITHUB_RUN_ATTEMPT')=='1','EXECUTION_CONTEXT_STOP')
+ before=event.get('before');after=event.get('after');head=event.get('head_commit',{})
+ need(type(before) is str and re.fullmatch('[a-f0-9]{40}',before) and after==env.get('GITHUB_SHA') and head.get('id')==after and head.get('message')==MESSAGE and len(event.get('commits',[]))==1,'PUSH_BINDING_STOP')
+ need(facts.get('full_history') is True and facts.get('root')==PARENT and type(facts.get('count')) is int and 1<=facts['count']<=3 and set(facts.get('preparation_files',[]))==PREPARATION_FILES,'PREPARATION_HISTORY_STOP')
+ need(facts.get('head')==after and facts.get('parent')==before and facts.get('files')==[MARKER] and facts.get('message')==MESSAGE and facts.get('marker_preexisted') is False,'MARKER_ONLY_STOP')
+ need(facts.get('deploy_marker_absent_root') is True and facts.get('deploy_marker_absent_prepared') is True and facts.get('deploy_marker_absent_head') is True and facts.get('deploy_marker_absent_worktree') is True,'DEPLOY_CONSUMED_STOP')
+ need(facts.get('deploy_root_hashes')=={p:IMMUTABLE[p] for p in (DEPLOY_PLAN,DEPLOY_EXECUTOR)},'DEPLOY_PREPARATION_DEPENDENCY_STOP')
+ need(type(marker) is dict and set(marker)==set(PINS)|{'identity','state','prepared_commit_sha'} and marker['identity']==IDENTITY and marker['state']=='CONSUMED_BEFORE_REMOTE' and marker['prepared_commit_sha']==before,'MARKER_BINDING_STOP')
+ for k,p in PINS.items():need(sha(files[p])==marker[k],'SOURCE_HASH_DRIFT_STOP')
+ for p,h in IMMUTABLE.items():need(sha(files[p])==h,'IMMUTABLE_DEPENDENCY_STOP')
+ plan=json_exact(files[PLAN]);need(plan['identity']==IDENTITY and plan['exact_preparation_parent']==PARENT and plan['parked_deploy_prepared_commit']==PARENT and plan['allowed_requests']==[{'method':'GET','path':p} for p in GETS] and plan['maximum_GETs']==2,'PLAN_CONTRACT_STOP')
+ for k in ZERO_KEYS:need(type(plan.get(k)) is int and plan[k]==0,'PLAN_BUDGET_STOP')
+ need(plan['scope_attestation']=='OWNER_ATTESTED_INDIVIDUAL_WORKER_EDITOR' and plan['scope_api_verified'] is False and plan['write_capability_remote_tested'] is False and plan['deploy_authorized'] is False and plan['timeout_seconds']==TIMEOUT and plan['response_bytes_max_each']==MAX and plan['error_body_bytes_max']==ERROR_MAX,'PLAN_SAFETY_STOP')
+ for k in PINS:
+  if k!='plan_sha256':need(plan[k]==marker[k],'PLAN_PIN_STOP')
+
+_CAPABILITY=object()
+class RequestBudget:
+ def __init__(self):self.count=0;self.active=False
+ def admit(self,method,path):
+  need(method=='GET' and self.count<2 and path==GETS[self.count] and (self.count==0 or self.active),'REQUEST_GATE_STOP');self.count+=1
+ def verified(self,capability):need(capability is _CAPABILITY and self.count==1,'ACTIVE_PROOF_REQUIRED');self.active=True
+
+class AuthorizedTransport:
+ def __init__(self,token,capability=None):
+  need(capability is _CAPABILITY,'ONE_SHOT_GATE_REQUIRED');need(type(token) is str and token and not any(c in token for c in '\r\n'),'DEPLOY_TOKEN_MISSING_STOP');self.token=token;self.budget=RequestBudget()
+ def verified(self,c):self.budget.verified(c)
+ def __call__(self,method,path):
+  import http.client,time
+  self.budget.admit(method,path);started=time.monotonic();c=http.client.HTTPSConnection('api.cloudflare.com',timeout=TIMEOUT)
+  try:
+   c.connect();left=TIMEOUT-(time.monotonic()-started);need(left>0,'TRANSPORT_UNKNOWN_STOP');c.sock.settimeout(left)
+   c.request('GET','/client/v4'+path,headers={'Authorization':'Bearer '+self.token,'Accept':'*/*'})
+   left=TIMEOUT-(time.monotonic()-started);need(left>0,'TRANSPORT_UNKNOWN_STOP');c.sock.settimeout(left)
+   r=c.getresponse();status=r.status;limit=MAX if status==200 else ERROR_MAX;parts=[];n=0
+   while n<=limit:
+    left=TIMEOUT-(time.monotonic()-started);need(left>0,'TRANSPORT_UNKNOWN_STOP')
+    sock=c.sock if c.sock is not None else getattr(getattr(getattr(r,'fp',None),'raw',None),'_sock',None)
+    if sock is not None:sock.settimeout(left)
+    chunk=r.read1(min(8192,limit+1-n))
+    if not chunk:break
+    parts.append(chunk);n+=len(chunk)
+   raw=b''.join(parts);need(len(raw)<=limit,'RESPONSE_BOUND_STOP')
+   return status,raw,{'content_type':r.getheader('Content-Type') or '', 'entrypoint':r.getheader('cf-entrypoint')}
+  finally:c.close()
+
+def result_base():
+ out={k:0 for k in ZERO_KEYS};out.update(identity=IDENTITY,classification='DEPLOY_TOKEN_VERIFY_BLOCKED',reason_codes=[],requests_attempted=0,request_order=[],HTTP_statuses=[],cloudflare_error_codes=[],credential_active=False,target_worker_read=False,target_worker_read_verified=False,source_drift=None,source_representation_proven=False,scope_attestation='OWNER_ATTESTED_INDIVIDUAL_WORKER_EDITOR',scope_api_verified=False,write_capability_remote_tested=False,deploy_authorized=False,deploy_identity_consumed=False,secret_exposure=0)
+ return out
+
+def inspect(transport,now=None):
+ out=result_base()
+ try:
+  now=now or datetime.now(timezone.utc)
+  for index,path in enumerate(GETS):
+   if index:out['classification']='DEPLOY_TOKEN_TARGET_READ_BLOCKED'
+   out['requests_attempted']+=1;out['request_order'].append('GET '+path)
+   status,raw,meta=transport('GET',path);out['HTTP_statuses'].append(status)
+   if status!=200:out['cloudflare_error_codes']=numeric_errors(raw);raise Stop('HTTP_'+str(status)+'_STOP')
+   need(type(raw) is bytes and len(raw)<=MAX,'RESPONSE_BOUND_STOP')
+   if index==0:
+    out.update(verify(raw,now));out['credential_active']=True;transport.verified(_CAPABILITY)
+   else:
+    out['target_worker_read']=True;out['target_worker_read_verified']=True
+    proof=source_metadata(raw,meta,{OLD});out['source_representation_proven']=proof.get('source_representation_proven') is True
+    if not out['source_representation_proven']:out['classification']='SOURCE_REPRESENTATION_UNVERIFIED_STOP';raise Stop('SOURCE_REPRESENTATION_UNVERIFIED_STOP')
+    out['source_sha256']=proof['source_module_sha256'];out['source_drift']=out['source_sha256']!=OLD
+    if out['source_drift']:out['classification']='SOURCE_DRIFT_STOP_BEFORE_DEPLOY';raise Stop('SOURCE_DRIFT_STOP_BEFORE_DEPLOY')
+    out['classification']='DEPLOY_TOKEN_ACTIVE_TARGET_READ_CONFIRMED'
+   del raw
+ except Stop as e:out['reason_codes']=[str(e)]
+ except Exception:out['reason_codes']=['TRANSPORT_OR_SHAPE_UNKNOWN_STOP']
+ return out
+
+def collect_git_facts(before,git,exists):
+ need(git('rev-parse','--is-shallow-repository')=='false','SHALLOW_REPOSITORY_STOP')
+ root=git('merge-base',PARENT,before);need(root==PARENT,'PREPARATION_ROOT_STOP')
+ count=git('rev-list','--count',PARENT+'..'+before);need(count.isdigit(),'GIT_HISTORY_STOP')
+ return {'full_history':True,'root':root,'count':int(count),'preparation_files':git('diff','--name-only',PARENT,before).splitlines(),'head':git('rev-parse','HEAD'),'parent':git('rev-parse','HEAD^'),'files':git('diff','--name-only',before,'HEAD').splitlines(),'message':git('log','-1','--format=%B'),'marker_preexisted':exists(before+':'+MARKER),'deploy_marker_absent_root':not exists(PARENT+':'+DEPLOY_MARKER),'deploy_marker_absent_prepared':not exists(before+':'+DEPLOY_MARKER),'deploy_marker_absent_head':not exists('HEAD:'+DEPLOY_MARKER),'deploy_marker_absent_worktree':not Path(DEPLOY_MARKER).exists(),'deploy_root_hashes':{p:sha(git('show',PARENT+':'+p).encode()) for p in (DEPLOY_PLAN,DEPLOY_EXECUTOR)}}
+
+def load_gate():
+ import os,subprocess
+ event=json_exact(Path(os.environ['GITHUB_EVENT_PATH']).read_bytes());before=event['before'];need(type(before) is str and re.fullmatch('[a-f0-9]{40}',before),'PREPARED_COMMIT_STOP')
+ def git(*a):
+  r=subprocess.run(['git',*a],text=True,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,check=False);need(r.returncode==0,'GIT_HISTORY_COMMAND_STOP');return r.stdout if a[0]=='show' else r.stdout.strip()
+ def exists(spec):return subprocess.run(['git','cat-file','-e',spec],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
+ facts=collect_git_facts(before,git,exists);files={p:Path(p).read_bytes() for p in PINS.values()};validate_gate(dict(os.environ),event,facts,json_exact(Path(MARKER).read_bytes()),files);return files
+
+def main():
+ import os
+ out=result_base()
+ try:
+  load_gate();t=AuthorizedTransport(os.environ.get(SECRET),_CAPABILITY);out=inspect(t)
+ except Stop as e:out['reason_codes']=[str(e)]
+ except Exception:out['reason_codes']=['LOCAL_GATE_STOP']
+ print(json.dumps(out,sort_keys=True))
+if __name__=='__main__':main()
