@@ -109,7 +109,11 @@ def validate_gate(env,event,facts,marker,plan,files):
  need(env.get('GITHUB_REPOSITORY')==REPO and env.get('GITHUB_REF')==BRANCH and env.get('GITHUB_EVENT_NAME')=='push' and env.get('GITHUB_RUN_ATTEMPT')=='1','EXECUTION_CONTEXT_STOP')
  before=event.get('before');after=event.get('after');head=event.get('head_commit',{})
  need(type(before) is str and re.fullmatch('[a-f0-9]{40}',before) and after==env.get('GITHUB_SHA') and head.get('id')==after and head.get('message')==MESSAGE and len(event.get('commits',[]))==1,'PUSH_BINDING_STOP')
- need(facts=={'head':after,'parent':before,'prepared_parent':PARENT,'files':[MARKER],'marker_preexisted':False,'message':MESSAGE},'MARKER_ONLY_CHAIN_STOP')
+ need({k:facts.get(k) for k in ('head','parent','files','marker_preexisted','message')}=={'head':after,'parent':before,'files':[MARKER],'marker_preexisted':False,'message':MESSAGE},'MARKER_ONLY_CHAIN_STOP')
+ need(facts.get('preparation_root_ancestor') is True and type(facts.get('preparation_commit_count')) is int and 1<=facts['preparation_commit_count']<=3,'PREPARATION_CHAIN_STOP')
+ core={HELPER,WORKFLOW,PLAN,SCHEMA,CENSUS,PRIOR,'readiness/test_runtime_visibility_completion.py','.github/workflows/plm-runtime-integration-offline.yml'}
+ allowed=core|{'readiness/test_runtime_remote_readonly_executor.py','readiness/test_runtime_target_readonly.py'}
+ changed=facts.get('preparation_files');need(type(changed) is list and len(changed)==len(set(changed)) and core<=set(changed)<=allowed,'PREPARATION_DIFF_STOP')
  need(type(marker) is dict and set(marker)==set(PIN_FILES)|{'identity','state','prepared_commit_sha'} and marker['identity']==IDENTITY and marker['state']=='CONSUMED_BEFORE_REMOTE' and marker['prepared_commit_sha']==before,'MARKER_BINDING_STOP')
  for k,p in PIN_FILES.items():need(sha(files[p])==marker[k],'SOURCE_HASH_DRIFT_STOP')
  need(plan.get('identity')==IDENTITY and plan.get('exact_preparation_parent')==PARENT and plan.get('allowed_requests')==[{'method':'GET','path':p} for p in ENDPOINTS] and plan.get('maximum_remote_reads')==4 and plan.get('timeout_seconds')==TIMEOUT and plan.get('response_bytes_max_each')==MAX and plan.get('error_body_bytes_max')==ERROR_MAX,'PLAN_BINDING_STOP')
@@ -150,7 +154,7 @@ def load_gate():
  import os,subprocess
  event=json_exact(Path(os.environ['GITHUB_EVENT_PATH']).read_bytes());before=event['before'];need(type(before) is str and re.fullmatch('[a-f0-9]{40}',before),'PREPARED_COMMIT_STOP')
  def git(*a):return subprocess.check_output(['git',*a],text=True,stderr=subprocess.DEVNULL).strip()
- facts={'head':git('rev-parse','HEAD'),'parent':git('rev-parse','HEAD^'),'prepared_parent':git('rev-parse',before+'^'),'files':git('diff','--name-only',before,'HEAD').splitlines(),'marker_preexisted':subprocess.run(['git','cat-file','-e',before+':'+MARKER],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0,'message':git('log','-1','--format=%B')}
+ facts={'head':git('rev-parse','HEAD'),'parent':git('rev-parse','HEAD^'),'preparation_root_ancestor':subprocess.run(['git','merge-base','--is-ancestor',PARENT,before],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0,'preparation_commit_count':int(git('rev-list','--count',PARENT+'..'+before)),'preparation_files':git('diff','--name-only',PARENT,before).splitlines(),'files':git('diff','--name-only',before,'HEAD').splitlines(),'marker_preexisted':subprocess.run(['git','cat-file','-e',before+':'+MARKER],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0,'message':git('log','-1','--format=%B')}
  files={p:Path(p).read_bytes() for p in PIN_FILES.values()};plan=json_exact(files[PLAN]);validate_gate(dict(os.environ),event,facts,json_exact(Path(MARKER).read_bytes()),plan,files);return files
 
 def main():
