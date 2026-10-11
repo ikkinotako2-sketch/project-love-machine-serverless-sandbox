@@ -1,0 +1,148 @@
+{
+  "allowed_requests": [
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/queues"
+    }
+  ],
+  "binding_metadata_boundary": "Allowlisted D1 id/name and secret binding names/types only. Never request secret values, never inspect any value/text/material property. Plaintext variables not requested as key proof.",
+  "candidate_bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "candidate_runtime_source_sha256": "134c97c36a0a20cc43b35e3dce1a1243a5d9008673ece5fb29f7cb8c3a52f3ea",
+  "classification_requires": [
+    "source comparable and known identity",
+    "complete routes/exposure evidence",
+    "cron complete/count0",
+    "consumer complete/count0",
+    "exact D1 binding",
+    "parked source proven"
+  ],
+  "credential_secret_reference": "PLM_CF_WORKER_API_TOKEN",
+  "credential_values_accessed": false,
+  "error_body_bytes_max": 32768,
+  "exact_preparation_parent": "5dc0c5f3bb0dfc866ed59baecc09296629b8580c",
+  "execution_approved": false,
+  "executor_path": "readiness/runtime_remote_readonly_executor.py",
+  "expected_classifications": [
+    "REMOTE_PARKED_OLD_SOURCE_DEPLOY_PREPARATION_REQUIRED",
+    "REMOTE_EXACT_PARKED",
+    "STOP_UNEXPECTED_ACTIVE_RUNTIME",
+    "BLOCKED_REMOTE_VISIBILITY"
+  ],
+  "fallback": 0,
+  "forbidden": [
+    "Cloudflare execution this phase",
+    "D1 GET/query/write",
+    "Worker invocation/deploy",
+    "secret value retrieval",
+    "production write",
+    "GitHub dispatch",
+    "YouTube API",
+    "consumed rerun"
+  ],
+  "future_commit_message": "PLM runtime remote readonly once provider-neutral-runtime-remote-readonly-inspection-20261011-r1",
+  "future_execution_blockers": [
+    "Separate exact marker-only execution approval required; no marker exists",
+    "Routes zone completeness unavailable => BLOCKED_REMOTE_VISIBILITY normal result",
+    "Settings read permissions and key readiness unverified"
+  ],
+  "helper": "readiness/runtime_remote_readonly_executor.py",
+  "helper_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "http_executor_created": true,
+  "identity": "provider-neutral-runtime-remote-readonly-inspection-20261011-r1",
+  "known_old_parked_source_files": {
+    "serverless/youtube-connection/bundle.mjs": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f",
+    "serverless/youtube-live/worker.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+  },
+  "launchable": false,
+  "marker": {
+    "future_binding": [
+      "identity",
+      "state",
+      "prepared_commit_sha",
+      "plan_sha256",
+      "target_manifest_sha256",
+      "workflow_sha256",
+      "helper_sha256",
+      "offline_contract_sha256",
+      "candidate_bundle_sha256",
+      "candidate_runtime_source_sha256"
+    ],
+    "identity_reuse": false,
+    "path": "audit-evidence/consumed/provider-neutral-runtime-remote-readonly-inspection-20261011-r1.json",
+    "schema_path": "readiness/runtime-remote-readonly-executor-marker.schema.json",
+    "schema_sha256": "19e60d5f1d11836411367ef532a0b84f4b11590dbf5bf4475bb57927f5de1a88",
+    "state": "NOT_CREATED / NOT_CONSUMED"
+  },
+  "maximum_D1_requests": 0,
+  "maximum_YouTube_calls": 0,
+  "maximum_deploys": 0,
+  "maximum_dispatches": 0,
+  "maximum_remote_reads": 4,
+  "maximum_uploads": 0,
+  "maximum_writes": 0,
+  "official_sources": [
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/content/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/script_and_version_settings/methods/get/",
+    "https://developers.cloudflare.com/api/resources/workers/subresources/scripts/subresources/schedules/methods/get/",
+    "https://developers.cloudflare.com/api/resources/queues/methods/list/"
+  ],
+  "offline_contract_path": "readiness/runtime_remote_readonly_contract.py",
+  "offline_contract_sha256": "9edaabc4a00c563b6aaa6946405733014ac85144edae48db2ca1254aecd5a722",
+  "pagination": "Queues/schedules single response completeness required; missing/inconsistent metadata => UNVERIFIED_INCOMPLETE_PAGINATION, no next-page request",
+  "pagination_fallback": 0,
+  "permissions": "403/read visibility insufficient => UNVERIFIED_PERMISSION_LIMIT and safe STOP; no broad token request",
+  "preparation_kind": "EXECUTABLE_ONE_SHOT_PREPARED_NOT_APPROVED",
+  "prior_plan": "readiness/runtime-remote-readonly-plan.json",
+  "quota": {
+    "requests": 0,
+    "status": "UNVERIFIED_PERMISSION_LIMIT",
+    "usage_model_not_quota": "Account/worker usage/quota not inferred from settings. Additional officially read-only permission/endpoint proof requires separate preparation."
+  },
+  "raw_retention": 0,
+  "redirect": 0,
+  "request_order": "Exactly ordered content/settings/schedules/queues; stop after HTTP or active evidence; no extra GET",
+  "response_bytes_max_each": 262144,
+  "resume": 0,
+  "retry": 0,
+  "routes": {
+    "requests": 0,
+    "required_before_visibility_PASS": "Exact zone evidence and separately bounded GET /zones/{exact_zone_id}/workers/routes plan; no guessed zone or account routes endpoint",
+    "status": "UNVERIFIED_ZONE_ID_OR_PERMISSION",
+    "zone_id": null
+  },
+  "run_attempt": 1,
+  "schema_path": "readiness/runtime-remote-readonly-executor-marker.schema.json",
+  "schema_sha256": "19e60d5f1d11836411367ef532a0b84f4b11590dbf5bf4475bb57927f5de1a88",
+  "secret_key_readiness": "Name presence only; validity/role/distinctness/value unavailable => UNVERIFIED_PERMISSION_LIMIT; no secret endpoint",
+  "source_boundary": "In-memory SHA256 only; never print/persist raw source. Raw response MIME/multipart must not be presumed equal to standalone bundle. If exact comparable source representation cannot be proven => UNVERIFIED_SOURCE_REPRESENTATION.",
+  "source_parser": "Strict in-memory raw JS or multipart single JavaScript main module; cf-entrypoint or exact metadata main_module/body_part required for multipart. Multiple/unsupported modules => UNVERIFIED_SOURCE_REPRESENTATION. Never execute remote code.",
+  "target_account": "6c8ccd6aface937ab5dabef61cb64534",
+  "target_d1": {
+    "id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "name": "plm-serverless-sandbox-state",
+    "verification": "settings binding identity only; no D1 endpoint"
+  },
+  "target_manifest": "readiness/runtime-target-pinned-manifest.json",
+  "target_manifest_path": "readiness/runtime-target-pinned-manifest.json",
+  "target_manifest_sha256": "8315eac39526ed97126c3b5f85df9e150afc63186c224a3820fb03103bf11828",
+  "target_status": "PINNED_READONLY_NOT_EXECUTION_APPROVED",
+  "target_worker": "plm-serverless-sandbox-control",
+  "timeout_seconds": 15,
+  "timeout_semantics": "15s socket/transfer deadline, read1 bounded chunks with shrinking timeout; workflow hard timeout 3m. Any transport ambiguity STOP without retry.",
+  "workers_dev_preview_routes": "If settings do not prove exposure inactive => BLOCKED_REMOTE_VISIBILITY; do not invoke Worker fetch to test",
+  "workflow_created": true,
+  "workflow_path": ".github/workflows/plm-runtime-remote-readonly-once.yml",
+  "workflow_sha256": "fa2299dfeb62f14534e75b2979b8e6fa186afa135bca578f5298496db2c7c1be"
+}

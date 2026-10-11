@@ -1,0 +1,44 @@
+name: PLM Runtime Remote Readonly Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['audit-evidence/consumed/provider-neutral-runtime-remote-readonly-inspection-20261011-r1.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: provider-neutral-runtime-remote-readonly-inspection-20261011-r1
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.head_commit.message == 'PLM runtime remote readonly once provider-neutral-runtime-remote-readonly-inspection-20261011-r1' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+      - name: Gate marker-only commit, exact parent, hashes and attempt before credential injection
+        run: |
+          python3 - <<'PY'
+          import os,subprocess
+          from pathlib import Path
+          from readiness.runtime_remote_readonly_executor import *
+          event=json_exact(Path(os.environ['GITHUB_EVENT_PATH']).read_bytes());before=event['before']
+          need(type(before) is str and re.fullmatch('[a-f0-9]{40}',before),'PREPARED_COMMIT_STOP')
+          def git(*a):return subprocess.check_output(['git',*a],text=True).strip()
+          facts={'head':git('rev-parse','HEAD'),'parent':git('rev-parse','HEAD^'),'prepared_parent':git('rev-parse',before+'^'),'files':git('diff','--name-only',before,'HEAD').splitlines(),'marker_preexisted':subprocess.run(['git','cat-file','-e',before+':'+MARKER],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0,'message':git('log','-1','--format=%B')}
+          plan=json_exact(Path(PLAN).read_bytes());paths=set(PIN_FILES.values())|{SCHEMA,'serverless/youtube-connection/runtime-bundle.mjs','serverless/youtube-connection/runtime.mjs'}|set(plan['known_old_parked_source_files']);files={p:Path(p).read_bytes() for p in paths}
+          validate_gate(dict(os.environ),event,facts,json_exact(Path(MARKER).read_bytes()),plan,files)
+          PY
+      - name: At most four GETs, sanitized result only; permanent STOP without retry
+        env:
+          PLM_CF_WORKER_API_TOKEN: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+        run: python3 readiness/runtime_remote_readonly_executor.py
