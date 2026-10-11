@@ -151,7 +151,7 @@ class Bindings(unittest.TestCase):
    for identity in ('provider-neutral-0008-migration-20261010-r2','provider-neutral-0008-postcheck-20261010-r2','provider-neutral-0008-fresh-readonly-preflight-20261010-r6','provider-neutral-0009-migration-20261011-r1','provider-neutral-0009-postcheck-20261011-r1'):
     with self.assertRaises(p.Stop):c.check_marker(stage,dict(marker,identity=identity),plan,files)
    with self.assertRaises(p.Stop):c.check_marker(stage,dict(marker,helper_sha256='0'*64),plan,files)
-   self.assertFalse(Path(cfg['marker']).exists())
+   self.assertEqual(p.sha(Path(cfg['marker']).read_bytes()),'67f97b0eadb2697b8eec6a7f0c963c7d2191ecac023a575b48e82f59c420bffd') if stage=='preflight' else self.assertFalse(Path(cfg['marker']).exists())
  def test_workflow_exact(self):
   for stage in c.CONFIG:
    cfg=c.paths(stage);w=Path(cfg['workflow']).read_text();self.assertIn(cfg['marker'],w);self.assertIn(cfg['message'],w);self.assertIn('github.run_attempt == 1',w);self.assertNotIn('workflow_dispatch',w)
@@ -231,7 +231,9 @@ class Isolation(unittest.TestCase):
   fn=Mock();o=m.ImportRunner().run(Path('serverless/migrations/0009_youtube_queue_result_proposal.sql').read_bytes(),fresh(),fn,lambda e:None,NOW);fn.assert_not_called();self.assertEqual(o['migration_executions'],0)
  def test_no_new_marker_and_expected_parent(self):
   self.assertEqual(p.PARENT,'dc13343915c7d3bdad14fc808fc9ae4eb2b2f46b')
-  for stage in c.CONFIG:self.assertFalse(Path(c.paths(stage)['marker']).exists())
+  for stage in c.CONFIG:
+   if stage=='preflight':self.assertEqual(p.sha(Path(c.paths(stage)['marker']).read_bytes()),'67f97b0eadb2697b8eec6a7f0c963c7d2191ecac023a575b48e82f59c420bffd')
+   else:self.assertFalse(Path(c.paths(stage)['marker']).exists())
  def test_foreign_keys_and_immutable_triggers(self):
   d,b,a=db();d.execute('PRAGMA foreign_keys=ON')
   for f in ('serverless/migrations/0008_provider_neutral_roundtrip_backend.sql','serverless/migrations/0009_youtube_queue_result_proposal.sql',p.SQL):d.executescript(Path(f).read_text())
