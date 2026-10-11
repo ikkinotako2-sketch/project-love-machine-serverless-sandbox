@@ -1,0 +1,156 @@
+{
+  "remote_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "current": [
+    {
+      "path": "serverless/bootstrap-placeholder.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    {
+      "path": "serverless/worker.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef"
+    },
+    {
+      "path": "serverless/youtube-live/worker.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "path": "serverless/youtube-live/bundle.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "path": "serverless/youtube-connection/worker.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5"
+    },
+    {
+      "path": "serverless/youtube-connection/bundle.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f"
+    },
+    {
+      "path": "serverless/youtube-connection/runtime.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "134c97c36a0a20cc43b35e3dce1a1243a5d9008673ece5fb29f7cb8c3a52f3ea"
+    },
+    {
+      "path": "serverless/youtube-connection/runtime-bundle.mjs",
+      "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+      "sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9"
+    }
+  ],
+  "historical": [
+    {
+      "ref": "8ac2337a37072ae23f7781e2f47e8dfc7016b30f",
+      "path": "serverless/bootstrap-placeholder.mjs",
+      "status": "FOUND",
+      "sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/bootstrap-placeholder.mjs",
+      "status": "FOUND",
+      "sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/worker.mjs",
+      "status": "FOUND",
+      "sha256": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-live/worker.mjs",
+      "status": "FOUND",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-live/bundle.mjs",
+      "status": "FOUND",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-connection/worker.mjs",
+      "status": "FOUND",
+      "sha256": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-connection/bundle.mjs",
+      "status": "FOUND",
+      "sha256": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-connection/runtime.mjs",
+      "status": "ABSENT"
+    },
+    {
+      "ref": "95090e18396888e9ee74ec6f46bc431f5ea565cc",
+      "path": "serverless/youtube-connection/runtime-bundle.mjs",
+      "status": "ABSENT"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/bootstrap-placeholder.mjs",
+      "status": "FOUND",
+      "sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/worker.mjs",
+      "status": "FOUND",
+      "sha256": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-live/worker.mjs",
+      "status": "FOUND",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-live/bundle.mjs",
+      "status": "FOUND",
+      "sha256": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-connection/worker.mjs",
+      "status": "FOUND",
+      "sha256": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-connection/bundle.mjs",
+      "status": "FOUND",
+      "sha256": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-connection/runtime.mjs",
+      "status": "FOUND",
+      "sha256": "134c97c36a0a20cc43b35e3dce1a1243a5d9008673ece5fb29f7cb8c3a52f3ea"
+    },
+    {
+      "ref": "64f3605d02e581ee3fa7a007256a0539d4f6f839",
+      "path": "serverless/youtube-connection/runtime-bundle.mjs",
+      "status": "FOUND",
+      "sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9"
+    }
+  ],
+  "history_scope": "bootstrap creation; prior Worker inspection preparation; parked runtime composition preparation; 17 bounded historical file reads",
+  "exact_match": true,
+  "matched_path": "serverless/bootstrap-placeholder.mjs",
+  "matched_commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+  "origin_commit": "8ac2337a37072ae23f7781e2f47e8dfc7016b30f",
+  "known_old_parked_source": true,
+  "parked_proven": true,
+  "proof_kind": "EXACT_BYTES_AND_STRICT_LITERAL_FETCH_ONLY_SOURCE",
+  "source_currentness": "PRIOR_RUN_38128155103_ONLY_NOT_FRESH_SOURCE_REVALIDATION"
+}

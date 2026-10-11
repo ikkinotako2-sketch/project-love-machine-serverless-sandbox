@@ -1,0 +1,20 @@
+{
+  "identity": "provider-neutral-runtime-remote-readonly-inspection-20261011-r1",
+  "run_id": 38128155103,
+  "commit": "8535d651e21623e521ed4024bf3abc4031b7474b",
+  "attempt": 1,
+  "conclusion": "success",
+  "worker_exists": true,
+  "source_representation_proven": true,
+  "source_module_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "binding_exact": true,
+  "binding_name": "DB",
+  "database_id_match": true,
+  "cron_complete": true,
+  "cron_count": 0,
+  "consumers_complete": true,
+  "consumer_count": 0,
+  "secret_values_accessed": false,
+  "provenance": "COMPLETED_SANITIZED_ACTIONS_RESULT",
+  "fresh_in_this_inspection": false
+}
