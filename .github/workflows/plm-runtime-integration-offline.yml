@@ -1,0 +1,33 @@
+name: PLM Runtime Integration Offline
+on:
+  push:
+    paths: ['readiness/runtime-integration-*.json', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
+  pull_request:
+    paths: ['readiness/runtime-integration-*.json', 'readiness/test_runtime_integration_readiness.py', 'serverless/test-runtime-integration-readiness.mjs', '.github/workflows/plm-runtime-integration-offline.yml']
+permissions:
+  contents: read
+jobs:
+  integration:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Compile trusted offline kernel guard
+        run: gcc -shared -fPIC -O2 -Wall -Werror readiness/guard/native_guard.c -o "$RUNNER_TEMP/plm-offline-guard.so"
+      - name: Guarded runtime integration SQLite E2E
+        run: >-
+          env LD_PRELOAD="$RUNNER_TEMP/plm-offline-guard.so"
+          node --import ./readiness/guard/node_guard.mjs --test-isolation=none --test
+          serverless/test-youtube-live.mjs serverless/test-youtube-live-sql.mjs
+          serverless/test-youtube-connection.mjs serverless/test-runtime-integration-readiness.mjs

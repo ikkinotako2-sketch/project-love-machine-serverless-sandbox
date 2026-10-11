@@ -1,0 +1,1368 @@
+{
+  "binding": {
+    "dispatch_id": "immutable SHA256(account/job/script/production_ref/workflow) in ConnectionBoundary.reserve",
+    "job_id": "durable job/queue primary identity",
+    "owner_epoch_fence": "queue JOIN job + signed stage/callback equality + SQL guards",
+    "payload_sha256": "outbox SHA256(canonical {ref,inputs}); bind equals outbox hash; callback must match preexisting binding",
+    "pipeline_run_id": "signed bind run_id, numeric string, exact callback.run_id",
+    "render_run_id": "workflow_call same run identity required, not a separate guessed run",
+    "replay": "Exact signed callback/bind replay returns no-op (not blanket rejection); changed replay and duplicate SQL rows rejected",
+    "result_application": "callback+result batch, trigger changes effect/job/outbox/queue; readback Queue COMPLETE/Job SUCCEEDED/Outbox CONFIRMED",
+    "run_attempt": 1,
+    "workflow_sha256": "target hash equals signed stage and callback; production sender hashes actual workflow bytes"
+  },
+  "fixed_sql": {
+    "bind": "INSERT INTO plm_ytp_v1_binding VALUES (?,?,?,?,1,?,?,?,?)",
+    "binding": "SELECT * FROM plm_ytp_v1_binding WHERE job_id=?",
+    "callback": "INSERT INTO plm_rt_v2_callback VALUES (?,?,?,?,?,?,?,?, 'CONFIRMED',?)",
+    "claim": "UPDATE plm_ytq_v1_queue SET state='CLAIMED',version=version+1,updated_at=? WHERE job_id=? AND state='QUEUED' AND owner=? AND owner_epoch=? AND fencing_token=? AND version=?",
+    "dispatched": "UPDATE plm_ytq_v1_queue SET state='DISPATCHED',version=version+1,updated_at=? WHERE job_id=? AND state='CLAIMED' AND version=?",
+    "effect": "INSERT INTO plm_rt_v2_effect VALUES (?,?,? ,?,?,?, ?,?,NULL,1,'RESERVED',?,?)",
+    "effectSent": "UPDATE plm_rt_v2_effect SET state='SENT',version=2,updated_at=? WHERE effect_id=? AND state='RESERVED'",
+    "eligible": "SELECT job_id FROM plm_ytq_v1_queue q WHERE state='QUEUED' AND not_before<=? AND NOT EXISTS(SELECT 1 FROM plm_ytq_v1_queue a WHERE a.account_id=q.account_id AND a.state IN ('CLAIMED','DISPATCHED','UNKNOWN')) ORDER BY not_before,created_at,job_id LIMIT 1",
+    "enqueue": "INSERT INTO plm_ytq_v1_queue VALUES (?,?,?,?,?,?,?,?,'QUEUED',1,?,?)",
+    "outbox": "SELECT * FROM plm_ytq_v1_outbox WHERE dispatch_id=?",
+    "render": "SELECT r.*,e.delivery_id,e.state AS upload_state FROM plm_rt_v2_render r JOIN plm_rt_v2_effect e ON e.job_id=r.job_id AND e.kind='UPLOAD' WHERE r.job_id=?",
+    "renderConfirm": "UPDATE plm_rt_v2_effect SET state='CONFIRMED',version=3,result_id=?,updated_at=? WHERE effect_id=? AND state='SENT'",
+    "renderInsert": "INSERT INTO plm_rt_v2_render VALUES (?,?,?,?,?,?,?,?,?,'PASS',?)",
+    "renderReplay": "SELECT r.*,e.state AS upload_state FROM plm_rt_v2_render r JOIN plm_rt_v2_effect e ON e.job_id=r.job_id AND e.kind='UPLOAD' WHERE r.job_id=?",
+    "replay": "SELECT * FROM plm_rt_v2_callback WHERE result_id=? OR job_id=?",
+    "reserve": "INSERT INTO plm_ytq_v1_outbox VALUES (?,?,?,'RESERVED',0)",
+    "result": "INSERT INTO plm_ytq_v1_result VALUES (?,?,?,?,'private',0,'processed',?)",
+    "row": "SELECT q.*,j.state AS job_state FROM plm_ytq_v1_queue q JOIN plm_rt_v2_job j ON j.job_id=q.job_id AND j.owner=q.owner AND j.owner_epoch=q.owner_epoch AND j.fencing_token=q.fencing_token WHERE q.job_id=?",
+    "script": "SELECT script_json,script_sha256 FROM plm_rt_v2_script WHERE job_id=? AND state='COMPLETED'",
+    "sent": "UPDATE plm_ytq_v1_outbox SET state='SENT',send_attempts=1 WHERE dispatch_id=? AND state='RESERVED' AND send_attempts=0",
+    "unknownOut": "UPDATE plm_ytq_v1_outbox SET state='UNKNOWN' WHERE dispatch_id=? AND state='SENT'",
+    "unknownQueue": "UPDATE plm_ytq_v1_queue SET state='UNKNOWN',version=version+1,updated_at=? WHERE job_id=? AND state='DISPATCHED'"
+  },
+  "identity": "provider-neutral-runtime-integration-readiness-20261011-r1",
+  "legacy": {
+    "scope": "Pinned sandbox revised production snapshot only; no current production access or edit",
+    "serverless_context": "",
+    "serverless_guard": false
+  },
+  "mapping": [
+    {
+      "INSERT_query_keys": [],
+      "SELECT_query_keys": [
+        "row"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_job",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "ACTIVE -> SUCCEEDED/FAILED by callback trigger; creation/owner acquisition not connected",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [],
+      "SELECT_query_keys": [
+        "script"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_script",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "STARTED -> COMPLETED/FAILED; generation fixture only, no ambient generation runtime",
+      "trigger_updates": []
+    },
+    {
+      "INSERT_query_keys": [
+        "renderInsert"
+      ],
+      "SELECT_query_keys": [
+        "render",
+        "renderReplay"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_render",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable PASS artifact/media/script/owner/epoch/fence/run checkpoint",
+      "trigger_updates": []
+    },
+    {
+      "INSERT_query_keys": [
+        "effect"
+      ],
+      "SELECT_query_keys": [
+        "render",
+        "renderReplay"
+      ],
+      "UPDATE_query_keys": [
+        "effectSent",
+        "renderConfirm"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_effect",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "RESERVED -> SENT -> CONFIRMED; UNKNOWN is permanent stop; upload SENT is pre-upload authorization checkpoint, not success",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "callback"
+      ],
+      "SELECT_query_keys": [
+        "replay"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_callback",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable CONFIRMED result; exact replay no-op, changed replay rejected",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "enqueue"
+      ],
+      "SELECT_query_keys": [
+        "row",
+        "eligible"
+      ],
+      "UPDATE_query_keys": [
+        "claim",
+        "dispatched",
+        "unknownQueue"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_queue",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "QUEUED -> CLAIMED -> DISPATCHED -> COMPLETE; DISPATCHED -> UNKNOWN no resend",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "reserve"
+      ],
+      "SELECT_query_keys": [
+        "outbox"
+      ],
+      "UPDATE_query_keys": [
+        "sent",
+        "unknownOut"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_outbox",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "RESERVED/0 -> SENT/1 -> CONFIRMED/1; SENT -> UNKNOWN, never resend",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "result"
+      ],
+      "SELECT_query_keys": [],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_result",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable private/processed result; duplicate SQL insert rejected",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "bind"
+      ],
+      "SELECT_query_keys": [
+        "binding"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_ytp_v1_binding",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable job/dispatch/pipeline_run/render_run/attempt1/workflow/payload binding; SQL duplicates rejected",
+      "trigger_updates": []
+    }
+  ],
+  "parent": "1dcbb0db8736527e15ef3ed6bab1f5ebbec4ce66",
+  "safe_defaults": {
+    "DRY_RUN": true,
+    "EMERGENCY_STOP": true,
+    "NO_PUBLISH": true,
+    "TEST_ONLY": true
+  },
+  "schema": {
+    "columns": {
+      "plm_rt_v2_callback": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "delivery_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "callback_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "account_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "payload_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "result_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "consumed_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_rt_v2_effect": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "effect_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "kind",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "owner",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "request_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "delivery_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "result_id",
+          "notnull": 0,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "version",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 10,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 11,
+          "dflt_value": null,
+          "name": "created_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 12,
+          "dflt_value": null,
+          "name": "updated_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_rt_v2_job": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "platform",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "account_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "intent_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "owner",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "version",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "old_owner_stop_proof",
+          "notnull": 0,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 10,
+          "dflt_value": null,
+          "name": "result_id",
+          "notnull": 0,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 11,
+          "dflt_value": null,
+          "name": "created_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 12,
+          "dflt_value": null,
+          "name": "updated_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_rt_v2_render": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "artifact_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "owner",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "script_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "artifact_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "artifact_ref",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "render_run_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "quality_gate",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 10,
+          "dflt_value": null,
+          "name": "created_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_rt_v2_script": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "checkpoint_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "owner",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "version",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "provider",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "model",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "request_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 10,
+          "dflt_value": null,
+          "name": "script_json",
+          "notnull": 0,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 11,
+          "dflt_value": null,
+          "name": "script_sha256",
+          "notnull": 0,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 12,
+          "dflt_value": null,
+          "name": "created_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 13,
+          "dflt_value": null,
+          "name": "updated_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_ytp_v1_binding": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "dispatch_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "pipeline_run_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "render_run_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "run_attempt",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "workflow_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "dispatch_payload_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "bind_payload_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "bound_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_ytq_v1_outbox": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "dispatch_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "payload_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "send_attempts",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_ytq_v1_queue": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "account_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "intent_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "script_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "owner",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "owner_epoch",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "fencing_token",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "not_before",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 8,
+          "dflt_value": null,
+          "name": "state",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 9,
+          "dflt_value": null,
+          "name": "version",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 10,
+          "dflt_value": null,
+          "name": "created_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 11,
+          "dflt_value": null,
+          "name": "updated_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ],
+      "plm_ytq_v1_result": [
+        {
+          "cid": 0,
+          "dflt_value": null,
+          "name": "job_id",
+          "notnull": 0,
+          "pk": 1,
+          "type": "TEXT"
+        },
+        {
+          "cid": 1,
+          "dflt_value": null,
+          "name": "result_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 2,
+          "dflt_value": null,
+          "name": "video_id",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 3,
+          "dflt_value": null,
+          "name": "media_sha256",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 4,
+          "dflt_value": null,
+          "name": "privacy_status",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 5,
+          "dflt_value": null,
+          "name": "notify_subscribers",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        },
+        {
+          "cid": 6,
+          "dflt_value": null,
+          "name": "upload_status",
+          "notnull": 1,
+          "pk": 0,
+          "type": "TEXT"
+        },
+        {
+          "cid": 7,
+          "dflt_value": null,
+          "name": "saved_at",
+          "notnull": 1,
+          "pk": 0,
+          "type": "INTEGER"
+        }
+      ]
+    },
+    "objects": [
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_callback_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_callback_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_callback_3",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_effect_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_effect_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_effect_3",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_effect_4",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_job_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_job",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_job_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_job",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_job_3",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_job",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_render_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_render",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_render_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_render",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_script_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_script",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_rt_v2_script_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_rt_v2_script",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytp_v1_binding_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytp_v1_binding_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytp_v1_binding_3",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_outbox_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_outbox_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_queue_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_queue_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_result_1",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "index"
+      },
+      {
+        "name": "sqlite_autoindex_plm_ytq_v1_result_2",
+        "sql_sha256": null,
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "index"
+      },
+      {
+        "name": "plm_rt_v2_callback",
+        "sql_sha256": "882f4c74de0282c106a1d8c7db55a52c6d7227217e8afa47e65ac14a9ad4a3ae",
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "table"
+      },
+      {
+        "name": "plm_rt_v2_effect",
+        "sql_sha256": "c64e0ab63e0e617d8628848427cf21ec265d4444cc8e7e3169feba2c5d038e9a",
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "table"
+      },
+      {
+        "name": "plm_rt_v2_job",
+        "sql_sha256": "2a4cbcab42afb9acfd5e65a9e0216ff12334c6bc74fe9129130150c3d32081fd",
+        "tbl_name": "plm_rt_v2_job",
+        "type": "table"
+      },
+      {
+        "name": "plm_rt_v2_render",
+        "sql_sha256": "a427fc9fd60ae591a235a734a2c3c13deab56ca63dc0bed0cbd3274c2f9b3292",
+        "tbl_name": "plm_rt_v2_render",
+        "type": "table"
+      },
+      {
+        "name": "plm_rt_v2_script",
+        "sql_sha256": "be3c9e76d1d1c06c7349b9bd7355a27069f1b68dee8e96c952adefcde7e38cd6",
+        "tbl_name": "plm_rt_v2_script",
+        "type": "table"
+      },
+      {
+        "name": "plm_ytp_v1_binding",
+        "sql_sha256": "e91f172627680668c92dc810a4f8d059ebdb71a9b05cd61173e5886da747fac0",
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "table"
+      },
+      {
+        "name": "plm_ytq_v1_outbox",
+        "sql_sha256": "66fa3b359a85f1943cfc796d4e5991ccc00373af7c2ce463ae3453b1fdd6087b",
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "table"
+      },
+      {
+        "name": "plm_ytq_v1_queue",
+        "sql_sha256": "ed929759570b2675893fd38d715fdcef87b5ac0590237e1de049cd25e1b221dc",
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "table"
+      },
+      {
+        "name": "plm_ytq_v1_result",
+        "sql_sha256": "7d213ca3a6a3569bdfd703b4de0dc2ef2ba8b48f96abffc58d95a98a8355ac66",
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "table"
+      },
+      {
+        "name": "plm_rt_v2_callback_apply",
+        "sql_sha256": "5fc82e9df1371873909f91c39a03e9e7f414873da90fc9b28458865d1152ea2d",
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_callback_immutable",
+        "sql_sha256": "a93ab908def99e587f089d5d055b9d67029cafcc990401fa3ec48a36aa275e07",
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_callback_insert",
+        "sql_sha256": "c8d734d0be87cec294f06f97147a961651afba175e03e7b36899f894df4f516e",
+        "tbl_name": "plm_rt_v2_callback",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_effect_guard",
+        "sql_sha256": "7c52c1771d06bb459ddb3b68dc804779727e94f12a0bc73ea7d0b71f9c286831",
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_effect_insert",
+        "sql_sha256": "56a76ff6170cdc5afdbec3e4b9c76a320fc599ce2675896903af7f6e089f301c",
+        "tbl_name": "plm_rt_v2_effect",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_job_guard",
+        "sql_sha256": "27ec56b1cab692acb3ee8577fda1bc0b84d5eaca95c43fe8ab932838a3db7259",
+        "tbl_name": "plm_rt_v2_job",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_job_insert",
+        "sql_sha256": "dfe9f20fc5897cc66a135db2c1af679892d20cd39f647e1df334ee54fd8397fc",
+        "tbl_name": "plm_rt_v2_job",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_render_immutable",
+        "sql_sha256": "36ed3b9e03c0f3046a62877bac0811f8c6350ff26b5c1e139268cb0a43446aa3",
+        "tbl_name": "plm_rt_v2_render",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_render_insert",
+        "sql_sha256": "5da6cf949e024b197ee7a98229001ae34663d9feeac0b26dcd9ac0c5b813766f",
+        "tbl_name": "plm_rt_v2_render",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_script_guard",
+        "sql_sha256": "27782abd8b814711c871caf7eeab50b1b5c927abf3f259fd3498d9a233b3556b",
+        "tbl_name": "plm_rt_v2_script",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_rt_v2_script_insert",
+        "sql_sha256": "be7bc710f3992e032ecc95ad27cb92e1cb2af2b15b8efdc7afe4e19ffb40adbf",
+        "tbl_name": "plm_rt_v2_script",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytp_v1_binding_delete",
+        "sql_sha256": "10e64d5a3ce2f3a1e7c6034d8ea0ac78684b05c80e094c0658a39dbc06d31d17",
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytp_v1_binding_insert",
+        "sql_sha256": "52532f3ee30ef890d7668f07a12c18cd8385def774b0782b20ed07172b20d4ad",
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytp_v1_binding_update",
+        "sql_sha256": "183e54a2c6fd5440b8c19f1b63093876c392eeefe4b6722df430d256e3d4ee5d",
+        "tbl_name": "plm_ytp_v1_binding",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_outbox_delete",
+        "sql_sha256": "3a60f81dbda4dfdbbc24fd351f70afa22a7e8f473f4cfee3c64d9f85d4417854",
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_outbox_insert",
+        "sql_sha256": "2c8a42970cdef589547cb802707c57a6720b50ba13e78ab0ecd878640fd5b9e6",
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_outbox_update",
+        "sql_sha256": "1d9c24ae883a14b64946ada87b342afdc871b4168b110c746a4414be4bed7fe4",
+        "tbl_name": "plm_ytq_v1_outbox",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_queue_delete",
+        "sql_sha256": "ce70a804185396a79db179408f037e0a62d349116eee9de53958fa4f849690a8",
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_queue_insert",
+        "sql_sha256": "9ebeff0c6ca5c8dccac00ef99ed9ec30d133f05ed86f461393e763a6bc51a3a0",
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_queue_update",
+        "sql_sha256": "22ae4e56545be46b43f0c7292df764c15418cc736acd5ce34233aa7874cbbc6c",
+        "tbl_name": "plm_ytq_v1_queue",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_result_apply",
+        "sql_sha256": "1b3ecc07f039298175ee50d24d0884437412c2ffbb7e5fb1176fb79ce8bc606e",
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_result_delete",
+        "sql_sha256": "f65df824b0d0d0977d1bc028226c3c64bcc62bcbbd5bb31c47409d44e88fd700",
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_result_insert",
+        "sql_sha256": "90e33e523df6ed904d7e661f2c7f8e3fcc1041c628f43dad101c64fcfee46450",
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "trigger"
+      },
+      {
+        "name": "plm_ytq_v1_result_update",
+        "sql_sha256": "32bb5ec1aa2239b3cfeaedbbb7bb4e02c1b3ae5fe21b8838861bfd0d748faf9f",
+        "tbl_name": "plm_ytq_v1_result",
+        "type": "trigger"
+      }
+    ],
+    "remote_source_evidence": {
+      "commit": "1dcbb0db8736527e15ef3ed6bab1f5ebbec4ce66",
+      "run": 38119266513,
+      "scope": "Historical postcheck; no new D1 access",
+      "terminal": "0010_POSTCHECK_SUCCESS_STOP"
+    }
+  },
+  "side_effects": {
+    "cloudflare": 0,
+    "consumed_reruns": 0,
+    "d1_remote_reads": 0,
+    "d1_remote_writes": 0,
+    "deploy": 0,
+    "publish": 0,
+    "secret_changes": 0,
+    "youtube": 0
+  },
+  "source_sha256": {
+    "audit-evidence/consumed/provider-neutral-0010-migration-20261011-r2.json": "1f6bc39d2c44824ec640f94725b3bc714d4a3394f7495b933e3a9c326c4c8e78",
+    "audit-evidence/consumed/provider-neutral-0010-postcheck-20261011-r2.json": "28701023d485c1b6d35c5b933ad5fafcd7b7d3c549470b96cbde420bcb72485c",
+    "readiness/build_youtube_connection_bundle.py": "833b95c615a7abd172e52c2612a67a0290264067403e309444e85798b6b1d659",
+    "readiness/production-candidate/production-revised.patch": "797cf37848a45e752edd27e240c716ab67e6feb220ad59c7e2a0dbc044f4bbc3",
+    "readiness/production-candidate/revised-source/.github/workflows/youtube-pipeline.yml": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55",
+    "readiness/production-candidate/source/.github/workflows/youtube-adapter.yml": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51",
+    "readiness/production-candidate/source/plm/entrypoints/yt_serverless_candidate.py": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+    "readiness/provider-neutral-0010-after.json": "ecba796bd4054b09729c9c792b6e624203360ddf1e9d34b7ee73aa59ac91b4c9",
+    "readiness/test_youtube_connection_candidate.py": "4b41ca77c2e8c40bd515e1eaaa15af1552b73a7248cdba8e8e96a4bc20eade48",
+    "readiness/test_youtube_revised_scheduling.py": "5e909e8544bf54c3cdb82d3b626c09115c22e305f461902875a233ed83c67ddb",
+    "readiness/youtube-connection-candidate-plan.json": "86cec75314851b745a0b153357b13489a37aa0f7cd5897c4d8c80d4d949acc00",
+    "readiness/youtube-live-worker-successor-plan.json": "1a44279c319cd527bb531a7ba9d62ebfbdc8c263facd3dc9a692c90d69ae9241",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+    "serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql": "79a88960393ad7030b60e707c9de67cceccb16f02d41f7bcf99f41c1f11ea336",
+    "serverless/provider-neutral-backend-contract.mjs": "e76c5fe5e2382a3d8d9ba4a09da9041e1a5768fc91ce329f4c28bcd1995ad4e2",
+    "serverless/test-youtube-connection.mjs": "0b1038ff422edfc8a30a98e994310c083a0161b4ce86d0311cc94a1c9f69e5e4",
+    "serverless/test-youtube-live-sql.mjs": "d599b29d65de201490e3682dd445027bcab6976b2f975839d0818ae2d8887930",
+    "serverless/test-youtube-live.mjs": "32f6522f9a53273d0039a4be516baaede353ed8851c76ed74246d3943dbc4141",
+    "serverless/worker.mjs": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef",
+    "serverless/wrangler.stopped.json": "3c73c70c4fcc73f96755661012bf23e273888583724c958994dc5e7ba008f08e",
+    "serverless/youtube-connection/bundle.mjs": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f",
+    "serverless/youtube-connection/checkpoint.mjs": "812526012a8954282451d3331aade6e5aa28395efaf4bbb0bb90e5575e428a63",
+    "serverless/youtube-connection/connection.mjs": "53524c17f8b72321c35b8466ce17d2ae5043d2811ab57dd1e9764e4d15e9a8fe",
+    "serverless/youtube-connection/dispatch.mjs": "1000b43a875f56e777788d27a4522f6375e60a2fb6d189fee35b297553d13631",
+    "serverless/youtube-connection/mapping.mjs": "c24a962bb69e5ae5badff8469b4c34a7359b594c5be167d3f470a2b724c35c54",
+    "serverless/youtube-connection/sender.mjs": "6e1a6058224190616f64000c7935bf34e23f0f22c6181169c216fe4c5605efda",
+    "serverless/youtube-connection/worker.mjs": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5",
+    "serverless/youtube-connection/wrangler.stopped.json": "a890d4c303ad3cefca2a85f8770cbf5279fea5968c91c11510744e8e400078a9",
+    "serverless/youtube-live/bundle.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+    "serverless/youtube-live/worker.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+    "serverless/youtube-live/wrangler.stopped.json": "646180b3d6adbe9a512875a9f0bab01e2f423691511db3b4dd537508c6acf17c"
+  }
+}

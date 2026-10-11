@@ -1,0 +1,323 @@
+{
+  "blockers": [
+    {
+      "evidence": "connection.mjs default.fetch 503, scheduled/queue throw; no env.DB/keys/target/transport composition",
+      "id": "NO_RUNTIME_COMPOSITION",
+      "required": "Explicit one-shot operation gate, flags, exact target/hash/identity wiring and parked entrypoint before any separate activation approval",
+      "type": "OFFLINE_IMPLEMENTATION"
+    },
+    {
+      "evidence": "ConnectionBoundary requires preexisting ACTIVE job and COMPLETED script + CONFIRMED GENERATION effect; E2E creates these in fixture",
+      "id": "GENERATION_TO_QUEUE_UNCONNECTED",
+      "required": "Bounded provider-neutral generation/checkpoint/enqueue adapter or separately approved preexisting-job contract; do not create jobs now",
+      "type": "OFFLINE_IMPLEMENTATION"
+    },
+    {
+      "evidence": "youtube-live TARGET.ref b0c7f429... predates callback sender; connection accepts injected immutable successor but no final approved target manifest; test hashes old always() source snapshot",
+      "id": "PRODUCTION_TARGET_NOT_PINNED",
+      "required": "Pin callback-capable revised production commit/workflow/sender hashes, resolve fixtures without modifying legacy path; current production identity UNVERIFIED",
+      "type": "OFFLINE_INTEGRATION"
+    },
+    {
+      "evidence": "exported ingress is dependency injected, not mounted; exact callback replay is idempotent; fixture keys acceptable to low-level library but cannot become live keys",
+      "id": "REPLAY_AND_AUTH_LIFECYCLE_UNFIXED",
+      "required": "Runtime rejects fixture keys, binds independent key IDs/exact route/scope, fixes one-shot consumption and duplicate policy; body HMAC alone is not GitHub run metadata verification",
+      "type": "OFFLINE_IMPLEMENTATION"
+    },
+    {
+      "evidence": "No current remote source equality, routes, quota, D1 live transaction, dispatch acceptance or key readiness inspection this phase",
+      "id": "LIVE_PLATFORM_GATES",
+      "required": "Future read-only inspection required after offline composition; no claim remote bundle equal or free quota proven",
+      "type": "REMOTE_OR_APPROVAL"
+    }
+  ],
+  "database": {
+    "0008": "FULL_APPLIED",
+    "0009": "FULL_APPLIED",
+    "0010": "FULL_APPLIED"
+  },
+  "database_evidence": {
+    "commit": "1dcbb0db8736527e15ef3ed6bab1f5ebbec4ce66",
+    "run": 38119266513,
+    "scope": "Historical postcheck; no new D1 access",
+    "terminal": "0010_POSTCHECK_SUCCESS_STOP"
+  },
+  "historical_plan_policy": "Do not rewrite old plans NOT_APPLIED/UNVERIFIED; use new successor evidence",
+  "identity": "provider-neutral-runtime-integration-readiness-20261011-r1",
+  "inventory": [
+    "serverless/worker.mjs",
+    "serverless/wrangler.stopped.json",
+    "serverless/provider-neutral-backend-contract.mjs",
+    "readiness/youtube-connection-candidate-plan.json",
+    "readiness/youtube-live-worker-successor-plan.json",
+    "readiness/build_youtube_connection_bundle.py",
+    "readiness/production-candidate/production-revised.patch",
+    "readiness/production-candidate/revised-source/.github/workflows/youtube-pipeline.yml",
+    "readiness/production-candidate/source/.github/workflows/youtube-adapter.yml",
+    "readiness/production-candidate/source/plm/entrypoints/yt_serverless_candidate.py",
+    "serverless/test-youtube-live.mjs",
+    "serverless/test-youtube-live-sql.mjs",
+    "serverless/test-youtube-connection.mjs",
+    "readiness/test_youtube_connection_candidate.py",
+    "readiness/test_youtube_revised_scheduling.py",
+    "readiness/provider-neutral-0010-after.json",
+    "audit-evidence/consumed/provider-neutral-0010-postcheck-20261011-r2.json",
+    "audit-evidence/consumed/provider-neutral-0010-migration-20261011-r2.json",
+    "serverless/youtube-live/bundle.mjs",
+    "serverless/youtube-live/worker.mjs",
+    "serverless/youtube-live/wrangler.stopped.json",
+    "serverless/youtube-connection/bundle.mjs",
+    "serverless/youtube-connection/checkpoint.mjs",
+    "serverless/youtube-connection/connection.mjs",
+    "serverless/youtube-connection/dispatch.mjs",
+    "serverless/youtube-connection/mapping.mjs",
+    "serverless/youtube-connection/sender.mjs",
+    "serverless/youtube-connection/worker.mjs",
+    "serverless/youtube-connection/wrangler.stopped.json",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql",
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql",
+    "serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql"
+  ],
+  "mapping": [
+    {
+      "INSERT_query_keys": [],
+      "SELECT_query_keys": [
+        "row"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_job",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "ACTIVE -> SUCCEEDED/FAILED by callback trigger; creation/owner acquisition not connected",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [],
+      "SELECT_query_keys": [
+        "script"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_script",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "STARTED -> COMPLETED/FAILED; generation fixture only, no ambient generation runtime",
+      "trigger_updates": []
+    },
+    {
+      "INSERT_query_keys": [
+        "renderInsert"
+      ],
+      "SELECT_query_keys": [
+        "render",
+        "renderReplay"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_render",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable PASS artifact/media/script/owner/epoch/fence/run checkpoint",
+      "trigger_updates": []
+    },
+    {
+      "INSERT_query_keys": [
+        "effect"
+      ],
+      "SELECT_query_keys": [
+        "render",
+        "renderReplay"
+      ],
+      "UPDATE_query_keys": [
+        "effectSent",
+        "renderConfirm"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_effect",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "RESERVED -> SENT -> CONFIRMED; UNKNOWN is permanent stop; upload SENT is pre-upload authorization checkpoint, not success",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "callback"
+      ],
+      "SELECT_query_keys": [
+        "replay"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_rt_v2_callback",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable CONFIRMED result; exact replay no-op, changed replay rejected",
+      "trigger_updates": [
+        "plm_rt_v2_callback_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "enqueue"
+      ],
+      "SELECT_query_keys": [
+        "row",
+        "eligible"
+      ],
+      "UPDATE_query_keys": [
+        "claim",
+        "dispatched",
+        "unknownQueue"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_queue",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "QUEUED -> CLAIMED -> DISPATCHED -> COMPLETE; DISPATCHED -> UNKNOWN no resend",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "reserve"
+      ],
+      "SELECT_query_keys": [
+        "outbox"
+      ],
+      "UPDATE_query_keys": [
+        "sent",
+        "unknownOut"
+      ],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_outbox",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "RESERVED/0 -> SENT/1 -> CONFIRMED/1; SENT -> UNKNOWN, never resend",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "result"
+      ],
+      "SELECT_query_keys": [],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_ytq_v1_result",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable private/processed result; duplicate SQL insert rejected",
+      "trigger_updates": [
+        "plm_ytq_v1_result_apply"
+      ]
+    },
+    {
+      "INSERT_query_keys": [
+        "bind"
+      ],
+      "SELECT_query_keys": [
+        "binding"
+      ],
+      "UPDATE_query_keys": [],
+      "connected_entrypoint": false,
+      "object": "plm_ytp_v1_binding",
+      "runtime_source": "serverless/youtube-connection/connection.mjs + checkpoint.mjs + inherited youtube-live/worker.mjs",
+      "state_contract": "immutable job/dispatch/pipeline_run/render_run/attempt1/workflow/payload binding; SQL duplicates rejected",
+      "trigger_updates": []
+    }
+  ],
+  "next_one_action": "OFFLINE runtime composition implementation preparation (no deploy, no jobs, no credentials or production edits)",
+  "parent": "1dcbb0db8736527e15ef3ed6bab1f5ebbec4ce66",
+  "readiness": {
+    "callback": "OFFLINE_CANDIDATE_PROVEN_NOT_MOUNTED",
+    "github_actions": "CANDIDATE_PRESENT_CURRENT_PRODUCTION_UNVERIFIED",
+    "pipeline_binding": "OFFLINE_SCHEMA_AND_HMAC_ENFORCED_NOT_LIVE_CONNECTED",
+    "queue_outbox_result": "OFFLINE_ATOMIC_E2E_PROVEN_NOT_LIVE_CONNECTED",
+    "worker": "BLOCKED_COMPOSITION"
+  },
+  "recommended_next_type": "B",
+  "runtime_activation_launchable": false,
+  "side_effects": {
+    "cloudflare": 0,
+    "consumed_reruns": 0,
+    "d1_remote_reads": 0,
+    "d1_remote_writes": 0,
+    "deploy": 0,
+    "publish": 0,
+    "secret_changes": 0,
+    "youtube": 0
+  },
+  "source_sha256": {
+    "audit-evidence/consumed/provider-neutral-0010-migration-20261011-r2.json": "1f6bc39d2c44824ec640f94725b3bc714d4a3394f7495b933e3a9c326c4c8e78",
+    "audit-evidence/consumed/provider-neutral-0010-postcheck-20261011-r2.json": "28701023d485c1b6d35c5b933ad5fafcd7b7d3c549470b96cbde420bcb72485c",
+    "readiness/build_youtube_connection_bundle.py": "833b95c615a7abd172e52c2612a67a0290264067403e309444e85798b6b1d659",
+    "readiness/production-candidate/production-revised.patch": "797cf37848a45e752edd27e240c716ab67e6feb220ad59c7e2a0dbc044f4bbc3",
+    "readiness/production-candidate/revised-source/.github/workflows/youtube-pipeline.yml": "3b46a638e1d7e7738c78cf43ab63f36587fcd3158c34a744c8b91969d9f32b55",
+    "readiness/production-candidate/source/.github/workflows/youtube-adapter.yml": "06da4ff3a60ac52b00c8bce327de1e3248448569ace33405bf32495855a56f51",
+    "readiness/production-candidate/source/plm/entrypoints/yt_serverless_candidate.py": "75f0752db9500c178c496242f0f3b09f322201f6887eed9a4e7e130db779b5e5",
+    "readiness/provider-neutral-0010-after.json": "ecba796bd4054b09729c9c792b6e624203360ddf1e9d34b7ee73aa59ac91b4c9",
+    "readiness/test_youtube_connection_candidate.py": "4b41ca77c2e8c40bd515e1eaaa15af1552b73a7248cdba8e8e96a4bc20eade48",
+    "readiness/test_youtube_revised_scheduling.py": "5e909e8544bf54c3cdb82d3b626c09115c22e305f461902875a233ed83c67ddb",
+    "readiness/youtube-connection-candidate-plan.json": "86cec75314851b745a0b153357b13489a37aa0f7cd5897c4d8c80d4d949acc00",
+    "readiness/youtube-live-worker-successor-plan.json": "1a44279c319cd527bb531a7ba9d62ebfbdc8c263facd3dc9a692c90d69ae9241",
+    "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+    "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+    "serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql": "79a88960393ad7030b60e707c9de67cceccb16f02d41f7bcf99f41c1f11ea336",
+    "serverless/provider-neutral-backend-contract.mjs": "e76c5fe5e2382a3d8d9ba4a09da9041e1a5768fc91ce329f4c28bcd1995ad4e2",
+    "serverless/test-youtube-connection.mjs": "0b1038ff422edfc8a30a98e994310c083a0161b4ce86d0311cc94a1c9f69e5e4",
+    "serverless/test-youtube-live-sql.mjs": "d599b29d65de201490e3682dd445027bcab6976b2f975839d0818ae2d8887930",
+    "serverless/test-youtube-live.mjs": "32f6522f9a53273d0039a4be516baaede353ed8851c76ed74246d3943dbc4141",
+    "serverless/worker.mjs": "7e5bbae3f9773063ba11e7e92b961c4bca3dd129ced0298abf37e587930430ef",
+    "serverless/wrangler.stopped.json": "3c73c70c4fcc73f96755661012bf23e273888583724c958994dc5e7ba008f08e",
+    "serverless/youtube-connection/bundle.mjs": "e1f0a6e128a4f85ea358cd00f821e87f0146f8dd6e0d73eef3eb7636100a0a1f",
+    "serverless/youtube-connection/checkpoint.mjs": "812526012a8954282451d3331aade6e5aa28395efaf4bbb0bb90e5575e428a63",
+    "serverless/youtube-connection/connection.mjs": "53524c17f8b72321c35b8466ce17d2ae5043d2811ab57dd1e9764e4d15e9a8fe",
+    "serverless/youtube-connection/dispatch.mjs": "1000b43a875f56e777788d27a4522f6375e60a2fb6d189fee35b297553d13631",
+    "serverless/youtube-connection/mapping.mjs": "c24a962bb69e5ae5badff8469b4c34a7359b594c5be167d3f470a2b724c35c54",
+    "serverless/youtube-connection/sender.mjs": "6e1a6058224190616f64000c7935bf34e23f0f22c6181169c216fe4c5605efda",
+    "serverless/youtube-connection/worker.mjs": "93ff5319c37ccee335ee1ca8626424031d01477ad1162a3d430ff796c4b20cf5",
+    "serverless/youtube-connection/wrangler.stopped.json": "a890d4c303ad3cefca2a85f8770cbf5279fea5968c91c11510744e8e400078a9",
+    "serverless/youtube-live/bundle.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+    "serverless/youtube-live/worker.mjs": "1fe6d0b87943731c04714015adcecd8678775e1ea1cc201d5eb0ca15edba8124",
+    "serverless/youtube-live/wrangler.stopped.json": "646180b3d6adbe9a512875a9f0bab01e2f423691511db3b4dd537508c6acf17c"
+  },
+  "worker_candidates": [
+    {
+      "config": "serverless/wrangler.stopped.json",
+      "main_in_config": "bootstrap-placeholder.mjs",
+      "path": "serverless/worker.mjs",
+      "publish": "none; guards require EMERGENCY_STOP false before test dispatch",
+      "purpose": "legacy TEST_ONLY test_jobs worker; not 0008/0009/0010 runtime"
+    },
+    {
+      "config": "serverless/youtube-live/wrangler.stopped.json",
+      "default_fetch": 503,
+      "main_in_config": "worker.mjs",
+      "path": "serverless/youtube-live/worker.mjs",
+      "purpose": "0008/0009 offline boundary, no 0010 enforcement, old production target"
+    },
+    {
+      "bundle": "deterministic standalone parked ESM",
+      "config": "serverless/youtube-connection/wrangler.stopped.json",
+      "default_fetch": 503,
+      "main_in_config": "bundle.mjs",
+      "path": "serverless/youtube-connection/worker.mjs",
+      "purpose": "preferred 0008/0009/0010 candidate exports"
+    }
+  ],
+  "worker_contract": {
+    "auth": "domain separated HMAC SHA256, canonical exact field sets, <=8192 bytes, skew300/30 seconds; separately injected keys",
+    "binding": "DB",
+    "candidate_routes": [
+      "POST /youtube/checkpoint",
+      "POST /youtube/result"
+    ],
+    "consumer": "disabled/unwired",
+    "cron": [],
+    "database_id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+    "dispatch": "reservation commit then durable SENT sentinel before one abortable send; 204 accepted only; timeout/non204 UNKNOWN permanent stop",
+    "enabled_routes": [],
+    "physical_billing_write_bound": "REMOTE_VERIFICATION_REQUIRED",
+    "privacy": "private, notify_subscribers false, scheduled_for empty",
+    "run_validation": "attempt1, numeric run_id, immutable 40hex ref, exact workflow/script/media/payload hashes; GitHub current run metadata not checked by Worker"
+  }
+}

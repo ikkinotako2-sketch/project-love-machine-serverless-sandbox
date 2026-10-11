@@ -82,9 +82,11 @@ class Binding(unittest.TestCase):
  def test_attempt_two_rejected(self):
   with patch.dict(os.environ,{'GITHUB_RUN_ATTEMPT':'2'},clear=True):
    with self.assertRaises(p.Stop):c.local_gate('migration')
- def test_old_and_new_markers_absent(self):
-  for version in ('r1','r2'):
-   for stage in ('migration','postcheck'):self.assertFalse(Path('audit-evidence/consumed/provider-neutral-0010-'+stage+'-20261011-'+version+'.json').exists())
+ def test_old_markers_absent_and_completed_r2_markers_immutable(self):
+  for stage in ('migration','postcheck'):
+   self.assertFalse(Path('audit-evidence/consumed/provider-neutral-0010-'+stage+'-20261011-r1.json').exists())
+   obj=json.loads(Path('audit-evidence/consumed/provider-neutral-0010-'+stage+'-20261011-r2.json').read_text())
+   self.assertEqual(obj['state'],'CONSUMED_BEFORE_REMOTE');self.assertEqual(obj['prepared_commit_sha'],'edcdeb45b460a1fdbd4ec8ba9d7fcbc7575558a0')
  def test_migration_local_chain_without_another_preflight(self):
   cfg=c.paths('migration');mk=marker('migration');original=Path.read_bytes
   def rb(path):return json.dumps(mk).encode() if str(path)==cfg['marker'] else original(path)
