@@ -151,7 +151,7 @@ class Bindings(unittest.TestCase):
    for identity in ('provider-neutral-0008-migration-20261010-r2','provider-neutral-0008-postcheck-20261010-r2','provider-neutral-0008-fresh-readonly-preflight-20261010-r6'):
     with self.assertRaises(p.Stop):c.check_marker(stage,dict(marker,identity=identity),plan,files)
    with self.assertRaises(p.Stop):c.check_marker(stage,dict(marker,helper_sha256='0'*64),plan,files)
-   self.assertFalse(Path(cfg['marker']).exists())
+   self.assertEqual(p.sha(Path(cfg['marker']).read_bytes()),{'audit-evidence/consumed/provider-neutral-0009-postcheck-20261011-r1.json': '79f858f0e41108728bbc3cff90ad3f87b74466de2a69bcc56ea7030d64b66389', 'audit-evidence/consumed/provider-neutral-0009-migration-20261011-r1.json': '31cb7a9f7a2e9216fa381183b3804ee6903436454aec53128a05d71d0d6a629f', 'audit-evidence/consumed/provider-neutral-0009-fresh-readonly-preflight-20261011-r1.json': '31ad7d5b06f08662781e5e1f05b927f68e9d4b115d7f6230c5921b24a027ac81'}[cfg['marker']])
  def test_workflow_exact(self):
   for stage in c.CONFIG:
    cfg=c.paths(stage);w=Path(cfg['workflow']).read_text();self.assertIn(cfg['marker'],w);self.assertIn(cfg['message'],w);self.assertIn('github.run_attempt == 1',w);self.assertNotIn('workflow_dispatch',w)
@@ -203,7 +203,7 @@ class Integration(unittest.TestCase):
     with self.assertRaisesRegex(p.Stop,'MARKER_ONLY_STOP'):c.local_gate('preflight')
  def test_migration_main_unstable_never_writes(self):
   s,r,t,calls=fixture(None)
-  with patch.dict('os.environ',{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as write,contextlib.redirect_stdout(io.StringIO()) as buf:
+  with patch.dict('os.environ',{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as write,patch.object(Path,'rglob',return_value=[]),contextlib.redirect_stdout(io.StringIO()) as buf:
    self.assertEqual(m.main(),1);write.assert_not_called();out=json.loads(buf.getvalue());self.assertEqual(out['result'],'FRESH_PRE_GATE_STOP');self.assertEqual(out['side_effect_requests'],0);self.assertEqual(out['cloudflare_read_only_calls'],60)
  def test_postcheck_main_no_write_credential(self):
   import provider_neutral_0009_postcheck_once as post

@@ -1,0 +1,52 @@
+{
+  "autoindexes": 3,
+  "baseline_kind": "OFFLINE_DERIVED_NOT_FRESH_REMOTE_EVIDENCE",
+  "created_objects": [
+    {
+      "name": "plm_ytp_v1_binding",
+      "sql": "CREATE TABLE plm_ytp_v1_binding (\n job_id TEXT PRIMARY KEY REFERENCES plm_ytq_v1_queue(job_id),\n dispatch_id TEXT NOT NULL UNIQUE REFERENCES plm_ytq_v1_outbox(dispatch_id),\n pipeline_run_id TEXT NOT NULL UNIQUE CHECK(pipeline_run_id NOT GLOB '*[^0-9]*' AND length(pipeline_run_id) BETWEEN 1 AND 20),\n render_run_id TEXT NOT NULL CHECK(render_run_id=pipeline_run_id),\n run_attempt INTEGER NOT NULL CHECK(run_attempt=1),\n workflow_sha256 TEXT NOT NULL CHECK(length(workflow_sha256)=64 AND workflow_sha256 NOT GLOB '*[^0-9a-f]*'),\n dispatch_payload_sha256 TEXT NOT NULL CHECK(length(dispatch_payload_sha256)=64 AND dispatch_payload_sha256 NOT GLOB '*[^0-9a-f]*'),\n bind_payload_sha256 TEXT NOT NULL CHECK(length(bind_payload_sha256)=64 AND bind_payload_sha256 NOT GLOB '*[^0-9a-f]*'),\n bound_at INTEGER NOT NULL CHECK(bound_at>0)\n)",
+      "tbl_name": "plm_ytp_v1_binding",
+      "type": "table"
+    },
+    {
+      "name": "plm_ytp_v1_binding_delete",
+      "sql": "CREATE TRIGGER plm_ytp_v1_binding_delete BEFORE DELETE ON plm_ytp_v1_binding\nBEGIN SELECT RAISE(ABORT,'pipeline_binding_consumed'); END",
+      "tbl_name": "plm_ytp_v1_binding",
+      "type": "trigger"
+    },
+    {
+      "name": "plm_ytp_v1_binding_insert",
+      "sql": "CREATE TRIGGER plm_ytp_v1_binding_insert BEFORE INSERT ON plm_ytp_v1_binding\nWHEN NOT EXISTS(SELECT 1 FROM plm_ytq_v1_queue q JOIN plm_ytq_v1_outbox o ON o.job_id=q.job_id JOIN plm_rt_v2_job j ON j.job_id=q.job_id WHERE q.job_id=NEW.job_id AND q.state='DISPATCHED' AND o.state='SENT' AND o.send_attempts=1 AND o.dispatch_id=NEW.dispatch_id AND o.payload_sha256=NEW.dispatch_payload_sha256 AND j.state='ACTIVE' AND j.owner=q.owner AND j.owner_epoch=q.owner_epoch AND j.fencing_token=q.fencing_token AND NEW.bound_at>=q.updated_at)\nBEGIN SELECT RAISE(ABORT,'pipeline_unbound_dispatch'); END",
+      "tbl_name": "plm_ytp_v1_binding",
+      "type": "trigger"
+    },
+    {
+      "name": "plm_ytp_v1_binding_update",
+      "sql": "CREATE TRIGGER plm_ytp_v1_binding_update BEFORE UPDATE ON plm_ytp_v1_binding\nBEGIN SELECT RAISE(ABORT,'pipeline_binding_immutable'); END",
+      "tbl_name": "plm_ytp_v1_binding",
+      "type": "trigger"
+    }
+  ],
+  "ddl_statements": 4,
+  "dependency_compatibility": "SQLITE_COMPILE_PASS_AGAINST_EXACT_0008_0009",
+  "destructive_operations": 0,
+  "existing_data_changes_at_migration": 0,
+  "existing_object_mutation": 0,
+  "expected_new_rows": 0,
+  "foreign_key_dependencies": [
+    "plm_ytq_v1_queue(job_id)",
+    "plm_ytq_v1_outbox(dispatch_id)"
+  ],
+  "namespace": "plm_ytp_v1_",
+  "physical_billing_rows_written": "REMOTE_VERIFICATION_REQUIRED",
+  "sql_path": "serverless/migrations/0010_youtube_pipeline_checkpoint_candidate.sql",
+  "sql_sha256": "79a88960393ad7030b60e707c9de67cceccb16f02d41f7bcf99f41c1f11ea336",
+  "tables": 1,
+  "trigger_dependencies": [
+    "plm_ytq_v1_queue",
+    "plm_ytq_v1_outbox",
+    "plm_rt_v2_job"
+  ],
+  "trigger_runtime": "INSERT guard SELECT only; UPDATE/DELETE abort; no UPDATE/DELETE DML",
+  "triggers": 3
+}
