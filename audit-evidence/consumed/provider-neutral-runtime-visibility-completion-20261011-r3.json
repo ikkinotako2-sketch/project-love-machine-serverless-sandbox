@@ -1,0 +1,16 @@
+{
+  "identity": "provider-neutral-runtime-visibility-completion-20261011-r3",
+  "state": "CONSUMED_BEFORE_REMOTE",
+  "prepared_commit_sha": "d3fbe9d0b370f13303113de4a5b31ab19add9d49",
+  "workflow_sha256": "50656a4838919ea5844a51ef14236d8a7b9feff6e09e6700bb48e4d7b491ab46",
+  "helper_sha256": "016ed394893044f8fa2b8b7903f4281ab1540fe7ad855a0a6fefa8418fbf1031",
+  "plan_sha256": "573ac118844c3416436a6b15b5e28b5df1639037310571dc23407f3398705b46",
+  "schema_sha256": "9332ac8f90a8d48239c3f376a2b9ed9a033e24d3a9e2697c6b48a6605ef936ea",
+  "census_sha256": "bf9fc8fa4666f961f536c69397c326ac00eeca9f713f7e0a688adcbe13e0312d",
+  "prior_evidence_sha256": "457eacb0f8e6f77c57d6d02d2b7fc5410eeee0a3302889e1d7d550a0d8a06109",
+  "parser_dependency_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "target_manifest_sha256": "8315eac39526ed97126c3b5f85df9e150afc63186c224a3820fb03103bf11828",
+  "known_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "r1_consumed_marker_sha256": "d07a86dd1f6cd9b46396cbb7c726016333ae07986183cd5cd825bb2e15f7a9cb",
+  "r2_consumed_marker_sha256": "c7a26d251f4569ec82a4fa1bef7159267feeac8200ea1ebe47f00ff98b01ad3a"
+}
