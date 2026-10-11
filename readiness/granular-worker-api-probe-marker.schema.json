@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "executor_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "expected_new_bundle_sha256": {
+      "const": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9"
+    },
+    "expected_old_source_sha256": {
+      "const": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451"
+    },
+    "identity": {
+      "const": "provider-neutral-granular-worker-api-probe-20261011-r1"
+    },
+    "parked_deploy_executor_sha256": {
+      "const": "56163be0825d3cc240e85eef8a757ee2a50a2ea92380979aa3fae81a8a9f795d"
+    },
+    "parked_deploy_plan_sha256": {
+      "const": "b96edafbbc0df5121eda655bd1fa12af6dc086f9b2077982410c97f740851985"
+    },
+    "parser_dependency_sha256": {
+      "const": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6"
+    },
+    "plan_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "prepared_commit_sha": {
+      "pattern": "^[a-f0-9]{40}$",
+      "type": "string"
+    },
+    "r1_consumed_marker_sha256": {
+      "const": "44275c75b3c0b1f4ac13cf4d6e73ec591ffec6f5760f9900a8d56d8cccca8e2d"
+    },
+    "r2_consumed_marker_sha256": {
+      "const": "b51954cc2f6aae162849db7c4041837c9a064e24c1c25ae8f273852bc5d9a08a"
+    },
+    "r3_consumed_marker_sha256": {
+      "const": "7aee4bc42b39f96c698cc285de349dc07c3893329719d19e23be13140ba143c3"
+    },
+    "schema_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "state": {
+      "const": "CONSUMED_BEFORE_REMOTE"
+    },
+    "workflow_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "workflow_sha256",
+    "executor_sha256",
+    "plan_sha256",
+    "schema_sha256",
+    "parked_deploy_plan_sha256",
+    "parked_deploy_executor_sha256",
+    "parser_dependency_sha256",
+    "expected_old_source_sha256",
+    "expected_new_bundle_sha256",
+    "identity",
+    "state",
+    "prepared_commit_sha",
+    "r1_consumed_marker_sha256",
+    "r2_consumed_marker_sha256",
+    "r3_consumed_marker_sha256"
+  ],
+  "type": "object"
+}
