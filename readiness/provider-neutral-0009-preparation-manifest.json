@@ -1,0 +1,57 @@
+{
+  "parent": "62a1b052a5cc3f362ca58a266f28a9d9e859b920",
+  "files": {
+    ".github/workflows/plm-provider-neutral-0009-fresh-readonly-once.yml": "4339d1d2f6c931c757f6c2f8a81b16869ae432bb0db7e80d8fe2f22f1b55819e",
+    ".github/workflows/plm-provider-neutral-0009-migration-once.yml": "11caeb3c2ca157dbfbef7dd6cfd2e2f6089958f1ddfc2cef9bb9c9dc6d5d3eb8",
+    ".github/workflows/plm-provider-neutral-0009-postcheck-once.yml": "18b05b0b7609eb2ddc4321545589218bf2c5e06b9c1cf6c93cbd508825481be5",
+    "readiness/provider-neutral-0009-after.json": "9bee419bc6ed176d1629ac2279a3fe6eca8c69a83dfee99aa99755eff07316ff",
+    "readiness/provider-neutral-0009-before.json": "58f133b75da124a36a82c04c24e194f8cbfef623e47a54a6d21ace6bd2e3eff3",
+    "readiness/provider-neutral-0009-candidate-audit.json": "c54bf301a1c81f152a253b7271283b984d5f7890dff0428d5df9eaf02510315c",
+    "readiness/provider-neutral-0009-fresh-readonly-marker.schema.json": "7f93f8f79492de94fdac7914ef4d8553c7409a6f8bcdad1fbb42bd6dd1f603e1",
+    "readiness/provider-neutral-0009-fresh-readonly-plan.json": "b80213613a5065bcf8294aa35faeb07cf8ab0815bf5b4417caf06aa4d27778c0",
+    "readiness/provider-neutral-0009-migration-marker.schema.json": "fdd3e94574edf9015eb0432d2878999f0215db77d60917e600edf179ddcc92ba",
+    "readiness/provider-neutral-0009-migration-plan.json": "a4e936bdfbaf4fcf9182bd3c4f1cc9f4e93833fcb8744d375d884d7f189662b9",
+    "readiness/provider-neutral-0009-postcheck-marker.schema.json": "dcb87c92638745066c3bffb06005509e9da9e6942961a56463da8845f450924b",
+    "readiness/provider-neutral-0009-postcheck-plan.json": "e2f11ef9a7b48dc89df58eb7edddcd9538299ff2c31b42e0c504d16c504537b2",
+    "readiness/provider_neutral_0009_common.py": "7a8d065bb385bf5b5685d7988a8ad9a54f86904c75bce27f2f6464453c8b5e24",
+    "readiness/provider_neutral_0009_fresh_preflight.py": "5d62dad04a6b730ebdbe9a8c72fa3ede44792831728081e5a1adddbf42f4f08d",
+    "readiness/provider_neutral_0009_migration_once.py": "a3bd1979c9c108f537578329862777ce1f1209a11580609bc53fb7e6fc89b401",
+    "readiness/provider_neutral_0009_postcheck_once.py": "8897ca5ee12ef81918b99da8ad3f88f701b7d7cea5ac7379afca7aec3f310bd7",
+    "readiness/provider_neutral_0009_stage_gate.py": "e3c6a670845c9a7401ddb9dc8678b1759035fb55c3b41d0d6fcc5554297d52d2",
+    "readiness/test_provider_neutral_0008_stability_r6.py": "11254997259872ebb9759283edd961a68dc2f08dda599260600d4e923bb84eec",
+    "readiness/test_provider_neutral_0009_stages.py": "19aad9feeb45d7380daab86eb6f8eb6368179cbd7e5cb811921512ee487fdc66"
+  },
+  "stages": {
+    "preflight": {
+      "identity": "provider-neutral-0009-fresh-readonly-preflight-20261011-r1",
+      "helper": "readiness/provider_neutral_0009_fresh_preflight.py",
+      "workflow": ".github/workflows/plm-provider-neutral-0009-fresh-readonly-once.yml",
+      "plan": "readiness/provider-neutral-0009-fresh-readonly-plan.json",
+      "schema": "readiness/provider-neutral-0009-fresh-readonly-marker.schema.json",
+      "marker": "audit-evidence/consumed/provider-neutral-0009-fresh-readonly-preflight-20261011-r1.json",
+      "message": "PLM 0009 preflight once provider-neutral-0009-fresh-readonly-preflight-20261011-r1"
+    },
+    "migration": {
+      "identity": "provider-neutral-0009-migration-20261011-r1",
+      "helper": "readiness/provider_neutral_0009_migration_once.py",
+      "workflow": ".github/workflows/plm-provider-neutral-0009-migration-once.yml",
+      "plan": "readiness/provider-neutral-0009-migration-plan.json",
+      "schema": "readiness/provider-neutral-0009-migration-marker.schema.json",
+      "marker": "audit-evidence/consumed/provider-neutral-0009-migration-20261011-r1.json",
+      "message": "PLM 0009 migration once provider-neutral-0009-migration-20261011-r1"
+    },
+    "postcheck": {
+      "identity": "provider-neutral-0009-postcheck-20261011-r1",
+      "helper": "readiness/provider_neutral_0009_postcheck_once.py",
+      "workflow": ".github/workflows/plm-provider-neutral-0009-postcheck-once.yml",
+      "plan": "readiness/provider-neutral-0009-postcheck-plan.json",
+      "schema": "readiness/provider-neutral-0009-postcheck-marker.schema.json",
+      "marker": "audit-evidence/consumed/provider-neutral-0009-postcheck-20261011-r1.json",
+      "message": "PLM 0009 postcheck once provider-neutral-0009-postcheck-20261011-r1"
+    }
+  },
+  "offline_focused_tests": 415,
+  "new_tests": 45,
+  "markers": "NOT_CREATED_NOT_CONSUMED",
+  "remote_calls": 0
+}

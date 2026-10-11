@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "identity": {
+      "const": "provider-neutral-0009-fresh-readonly-preflight-20261011-r1"
+    },
+    "state": {
+      "const": "CONSUMED_BEFORE_REMOTE"
+    },
+    "prepared_commit_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "prerequisite_commit_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "prerequisite_run_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "candidate_raw_hashes": {
+      "const": {
+        "serverless/migrations/0009_youtube_queue_result_proposal.sql": "55b87f14918a03150a1ec9e0294d540543a3259c4057797286a902c5d4455d42",
+        "readiness/provider-neutral-0009-before.json": "58f133b75da124a36a82c04c24e194f8cbfef623e47a54a6d21ace6bd2e3eff3",
+        "readiness/provider-neutral-0009-after.json": "9bee419bc6ed176d1629ac2279a3fe6eca8c69a83dfee99aa99755eff07316ff",
+        "serverless/migrations/0008_provider_neutral_roundtrip_backend.sql": "7734fe9ae6d950b5af444cc9a3f917b3da8d050c5e63083f51a79ea42d620bfe",
+        "serverless/provider-neutral-backend-before.json": "02d8d6c9e0d131dfbfc4088af072ca704589f31e3753a59a80a10cd71b2e31b9",
+        "serverless/provider-neutral-backend-after.json": "d0de3cd14ac3aa1afb55a358635c5a32a9c0f90528d1ca42f84ab4beb6fd54c3",
+        "serverless/provider-neutral-backend-plan.json": "277fcf6ae8f465ae574e4c5f903b8c506689baf632a0e1e2d68ed2bd7dd5820a"
+      }
+    },
+    "workflow_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "helper_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "identity",
+    "state",
+    "prepared_commit_sha",
+    "prerequisite_commit_sha",
+    "prerequisite_run_id",
+    "candidate_raw_hashes",
+    "workflow_sha256",
+    "helper_sha256",
+    "plan_sha256"
+  ]
+}

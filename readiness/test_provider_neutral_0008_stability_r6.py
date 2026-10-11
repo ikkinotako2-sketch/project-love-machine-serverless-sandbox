@@ -142,8 +142,9 @@ class Postcheck(unittest.TestCase):
  def test_no_backend_credential(self):self.assertNotIn(p.BACKEND_SECRET,(ROOT/q.CONFIG['workflow']).read_text())
 
 class Bindings(unittest.TestCase):
- def test_new_markers_absent(self):
-  for path in (p.MARKER,m.CONFIG['marker'],q.CONFIG['marker']):self.assertFalse((ROOT/path).exists())
+ def test_consumed_markers_immutable(self):
+  pins={'audit-evidence/consumed/provider-neutral-0008-fresh-readonly-preflight-20261010-r6.json': 'd6f5b5e730c9b01eb1ccc5ff9a203563e553ea9f31870db843d9391a4a92bdcf', 'audit-evidence/consumed/provider-neutral-0008-migration-20261010-r2.json': '675a9ffb34bc380624c9eb0989221a64b28e2a4bf1d454ac82c1f2a9238dbe6f', 'audit-evidence/consumed/provider-neutral-0008-postcheck-20261010-r2.json': '1c592d3480dfae8bd195d8386e0e8a1c379db609c2da0b4ed81ae4e8a68cbe0b'}
+  for path,h in pins.items():self.assertEqual(p.sha((ROOT/path).read_bytes()),h)
  def test_r6_marker_rejects_old(self):
   files={path:(ROOT/path).read_bytes() for path in (p.WORKFLOW,p.HELPER,p.PLAN,p.SCHEMA)};plan=json.loads(files[p.PLAN]);marker={'identity':p.IDENTITY,'state':'CONSUMED_BEFORE_REMOTE','prepared_commit_sha':'a'*40,'candidate_raw_hashes':p.PINS,**{key:p.sha(files[path]) for key,path in [('workflow_sha256',p.WORKFLOW),('helper_sha256',p.HELPER),('preflight_plan_sha256',p.PLAN)]}}
   p.marker_check(marker,plan,'a'*40,files)
@@ -178,7 +179,7 @@ class StageIntegration(unittest.TestCase):
  def test_three_drift_migration_main_zero_side_effects(self):
   import os
   b,a,r,t,calls=fixture(None);output=io.StringIO()
-  with patch.dict(os.environ,{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as writer,patch.object(m.time,'time',return_value=NOW),contextlib.redirect_stdout(output):
+  with patch.dict(os.environ,{p.READ_SECRET:'read-fixture',p.BACKEND_SECRET:'backend-fixture','PLM_HISTORY_GITHUB_TOKEN':'history-fixture','GITHUB_RUN_ID':'123'},clear=True),patch.object(c,'local_gate',return_value=({},{})),patch.object(c,'prerequisite',return_value=True),patch.object(p,'fetch_history',return_value=HISTORY),patch.object(p,'live_transport',return_value=t),patch.object(m,'LiveImport') as writer,patch.object(m.time,'time',return_value=NOW),patch.object(Path,'rglob',return_value=[]),contextlib.redirect_stdout(output):
    self.assertEqual(m.main(),1)
   writer.assert_not_called();out=json.loads(output.getvalue());self.assertEqual(out['result'],'FRESH_PRE_GATE_STOP');self.assertEqual(out['side_effect_requests'],0);self.assertEqual(out['cloudflare_read_only_calls'],42);self.assertNotIn('fixture',output.getvalue())
  def test_first_drift_sqlite_then_stable_post(self):
