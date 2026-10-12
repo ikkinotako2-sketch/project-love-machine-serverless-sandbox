@@ -27,7 +27,7 @@ class TokenVerifyTests(unittest.TestCase):
  def test_gate_pass(self):v.validate_gate(*self.fixture())
  def test_current_exact_dependencies(self):
   for p,h in v.IMMUTABLE.items():self.assertEqual(v.sha((ROOT/p).read_bytes()),h)
- def test_marker_both_absent(self):self.assertFalse((ROOT/v.MARKER).exists());self.assertFalse((ROOT/v.DEPLOY_MARKER).exists())
+ def test_marker_consumed_deploy_absent(self):self.assertEqual(v.sha((ROOT/v.MARKER).read_bytes()),'5fb7fe2a6afc882beef70db32211b62408fed96436cce4a606e62507d60a640e');self.assertFalse((ROOT/v.DEPLOY_MARKER).exists())
  def test_identity_independent(self):self.assertNotEqual(v.MARKER,v.DEPLOY_MARKER);self.assertIn('granular-worker-api-probe',v.IDENTITY)
  def test_missing_token_remote0(self):
   with patch.object(v,'load_gate'),patch.dict('os.environ',{v.SECRET:''}),patch('builtins.print') as p:v.main();o=json.loads(p.call_args[0][0]);self.assertEqual(o['requests_attempted'],0);self.assertEqual(o['reason_codes'],['DEPLOY_TOKEN_MISSING_STOP'])
