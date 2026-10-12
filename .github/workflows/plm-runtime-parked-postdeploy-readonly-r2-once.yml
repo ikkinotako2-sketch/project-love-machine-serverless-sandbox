@@ -1,0 +1,41 @@
+name: PLM Runtime Parked Postdeploy Readonly R2 Once
+on:
+  push:
+    branches: [plm-offline-readiness-v1-20261002]
+    paths: ['audit-evidence/consumed/provider-neutral-runtime-parked-postdeploy-readonly-20261012-r1.json']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: provider-neutral-runtime-parked-postdeploy-readonly-20261012-r1
+  cancel-in-progress: false
+jobs:
+  postcheck:
+    if: github.repository == 'ikkinotako2-sketch/project-love-machine-serverless-sandbox' && github.event_name == 'push' && github.ref == 'refs/heads/plm-offline-readiness-v1-20261002' && github.event.head_commit.message == 'PLM runtime parked postdeploy readonly once provider-neutral-runtime-parked-postdeploy-readonly-20261012-r1' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      TEST_ONLY: 'true'
+      DRY_RUN: 'true'
+      NO_PUBLISH: 'true'
+      EMERGENCY_STOP: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Gate independent marker chain before credentials
+        run: python3 -c 'from readiness.runtime_parked_postdeploy_readonly_r2 import load_gate; load_gate()'
+      - name: Verify exact deploy attempt and ACK before Worker read credential
+        id: prerequisite
+        env:
+          PLM_GITHUB_READ_TOKEN: ${{ github.token }}
+        run: python3 -c 'import os; from readiness.runtime_parked_postdeploy_readonly_r2 import load_gate,SPEC,c; files,marker=load_gate(); c.github_prerequisite(SPEC,marker,os.environ["PLM_GITHUB_READ_TOKEN"]); open(os.environ["GITHUB_OUTPUT"],"a").write("verified=true\nrun="+str(marker["prerequisite_run_id"])+"\n")'
+      - name: Bounded read-only postdeploy proof then STOP
+        if: steps.prerequisite.outputs.verified == 'true'
+        env:
+          PLM_PREREQUISITE_COMMIT: ${{ github.event.before }}
+          PLM_PREREQUISITE_RUN: ${{ steps.prerequisite.outputs.run }}
+          PLM_CF_WORKER_API_TOKEN: ${{ secrets.PLM_CF_WORKER_API_TOKEN }}
+        run: python3 -m readiness.runtime_parked_postdeploy_readonly_r2

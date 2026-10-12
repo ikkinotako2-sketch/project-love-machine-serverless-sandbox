@@ -1,0 +1,157 @@
+{
+  "D1_requests": 0,
+  "YouTube_calls": 0,
+  "contract_sha256": "c336c12c2e64c814972720012d7a79009e509d9a5de4d58b88b6ae26688d3c0d",
+  "credential_read": "PLM_CF_WORKER_API_TOKEN",
+  "credential_write": "PLM_CF_WORKER_DEPLOY_TOKEN",
+  "cron_writes": 0,
+  "dependency_0_sha256": "56163be0825d3cc240e85eef8a757ee2a50a2ea92380979aa3fae81a8a9f795d",
+  "dependency_10_sha256": "8315eac39526ed97126c3b5f85df9e150afc63186c224a3820fb03103bf11828",
+  "dependency_11_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "dependency_12_sha256": "44275c75b3c0b1f4ac13cf4d6e73ec591ffec6f5760f9900a8d56d8cccca8e2d",
+  "dependency_13_sha256": "b51954cc2f6aae162849db7c4041837c9a064e24c1c25ae8f273852bc5d9a08a",
+  "dependency_14_sha256": "7aee4bc42b39f96c698cc285de349dc07c3893329719d19e23be13140ba143c3",
+  "dependency_15_sha256": "5fb7fe2a6afc882beef70db32211b62408fed96436cce4a606e62507d60a640e",
+  "dependency_16_sha256": "cf4435afacafbde87bd1101525c9c795fb89ba52b45bb3846414d1c33463569a",
+  "dependency_1_sha256": "b96edafbbc0df5121eda655bd1fa12af6dc086f9b2077982410c97f740851985",
+  "dependency_2_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "dependency_3_sha256": "7c7f963852edeea87aac66d23da7779708bef21ede4272517fa32de7bf2331af",
+  "dependency_4_sha256": "cc30881e25654885ff47013f0fef41dc2250cf2d3ec99f5fb597c335ca0ef66b",
+  "dependency_5_sha256": "36200a1994e59ba12f7fec5daf1dff42286a0954f4628acb45f33c6061939f62",
+  "dependency_6_sha256": "49ab6740b3c5852fb0a3353b93c248ce89b2b9b8833ff52507fd0671e745899b",
+  "dependency_7_sha256": "3130c43646ad255a75f4c0c1a8c0407caf482a76f327508d65379546ffdf9a7d",
+  "dependency_8_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "dependency_9_sha256": "461f93e9d8468fd26f93895f7cbac002d5b49d35ff3eabe0a865e422226652eb",
+  "dispatches": 0,
+  "domain_writes": 0,
+  "error_body_bytes_max": 32768,
+  "exact_preparation_parent": "acf688aa1e9ef08457049baea5fe1aa5fb4da4c1",
+  "execution_approved": false,
+  "executor_sha256": "429463569f73e424b3dc09227f455959fd813d6901393375d165feef85169928",
+  "expected_parked_bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "expected_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "fallback": 0,
+  "historical_token_run": 38189160131,
+  "historical_token_terminal": "TEMP_WORKERS_PRODUCT_EDITOR_TARGET_READ_CONFIRMED",
+  "identity": "provider-neutral-runtime-parked-deploy-20261012-r2",
+  "invocations": 0,
+  "marker_state": "NOT_CREATED / NOT_CONSUMED",
+  "maximum_Cloudflare_HTTP": 9,
+  "maximum_GitHub_prerequisite_GETs": 0,
+  "maximum_audit_GETs": 7,
+  "maximum_script_writes": 1,
+  "maximum_token_verify_GETs": 1,
+  "operational_exclusion_required": "Separate execution approval must assert no concurrent Worker/settings/exposure changes; sequential GET drift proof is not atomic CAS",
+  "postcheck_required": true,
+  "preparation_commit_count": 1,
+  "preparation_files": [
+    ".github/workflows/plm-runtime-integration-offline.yml",
+    ".github/workflows/plm-runtime-parked-deploy-r2-once.yml",
+    ".github/workflows/plm-runtime-parked-postdeploy-readonly-r2-once.yml",
+    "readiness/runtime-parked-deploy-r2-marker.schema.json",
+    "readiness/runtime-parked-deploy-r2-plan.json",
+    "readiness/runtime-parked-postdeploy-readonly-r2-marker.schema.json",
+    "readiness/runtime-parked-postdeploy-readonly-r2-plan.json",
+    "readiness/runtime_parked_deploy_r2.py",
+    "readiness/runtime_parked_postdeploy_readonly_r2.py",
+    "readiness/runtime_parked_successor_contract.py",
+    "readiness/test_runtime_parked_deploy_r2.py",
+    "readiness/test_runtime_parked_deploy_token_verify_r4.py",
+    "readiness/test_runtime_parked_postdeploy_readonly_r2.py"
+  ],
+  "production_writes": 0,
+  "query_mutations": 0,
+  "queue_writes": 0,
+  "raw_retention": 0,
+  "redirect": 0,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/content/v2"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/schedules"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/queues"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control/subdomain"
+    },
+    {
+      "method": "GET",
+      "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/domains?service=plm-serverless-sandbox-control"
+    },
+    {
+      "method": "GET",
+      "path": "/zones?account.id=6c8ccd6aface937ab5dabef61cb64534&per_page=50&page=1"
+    }
+  ],
+  "rerun": 0,
+  "resend": 0,
+  "response_bytes_max_each": 262144,
+  "resume": 0,
+  "retry": 0,
+  "rollback": 0,
+  "rollback_policy": "No automatic rollback. UNKNOWN permanently STOP/no resend. A fresh separately approved recovery is required.",
+  "route_writes": 0,
+  "runtime_activation_approved": false,
+  "schema_sha256": "8e7f2e62ded95601e0c7eb56bc60ddedd1bfafb03c8881e89257d3673d09e623",
+  "scope_api_verified": false,
+  "scope_attestation": "OWNER_ATTESTED_TEMP_WORKERS_PRODUCT_EDITOR",
+  "secret_exposure": 0,
+  "source_freshly_revalidated": false,
+  "subdomain_writes": 0,
+  "terminal": "PARKED_DEPLOY_ACK_STOP_BEFORE_POSTCHECK",
+  "timeout_seconds": 15,
+  "token_verify": {
+    "finite_future_expiry_required": true,
+    "method": "GET",
+    "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/tokens/verify"
+  },
+  "workflow_sha256": "596d10ed6770aaf58d954f4e9dcfe0b4906f0d758e8a6570f5bfbe396530ad19",
+  "write": {
+    "metadata": {
+      "bindings": [
+        {
+          "id": "18050cf6-934e-4f3a-a1cd-5041bac1c35e",
+          "name": "DB",
+          "type": "d1"
+        },
+        {
+          "name": "TEST_ONLY",
+          "text": "true",
+          "type": "plain_text"
+        },
+        {
+          "name": "DRY_RUN",
+          "text": "true",
+          "type": "plain_text"
+        },
+        {
+          "name": "NO_PUBLISH",
+          "text": "true",
+          "type": "plain_text"
+        },
+        {
+          "name": "EMERGENCY_STOP",
+          "text": "true",
+          "type": "plain_text"
+        }
+      ],
+      "compatibility_date": "2026-10-06",
+      "keep_bindings": [],
+      "main_module": "runtime-bundle.mjs"
+    },
+    "method": "PUT",
+    "path": "/accounts/6c8ccd6aface937ab5dabef61cb64534/workers/scripts/plm-serverless-sandbox-control"
+  },
+  "write_capability_remote_tested": false
+}
