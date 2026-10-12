@@ -1,0 +1,18 @@
+{
+  "identity": "provider-neutral-runtime-parked-deploy-token-verify-20261012-r4",
+  "state": "CONSUMED_BEFORE_REMOTE",
+  "prepared_commit_sha": "53a6bab34c517c4b2034561849c6b1385c2a1a6f",
+  "workflow_sha256": "3130c43646ad255a75f4c0c1a8c0407caf482a76f327508d65379546ffdf9a7d",
+  "executor_sha256": "cc30881e25654885ff47013f0fef41dc2250cf2d3ec99f5fb597c335ca0ef66b",
+  "plan_sha256": "36200a1994e59ba12f7fec5daf1dff42286a0954f4628acb45f33c6061939f62",
+  "schema_sha256": "49ab6740b3c5852fb0a3353b93c248ce89b2b9b8833ff52507fd0671e745899b",
+  "parked_deploy_plan_sha256": "b96edafbbc0df5121eda655bd1fa12af6dc086f9b2077982410c97f740851985",
+  "parked_deploy_executor_sha256": "56163be0825d3cc240e85eef8a757ee2a50a2ea92380979aa3fae81a8a9f795d",
+  "parser_dependency_sha256": "4e5c746374757d77baf053c46c7516f65298f3cedbd8d37f6dea09242e619ee6",
+  "expected_old_source_sha256": "6c5d726f96d56dac792ff739f87227926197891f1149b1dedeeac38e67128451",
+  "expected_new_bundle_sha256": "8a6615fd020ca6590ba8f5e2c73a3844473d9e6ecd3babb19ea836d604d4a8a9",
+  "r1_consumed_marker_sha256": "44275c75b3c0b1f4ac13cf4d6e73ec591ffec6f5760f9900a8d56d8cccca8e2d",
+  "r2_consumed_marker_sha256": "b51954cc2f6aae162849db7c4041837c9a064e24c1c25ae8f273852bc5d9a08a",
+  "r3_consumed_marker_sha256": "7aee4bc42b39f96c698cc285de349dc07c3893329719d19e23be13140ba143c3",
+  "granular_probe_consumed_marker_sha256": "5fb7fe2a6afc882beef70db32211b62408fed96436cce4a606e62507d60a640e"
+}
